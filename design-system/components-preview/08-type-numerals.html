@@ -1,0 +1,16 @@
+<!-- @dsCard group="Type" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px 32px; background: var(--bg-canvas); display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: end; }
+  .col { background: var(--bg-card); border-radius: 10px; box-shadow: var(--shadow-1); padding: 18px 16px 14px; }
+  .tag { font: var(--t-label); color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.10em; margin-top: 8px; }
+  .delta { font: 500 12px/1 var(--font-mono); color: var(--success); margin-top: 6px; }
+  .down { color: var(--danger); }
+</style></head>
+<body>
+  <div class="col"><div class="num-xl">142</div><div class="tag">total visits</div><div class="delta">▲ +18%</div></div>
+  <div class="col"><div class="num-xl">38</div><div class="tag">unique customers</div><div class="delta">▲ +6%</div></div>
+  <div class="col"><div class="num-xl">3.74</div><div class="tag">avg visits / customer</div><div class="delta down">▼ −2%</div></div>
+  <div class="col"><div class="num-xl">€2.40</div><div class="tag">avg ticket</div><div class="delta">▲ +€0.10</div></div>
+</body></html>

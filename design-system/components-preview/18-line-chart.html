@@ -1,0 +1,42 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 20px 24px; background: var(--bg-canvas); }
+  .chart { background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-1); padding: 16px 18px; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .title { font: 600 14px/1 var(--font-body); color: var(--fg-1); }
+  .sub { font: var(--t-caption); color: var(--fg-3); }
+  svg { display: block; width: 100%; height: 110px; }
+</style></head>
+<body>
+  <div class="chart">
+    <div class="head"><div class="title">Visits per day</div><div class="sub">Last 7 days · 142 total</div></div>
+    <svg viewBox="0 0 600 110" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#C45A36" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#C45A36" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- grid -->
+      <line x1="0" y1="25"  x2="600" y2="25"  stroke="#ECE4D4"/>
+      <line x1="0" y1="55"  x2="600" y2="55"  stroke="#ECE4D4"/>
+      <line x1="0" y1="85"  x2="600" y2="85"  stroke="#ECE4D4"/>
+      <!-- area -->
+      <path d="M0,80 L100,55 L200,68 L300,32 L400,46 L500,22 L600,40 L600,110 L0,110 Z" fill="url(#g)"/>
+      <!-- line -->
+      <path d="M0,80 L100,55 L200,68 L300,32 L400,46 L500,22 L600,40" fill="none" stroke="#C45A36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- dots -->
+      <g fill="#C45A36">
+        <circle cx="0" cy="80" r="3"/>
+        <circle cx="100" cy="55" r="3"/>
+        <circle cx="200" cy="68" r="3"/>
+        <circle cx="300" cy="32" r="3"/>
+        <circle cx="400" cy="46" r="3"/>
+        <circle cx="500" cy="22" r="3"/>
+        <circle cx="600" cy="40" r="3"/>
+      </g>
+    </svg>
+  </div>
+</body></html>

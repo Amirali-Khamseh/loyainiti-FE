@@ -1,0 +1,26 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 20px 24px; background: var(--bg-canvas); }
+  table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-1); overflow: hidden; }
+  th, td { text-align: left; padding: 12px 16px; font: var(--t-body-sm); color: var(--fg-1); }
+  th { font: var(--t-label); color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.1em; background: var(--paper-100); border-bottom: 1px solid var(--border-subtle); }
+  td { border-bottom: 1px solid var(--border-subtle); }
+  tr:last-child td { border-bottom: 0; }
+  .num { font: var(--t-num); font-size: 13px; text-align: right; }
+  .avatar { display: inline-flex; align-items: center; gap: 10px; }
+  .av { width: 28px; height: 28px; border-radius: 50%; background: var(--paper-200); display: inline-flex; align-items: center; justify-content: center; font: 600 11px/1 var(--font-body); color: var(--fg-2); }
+  .name { font-weight: 500; }
+  .email { color: var(--fg-3); font-size: 11px; }
+</style></head>
+<body>
+  <table>
+    <thead><tr><th>Customer</th><th style="text-align:right">Visits</th><th>Last visit</th></tr></thead>
+    <tbody>
+      <tr><td><div class="avatar"><div class="av">MR</div><div><div class="name">Marco Rossi</div><div class="email">marco@example.com</div></div></div></td><td class="num">14</td><td>Today, 09:12</td></tr>
+      <tr><td><div class="avatar"><div class="av">SF</div><div><div class="name">Sara Ferri</div><div class="email">sara@example.com</div></div></div></td><td class="num">11</td><td>Yesterday</td></tr>
+      <tr><td><div class="avatar"><div class="av">LB</div><div><div class="name">Luca Bianchi</div><div class="email">luca@example.com</div></div></div></td><td class="num">9</td><td>2 days ago</td></tr>
+    </tbody>
+  </table>
+</body></html>

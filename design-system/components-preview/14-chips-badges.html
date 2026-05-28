@@ -1,0 +1,32 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--bg-canvas); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip {
+    font: 500 12px/1 var(--font-body);
+    border-radius: 999px;
+    padding: 7px 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid transparent;
+  }
+  .neutral { background: var(--bg-muted); color: var(--fg-2); }
+  .selected { background: var(--espresso-900); color: var(--paper-50); }
+  .ok { background: var(--success-bg); color: var(--success); border-color: var(--success-border); }
+  .warn { background: var(--warning-bg); color: var(--warning); border-color: var(--warning-border); }
+  .err { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+  .gold { background: var(--gold-50); color: var(--gold-600); border-color: var(--gold-200); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+</style></head>
+<body>
+  <span class="chip neutral">Public</span>
+  <span class="chip selected">7 days</span>
+  <span class="chip ok"><span class="dot" style="background:var(--success)"></span>Published</span>
+  <span class="chip warn"><span class="dot" style="background:var(--warning)"></span>Draft</span>
+  <span class="chip err"><span class="dot" style="background:var(--danger)"></span>Ended</span>
+  <span class="chip gold">Reward earned</span>
+  <span class="chip neutral">3 of 4 stamps</span>
+  <span class="chip selected">EUR · €</span>
+  <span class="chip neutral">Espresso</span>
+  <span class="chip neutral">Pastries</span>
+</body></html>

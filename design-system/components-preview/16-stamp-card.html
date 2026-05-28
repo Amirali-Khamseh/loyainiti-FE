@@ -1,0 +1,42 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 28px; background: var(--bg-canvas); }
+  .card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-2);
+    padding: 22px 26px;
+    max-width: 480px;
+    border: 1px solid var(--gold-200);
+    position: relative;
+  }
+  .card::after {
+    content: ""; position: absolute; inset: 0; border-radius: 12px;
+    box-shadow: inset 0 0 0 4px var(--gold-50);
+    pointer-events: none;
+  }
+  .biz { font: 600 13px/1 var(--font-body); color: var(--fg-2); display: flex; align-items: center; gap: 6px; }
+  .biz .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-500); }
+  h3 { font: 600 22px/1.2 var(--font-display); margin: 6px 0 0; }
+  .stamps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+  .st { aspect-ratio: 1; border-radius: 50%; border: 1.5px dashed var(--paper-300); display: flex; align-items: center; justify-content: center; }
+  .st.filled { background: var(--gold-500); border: 1.5px solid var(--gold-600); }
+  .st.filled::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--gold-600); }
+  .progress { margin-top: 14px; font: var(--t-caption); color: var(--fg-2); }
+  .progress b { color: var(--fg-1); }
+</style></head>
+<body>
+  <div class="card">
+    <div class="biz"><span class="dot"></span>Cafe Aurora · Via Roma 12</div>
+    <h3>Stamp 3 of 4. One more for a free coffee.</h3>
+    <div class="stamps">
+      <div class="st filled"></div>
+      <div class="st filled"></div>
+      <div class="st filled"></div>
+      <div class="st"></div>
+    </div>
+    <div class="progress">Last visit <b>2 days ago</b> · Stamps expire in 38 days</div>
+  </div>
+</body></html>

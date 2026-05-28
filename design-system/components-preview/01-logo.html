@@ -1,0 +1,77 @@
+<!-- @dsCard group="Brand" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 28px 32px; background: var(--bg-canvas); display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; align-items: center; }
+  .pile { display: flex; flex-direction: column; gap: 8px; }
+  .tag  { font: var(--t-caption); color: var(--fg-3); }
+  .tag b { color: var(--fg-1); }
+  .dark { background: var(--espresso-900); padding: 12px 20px; border-radius: 12px; display: inline-block; }
+  svg   { display: block; }
+</style></head>
+<body>
+  <!--
+    The flourish replaces the letter "n" in the wordmark.
+    Inner edges of the two lobes form the two stems of the n;
+    a small arch over the top closes the letter shape.
+    Word is typed as "loyai__iti" with a gap where the n would sit.
+  -->
+  <div class="pile">
+    <svg viewBox="-14 -16 230 76" width="280" height="93" role="img" aria-label="Loyainiti">
+      <!-- Flourish: left lobe + n-arch + right lobe -->
+      <path
+        d="M 108 12 L 108 42 C 70 54, -8 54, -8 24 C -8 -6, 70 -6, 108 12 Z
+           M 108 12 C 108 -4, 132 -4, 132 12
+           M 132 12 L 132 42 C 158 54, 200 54, 200 24 C 200 -6, 158 -6, 132 12 Z"
+        fill="none" stroke="#B58A3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Text on top of flourish; the missing "n" is replaced by the flourish itself -->
+      <text x="2" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#1F1611">loyai</text>
+      <text x="138" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#1F1611">iti</text>
+    </svg>
+    <div class="tag"><b>Canonical</b> — left lobe wraps "loyai", right lobe wraps "iti", and the two lobe stems + arch form the missing "n"</div>
+  </div>
+
+  <!-- Same logo on espresso -->
+  <div class="pile">
+    <div class="dark">
+      <svg viewBox="-14 -16 230 76" width="260" height="86" role="img" aria-label="Loyainiti">
+        <path
+          d="M 108 12 L 108 42 C 70 54, -8 54, -8 24 C -8 -6, 70 -6, 108 12 Z
+             M 108 12 C 108 -4, 132 -4, 132 12
+             M 132 12 L 132 42 C 158 54, 200 54, 200 24 C 200 -6, 158 -6, 132 12 Z"
+          fill="none" stroke="#D4A24A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="2" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#FBF8F3">loyai</text>
+        <text x="138" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#FBF8F3">iti</text>
+      </svg>
+    </div>
+    <div class="tag">On espresso · gold-500 stroke</div>
+  </div>
+
+  <!-- Small size sanity check -->
+  <div class="pile">
+    <svg viewBox="-14 -16 230 76" width="150" height="50" role="img" aria-label="Loyainiti small">
+      <path
+        d="M 108 12 L 108 42 C 70 54, -8 54, -8 24 C -8 -6, 70 -6, 108 12 Z
+           M 108 12 C 108 -4, 132 -4, 132 12
+           M 132 12 L 132 42 C 158 54, 200 54, 200 24 C 200 -6, 158 -6, 132 12 Z"
+        fill="none" stroke="#B58A3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="2" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#1F1611">loyai</text>
+      <text x="138" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#1F1611">iti</text>
+    </svg>
+    <div class="tag">Small · 150px wide</div>
+  </div>
+
+  <!-- Ink variant (no gold) for monochrome contexts -->
+  <div class="pile">
+    <svg viewBox="-14 -16 230 76" width="280" height="93" role="img" aria-label="Loyainiti ink">
+      <path
+        d="M 108 12 L 108 42 C 70 54, -8 54, -8 24 C -8 -6, 70 -6, 108 12 Z
+           M 108 12 C 108 -4, 132 -4, 132 12
+           M 132 12 L 132 42 C 158 54, 200 54, 200 24 C 200 -6, 158 -6, 132 12 Z"
+        fill="none" stroke="#1F1611" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="2" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#1F1611">loyai</text>
+      <text x="138" y="42" font-family="Fraunces, 'Source Serif 4', Georgia, serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#1F1611">iti</text>
+    </svg>
+    <div class="tag">Ink · monochrome contexts (favicon, print)</div>
+  </div>
+</body></html>

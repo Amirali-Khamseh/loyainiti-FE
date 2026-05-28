@@ -1,0 +1,35 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--bg-canvas); }
+  .group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .stack { display: grid; gap: 6px; }
+  .label { font: var(--t-label); color: var(--fg-2); margin-bottom: 4px; }
+  .swatch { display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 10px; background: var(--bg-card); padding: 8px 12px 8px 8px; border-radius: 8px; box-shadow: var(--shadow-1); }
+  .chip { height: 32px; border-radius: 6px; }
+  .name { font: 600 12px/1.2 var(--font-body); color: var(--fg-1); }
+  .hex { font: var(--t-num); font-size: 10px; color: var(--fg-3); margin-top: 1px; }
+</style></head>
+<body>
+  <div class="group">
+    <div class="stack">
+      <div class="label">Gold · loyalty</div>
+      <div class="swatch"><div class="chip" style="background:#FBF4E0"></div><div><div class="name">gold-50</div><div class="hex">#FBF4E0</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#D4A24A"></div><div><div class="name">gold-500</div><div class="hex">#D4A24A</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#B58A3C"></div><div><div class="name">gold-600</div><div class="hex">#B58A3C</div></div></div>
+    </div>
+    <div class="stack">
+      <div class="label">Sage · success</div>
+      <div class="swatch"><div class="chip" style="background:#EDF2E7"></div><div><div class="name">sage-50</div><div class="hex">#EDF2E7</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#7B9C7E"></div><div><div class="name">sage-500</div><div class="hex">#7B9C7E</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#4F6B52"></div><div><div class="name">sage-700</div><div class="hex">#4F6B52</div></div></div>
+    </div>
+    <div class="stack">
+      <div class="label">Rose · danger</div>
+      <div class="swatch"><div class="chip" style="background:#FCEDEE"></div><div><div class="name">rose-50</div><div class="hex">#FCEDEE</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#F2C8CD"></div><div><div class="name">rose-200</div><div class="hex">#F2C8CD</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#B43F4D"></div><div><div class="name">rose-600</div><div class="hex">#B43F4D</div></div></div>
+    </div>
+  </div>
+</body></html>

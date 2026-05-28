@@ -1,0 +1,30 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--bg-canvas); display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .kpi { background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-1); padding: 16px 18px; }
+  .kpi .label { font: var(--t-label); color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.10em; }
+  .kpi .num { font: var(--t-num-xl); font-size: 36px; color: var(--fg-1); margin-top: 10px; font-feature-settings: "tnum" 1; letter-spacing: -0.02em; }
+  .kpi .delta { font: 500 12px/1 var(--font-mono); color: var(--success); margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; }
+  .kpi .delta.down { color: var(--danger); }
+  .kpi .sub { font: var(--t-caption); color: var(--fg-3); margin-top: 4px; }
+</style></head>
+<body>
+  <div class="kpi">
+    <div class="label">Total visits</div>
+    <div class="num">142</div>
+    <div class="delta">▲ +18% vs prior 7 days</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Unique customers</div>
+    <div class="num">38</div>
+    <div class="delta">▲ +6%</div>
+    <div class="sub">12 new this period</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Avg visits / customer</div>
+    <div class="num">3.74</div>
+    <div class="delta down">▼ −2%</div>
+  </div>
+</body></html>

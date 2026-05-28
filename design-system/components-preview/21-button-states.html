@@ -1,0 +1,29 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--bg-canvas); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .row { display: flex; flex-direction: column; gap: 8px; }
+  .label { font: var(--t-label); color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.10em; }
+  button {
+    font: 500 14px/1 var(--font-body);
+    background: var(--action); color: #fff;
+    border: 0; border-radius: 8px; padding: 11px 18px;
+    transition: background var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out);
+    cursor: pointer;
+  }
+  .rest { background: var(--action); }
+  .hover { background: var(--action-hover); box-shadow: 0 4px 12px -4px rgba(196,90,54,0.45); }
+  .press { background: var(--action-press); transform: scale(0.97); }
+  .focus { background: var(--action); box-shadow: 0 0 0 3px var(--terracotta-200), 0 0 0 5px var(--action); }
+  .disabled { background: var(--action); opacity: 0.4; cursor: not-allowed; }
+</style></head>
+<body>
+  <div class="row"><div class="label">Rest</div><button class="rest">Scan QR</button></div>
+  <div class="row"><div class="label">Hover</div><button class="hover">Scan QR</button></div>
+  <div class="row"><div class="label">Press</div><button class="press">Scan QR</button></div>
+  <div class="row"><div class="label">Focus-visible</div><button class="focus">Scan QR</button></div>
+  <div class="row"><div class="label">Disabled</div><button class="disabled">Scan QR</button></div>
+  <div class="row"><div class="label">Loading</div><button class="rest"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid #fff;border-top-color:transparent;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:8px"></span>Scanning…</button></div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</body></html>

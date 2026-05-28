@@ -1,0 +1,19 @@
+<!-- @dsCard group="Spacing" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 28px; background: var(--bg-canvas); display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; align-items: end; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .box { width: 78px; height: 78px; background: var(--bg-card); box-shadow: var(--shadow-1); display: flex; align-items: center; justify-content: center; }
+  .name { font: 600 12px/1 var(--font-body); color: var(--fg-1); }
+  .val { font: var(--t-num); font-size: 11px; color: var(--fg-3); }
+  .ex { width: 38px; height: 26px; background: var(--terracotta-500); }
+</style></head>
+<body>
+  <div class="col"><div class="box" style="border-radius:4px"><div class="ex" style="border-radius:2px"></div></div><div class="name">r-1</div><div class="val">4 px</div></div>
+  <div class="col"><div class="box" style="border-radius:8px"><div class="ex" style="border-radius:4px"></div></div><div class="name">r-2</div><div class="val">8 px</div></div>
+  <div class="col"><div class="box" style="border-radius:12px"><div class="ex" style="border-radius:8px"></div></div><div class="name">r-3 · card</div><div class="val">12 px</div></div>
+  <div class="col"><div class="box" style="border-radius:16px"><div class="ex" style="border-radius:10px"></div></div><div class="name">r-4</div><div class="val">16 px</div></div>
+  <div class="col"><div class="box" style="border-radius:20px"><div class="ex" style="border-radius:12px"></div></div><div class="name">r-5</div><div class="val">20 px</div></div>
+  <div class="col"><div class="box" style="border-radius:999px"><div class="ex" style="border-radius:999px"></div></div><div class="name">pill</div><div class="val">999</div></div>
+</body></html>
