@@ -1,0 +1,192 @@
+/* =========================================================================
+   Loyainiti — Core Color + Type Tokens
+   ------------------------------------------------------------------------
+   The brand sits at the intersection of warm hospitality and modern SaaS:
+   espresso browns, cream paper, terracotta highlights, and a slim gold
+   accent that recalls a stamped loyalty card. Mediterranean light, not
+   tech-blue.
+   ========================================================================= */
+
+/* ----- Fonts -------------------------------------------------------------
+   Display:  Fraunces  — variable serif (optical sizing) for hero numbers,
+                          card titles. Note: Fraunces is on our project's
+                          "avoid" list as overused; we use it sparingly and
+                          only at large sizes for editorial flavor. Substitute
+                          Source Serif 4 if you want a quieter alternative.
+   Body:     Söhne     — proprietary; we substitute Inter Tight as the nearest
+                          Google Fonts match (geometric grotesk, similar
+                          width). FLAG: please ship Söhne if available.
+   Mono:     JetBrains Mono — for KPI numerals, code, QR-code hashes.
+   --------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ===== Brand core ===== */
+  --espresso-900: #1F1611;   /* near-black, warm */
+  --espresso-800: #2A1F18;
+  --espresso-700: #3D2E22;
+  --espresso-600: #5C4836;
+
+  --terracotta-700: #A8482B;
+  --terracotta-600: #C45A36;  /* primary action */
+  --terracotta-500: #DB7351;
+  --terracotta-200: #F3D2C2;
+  --terracotta-50:  #FBEFE8;
+
+  --gold-600: #B58A3C;        /* loyalty stamp accent */
+  --gold-500: #D4A24A;
+  --gold-200: #F0DDB0;
+  --gold-50:  #FBF4E0;
+
+  --sage-700:  #4F6B52;        /* positive / success */
+  --sage-500:  #7B9C7E;
+  --sage-200:  #CFDDC9;
+  --sage-50:   #EDF2E7;
+
+  --rose-600:  #B43F4D;        /* destructive / alerts */
+  --rose-200:  #F2C8CD;
+  --rose-50:   #FCEDEE;
+
+  /* ===== Paper / neutrals — warm, not gray ===== */
+  --paper-50:  #FBF8F3;   /* primary canvas */
+  --paper-100: #F6F1E8;   /* card on canvas */
+  --paper-200: #ECE4D4;   /* divider, subtle fill */
+  --paper-300: #D9CDB4;   /* border */
+  --paper-400: #B8A98A;
+  --paper-500: #8E7F66;
+  --paper-600: #6B5E48;
+  --paper-700: #4A4233;
+
+  /* ===== Semantic foreground ===== */
+  --fg-1: var(--espresso-900);     /* primary text */
+  --fg-2: var(--paper-700);        /* secondary text, labels */
+  --fg-3: var(--paper-500);        /* tertiary, captions, placeholders */
+  --fg-on-dark: var(--paper-50);
+  --fg-on-accent: #ffffff;
+
+  /* ===== Semantic background ===== */
+  --bg-canvas: var(--paper-50);
+  --bg-card:   #FFFFFF;
+  --bg-muted:  var(--paper-100);
+  --bg-sunken: var(--paper-200);
+  --bg-inverse: var(--espresso-900);
+
+  /* ===== Semantic border ===== */
+  --border-subtle: var(--paper-200);
+  --border-default: var(--paper-300);
+  --border-strong:  var(--paper-400);
+
+  /* ===== Action ===== */
+  --action: var(--terracotta-600);
+  --action-hover: var(--terracotta-700);
+  --action-press: #8E3922;
+  --action-fg:   #ffffff;
+  --action-subtle-bg: var(--terracotta-50);
+  --action-subtle-fg: var(--terracotta-700);
+
+  /* ===== Status ===== */
+  --success: var(--sage-700);
+  --success-bg: var(--sage-50);
+  --success-border: var(--sage-200);
+
+  --warning: #A86A12;
+  --warning-bg: var(--gold-50);
+  --warning-border: var(--gold-200);
+
+  --danger: var(--rose-600);
+  --danger-bg: var(--rose-50);
+  --danger-border: var(--rose-200);
+
+  /* ===== Type families ===== */
+  --font-display: 'Fraunces', 'Source Serif 4', Georgia, serif;
+  --font-body:    'Inter Tight', 'Söhne', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+
+  /* ===== Type scale (px, line-height, weight) ===== */
+  --t-display-1: 700 56px/1.04 var(--font-display);
+  --t-display-2: 700 40px/1.08 var(--font-display);
+  --t-h1:        600 32px/1.14 var(--font-display);
+  --t-h2:        600 24px/1.22 var(--font-display);
+  --t-h3:        600 18px/1.30 var(--font-body);
+  --t-body-lg:   400 17px/1.50 var(--font-body);
+  --t-body:      400 15px/1.55 var(--font-body);
+  --t-body-sm:   400 13px/1.50 var(--font-body);
+  --t-caption:   500 12px/1.40 var(--font-body);
+  --t-label:     500 11px/1.20 var(--font-body); /* uppercase eyebrow */
+  --t-num-xl:    600 40px/1.0 var(--font-mono);  /* KPIs */
+  --t-num-lg:    600 28px/1.0 var(--font-mono);
+  --t-num:       500 15px/1.4 var(--font-mono);
+
+  /* ===== Spacing scale (4-base) ===== */
+  --s-0: 0;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+
+  /* ===== Radii — soft, never pill-y by default ===== */
+  --r-1: 4px;
+  --r-2: 8px;
+  --r-3: 12px;   /* default card */
+  --r-4: 16px;
+  --r-5: 20px;
+  --r-pill: 999px;
+
+  /* ===== Shadows — low, warm, almost not-there ===== */
+  --shadow-1: 0 1px 2px rgba(31, 22, 17, 0.04), 0 0 0 1px rgba(31, 22, 17, 0.04);
+  --shadow-2: 0 4px 12px -2px rgba(31, 22, 17, 0.08), 0 0 0 1px rgba(31, 22, 17, 0.04);
+  --shadow-3: 0 12px 32px -8px rgba(31, 22, 17, 0.18), 0 0 0 1px rgba(31, 22, 17, 0.06);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  /* ===== Motion ===== */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.6, 0, 0.4, 1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+}
+
+/* =========================================================================
+   Semantic element styles — use these directly in markup. Keeps consumers
+   honest with the type ramp.
+   ========================================================================= */
+.display-1 { font: var(--t-display-1); letter-spacing: -0.02em; color: var(--fg-1); }
+.display-2 { font: var(--t-display-2); letter-spacing: -0.018em; color: var(--fg-1); }
+h1, .h1   { font: var(--t-h1); letter-spacing: -0.014em; color: var(--fg-1); margin: 0; }
+h2, .h2   { font: var(--t-h2); letter-spacing: -0.01em;  color: var(--fg-1); margin: 0; }
+h3, .h3   { font: var(--t-h3); color: var(--fg-1); margin: 0; }
+p, .body  { font: var(--t-body); color: var(--fg-1); margin: 0; text-wrap: pretty; }
+.body-lg  { font: var(--t-body-lg); color: var(--fg-1); }
+.body-sm  { font: var(--t-body-sm); color: var(--fg-2); }
+.caption  { font: var(--t-caption); color: var(--fg-2); }
+.label    { font: var(--t-label); color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.10em; }
+.num-xl   { font: var(--t-num-xl); color: var(--fg-1); font-feature-settings: "tnum" 1; letter-spacing: -0.02em; }
+.num-lg   { font: var(--t-num-lg); color: var(--fg-1); font-feature-settings: "tnum" 1; letter-spacing: -0.01em; }
+.num      { font: var(--t-num); color: var(--fg-1); font-feature-settings: "tnum" 1; }
+code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+
+a {
+  color: var(--action);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+a:hover { color: var(--action-hover); }
+
+html, body { background: var(--bg-canvas); color: var(--fg-1); font-family: var(--font-body); }
+
+/* QR-stamp accent: a small punched dot used as a decorative motif
+   throughout the brand (loyalty card metaphor). */
+.brand-stamp {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold-500);
+  display: inline-block;
+  vertical-align: middle;
+}
