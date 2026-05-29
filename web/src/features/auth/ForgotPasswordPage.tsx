@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { api } from '../../lib/api';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { useToast } from '../../components/Toast';
 import { AuthLayout } from './AuthLayout';
 
-const schema = z.object({ email: z.string().email() });
-type Form = z.infer<typeof schema>;
+type Form = { email: string };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ForgotPasswordPage() {
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, formState } = useForm<Form>();
+  const { register, handleSubmit, formState } = useForm<Form>({ mode: 'onBlur' });
 
   const onSubmit = handleSubmit(async ({ email }) => {
-    setError(null);
     setSubmitting(true);
     try {
       await api('/api/auth/forget-password', {
@@ -25,9 +25,10 @@ export function ForgotPasswordPage() {
         body: { email, redirectTo: `${window.location.origin}/sign-in` },
       });
       setSent(true);
+      toast.success('Check your email for a reset link');
     } catch (e: unknown) {
       // BE returns 200 even when email is unknown (security); only surface unexpected failures.
-      setError(e instanceof Error ? e.message : 'Could not start reset');
+      toast.error(e instanceof Error ? e.message : 'Could not start reset');
     } finally {
       setSubmitting(false);
     }
@@ -52,17 +53,17 @@ export function ForgotPasswordPage() {
           In development the link is printed to the backend logs (no email is sent yet).
         </p>
       ) : (
-        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
           <Input
             label="Email"
             type="email"
             autoComplete="email"
-            {...register('email')}
+            {...register('email', {
+              required: 'Email is required',
+              pattern: { value: EMAIL_RE, message: 'Enter a valid email address' },
+            })}
             error={formState.errors.email?.message}
           />
-          {error && (
-            <p style={{ font: 'var(--t-body-sm)', color: 'var(--danger)', margin: 0 }}>{error}</p>
-          )}
           <Button type="submit" loading={submitting} size="lg">
             Send reset link
           </Button>
