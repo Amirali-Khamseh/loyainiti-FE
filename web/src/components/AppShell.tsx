@@ -54,7 +54,9 @@ export function AppShell() {
   // `role` is a BE-side additional field; the client types don't see it, so we cast.
   const role: Role | undefined = (session?.user as { role?: Role } | undefined)?.role;
   const isStaff = role === 'business_owner' || role === 'staff' || role === 'admin';
-  const items = isStaff ? [...businessItems, ...customerItems] : customerItems;
+  // Shops don't need a personal QR (they're the ones scanning, not being scanned).
+  // Give staff the business nav only; customers keep the customer nav.
+  const items = isStaff ? businessItems : customerItems;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

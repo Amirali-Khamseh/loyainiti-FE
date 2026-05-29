@@ -20,6 +20,8 @@ type Business = {
   isPublished: boolean;
 };
 
+type MyBusiness = Business & { staffRole: 'owner' | 'manager' | 'staff' };
+
 async function presignAndUpload(
   kind: 'business_logo' | 'business_cover',
   businessId: string,
@@ -72,11 +74,9 @@ export function BusinessProfilePage() {
   const biz = useQuery({
     queryKey: ['business-self', businessId],
     queryFn: async () => {
-      // We don't have a "get by id" endpoint exposed; fetch all + filter, or load via slug indirectly.
-      // For v1 grab from the public list (works for published only) — refined when /api/me/businesses lands.
-      const all = await api<Business[]>('/api/businesses');
-      const found = all.find((b) => b.id === businessId);
-      if (!found) throw new ApiError(404, 'not_found', 'business not found in the public list');
+      const mine = await api<MyBusiness[]>('/api/me/businesses');
+      const found = mine.find((b) => b.id === businessId);
+      if (!found) throw new ApiError(404, 'not_found', 'business not found');
       return found;
     },
     enabled: !!businessId && !isOnboarding,
@@ -154,8 +154,7 @@ export function BusinessProfilePage() {
       <Card>
         <h2 className="h2">Couldn't load this business</h2>
         <p className="body" style={{ color: 'var(--fg-2)', marginTop: 8 }}>
-          It may not be published yet. Once /api/me/businesses lands on the backend this page will
-          fetch it directly.
+          {(biz.error as Error).message}
         </p>
       </Card>
     );
@@ -169,9 +168,11 @@ export function BusinessProfilePage() {
           {biz.data?.name}
         </h1>
         <p className="caption" style={{ color: 'var(--fg-3)' }}>
-          /{biz.data?.slug} — slug is read-only after creation
+          /{biz.data?.slug} (slug is read-only after creation)
         </p>
       </header>
+
+      {biz.data && <SupportIdCard id={biz.data.id} />}
 
       <Card padding={32} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <Input
@@ -233,6 +234,40 @@ export function BusinessProfilePage() {
         </p>
       </Card>
     </div>
+  );
+}
+
+function SupportIdCard({ id }: { id: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <Card padding={20} variant="muted">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+        <div>
+          <p className="label">Support ID</p>
+          <p className="mono" style={{ font: 'var(--t-num)', marginTop: 4, wordBreak: 'break-all' }}>
+            {id}
+          </p>
+          <p className="caption" style={{ marginTop: 4, color: 'var(--fg-3)' }}>
+            Share this with support if you ever need help with your business account.
+          </p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText(id);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1500);
+            } catch {
+              setCopied(false);
+            }
+          }}
+        >
+          {copied ? 'Copied' : 'Copy'}
+        </Button>
+      </div>
+    </Card>
   );
 }
 
