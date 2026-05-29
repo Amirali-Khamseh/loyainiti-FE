@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Save, Upload } from 'lucide-react';
 import { api, ApiError } from '../../lib/api';
+import { auth } from '../../lib/auth';
 import { getActiveBusinessId, setActiveBusinessId } from '../../lib/activeBusiness';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
@@ -48,10 +49,21 @@ export function BusinessProfilePage() {
   const [createErr, setCreateErr] = useState<string | null>(null);
   const createMut = useMutation({
     mutationFn: () => api<Business>('/api/businesses', { method: 'POST', body: draft }),
-    onSuccess: (b) => {
+    onSuccess: async (b) => {
       setActiveBusinessId(b.id);
       qc.invalidateQueries({ queryKey: ['my-businesses'] });
-      navigate('/admin/business');
+      // The BE promoted this user to `business_owner` as a side effect of creating
+      // the business. The Better Auth session in the browser is still cached with
+      // the old `customer` role, so the AppShell would keep rendering customer nav
+      // and admin routes would 403. Force a fresh session read before navigating.
+      try {
+        await auth.getSession({ query: { disableCookieCache: true } });
+      } catch {
+        // Non-fatal; the hard navigation below still picks up the new role.
+      }
+      // Hard navigation guarantees AppShell remounts with the refreshed session,
+      // even if the underlying store update raced with the route change.
+      window.location.assign('/admin/business');
     },
     onError: (e) => setCreateErr(e instanceof ApiError ? e.message : 'Could not create'),
   });
