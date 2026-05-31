@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
         ),
       },
       // Onboarding: customer who wants to create a business. Renders the same component
-      // but doesn't require staff role — the user is promoted to business_owner the moment
+      // but doesn't require staff role - the user is promoted to business_owner the moment
       // the business is created.
       {
         path: 'onboarding/business',
