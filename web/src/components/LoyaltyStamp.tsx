@@ -49,8 +49,8 @@ export function LoyaltyStamp({ required, earned, rewardLabel }: LoyaltyStampProp
         }}
       >
         {rewardReady
-          ? `🎉 Reward ready${rewardLabel ? ` - ${rewardLabel}` : ''}`
-          : `${earned} / ${required} stamps${rewardLabel ? ` - ${rewardLabel}` : ''}`}
+          ? `🎉 Reward ready${rewardLabel ? ` — ${rewardLabel}` : ''}`
+          : `${earned} / ${required} stamps${rewardLabel ? ` — ${rewardLabel}` : ''}`}
       </p>
     </div>
   );

@@ -169,7 +169,7 @@ export function ShopPage() {
               <h3 className="h3">You're not a member yet</h3>
               <p className="body" style={{ color: 'var(--fg-2)', marginTop: 8 }}>
                 Memberships are added the first time the shop scans your QR code. Drop in and say
-                hi - your loyalty card starts on visit #1.
+                hi — your loyalty card starts on visit #1.
               </p>
             </Card>
           )}

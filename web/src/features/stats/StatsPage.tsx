@@ -90,13 +90,13 @@ export function StatsPage() {
           gap: 16,
         }}
       >
-        <KpiCard label="Visits" value={summary.data?.totalVisits ?? '-'} />
-        <KpiCard label="Unique customers" value={summary.data?.uniqueCustomers ?? '-'} />
-        <KpiCard label="New members" value={summary.data?.newMembers ?? '-'} />
-        <KpiCard label="Redemptions" value={summary.data?.totalRedemptions ?? '-'} />
+        <KpiCard label="Visits" value={summary.data?.totalVisits ?? '—'} />
+        <KpiCard label="Unique customers" value={summary.data?.uniqueCustomers ?? '—'} />
+        <KpiCard label="New members" value={summary.data?.newMembers ?? '—'} />
+        <KpiCard label="Redemptions" value={summary.data?.totalRedemptions ?? '—'} />
         <KpiCard
           label="Avg visits / customer"
-          value={summary.data?.avgVisitsPerCustomer ?? '-'}
+          value={summary.data?.avgVisitsPerCustomer ?? '—'}
         />
       </section>
 

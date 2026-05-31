@@ -42,7 +42,7 @@ select {
   font: inherit;
 }
 
-/* Layout primitives - used everywhere */
+/* Layout primitives — used everywhere */
 .container {
   max-width: 1200px;
   margin-inline: auto;

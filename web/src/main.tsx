@@ -13,7 +13,7 @@ import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '@fontsource/jetbrains-mono/600.css';
 
-// Design tokens - drives every component via CSS custom properties
+// Design tokens — drives every component via CSS custom properties
 import './design-system/tokens.css';
 import './styles/app.css';
 
