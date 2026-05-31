@@ -210,7 +210,7 @@ export function BusinessProfilePage() {
             checked={edit.isPublished ?? false}
             onChange={(e) => setEdit({ ...edit, isPublished: e.target.checked })}
           />
-          Published — visible on the public explorer
+          Published - visible on the public explorer
         </label>
 
         <Button onClick={() => patchMut.mutate()} loading={patchMut.isPending}>
@@ -229,7 +229,7 @@ export function BusinessProfilePage() {
       <Card variant="muted">
         <h3 className="h3">Opening hours</h3>
         <p className="body" style={{ color: 'var(--fg-2)', marginTop: 8 }}>
-          Hours aren't stored on the backend yet — flagged as a follow-up. Once
+          Hours aren't stored on the backend yet - flagged as a follow-up. Once
           `businesses.opening_hours` lands, this card becomes editable.
         </p>
       </Card>

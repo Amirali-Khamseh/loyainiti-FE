@@ -1,4 +1,4 @@
-# Iconography — Lucide mapping
+# Iconography - Lucide mapping
 
 Loyainiti uses **Lucide** icons (https://lucide.dev). Load from CDN:
 
@@ -16,7 +16,7 @@ Or import individual SVGs from `https://unpkg.com/lucide-static@0.460.0/icons/<n
 | --- | --- | --- |
 | Customer QR / scan | `qr-code` | Outline only; never filled. |
 | Scan action (verb) | `scan-line` | Used on the staff scanner button. |
-| Visit (verb/noun) | `coffee` | Even non-café businesses use coffee — it's the brand. |
+| Visit (verb/noun) | `coffee` | Even non-café businesses use coffee - it's the brand. |
 | Loyalty reward / gift | `gift` | Filled state when redeemable. |
 | Stamp (custom) | `assets/stamp.svg` | Brand-custom, gold-foil look. Never Lucide. |
 | Customer | `user` | Singular customer. |
@@ -41,11 +41,11 @@ Or import individual SVGs from `https://unpkg.com/lucide-static@0.460.0/icons/<n
 | Filter | `sliders-horizontal` | List filters. |
 | Sort | `arrow-up-down` | Table-column sort. |
 | Link out | `arrow-up-right` | "View business" arrow. |
-| Loading | (spinner — see components) | Custom dotted-ring spinner, not Lucide. |
+| Loading | (spinner - see components) | Custom dotted-ring spinner, not Lucide. |
 
 ## Rules
 
-- **Stroke 1.75px**. Lucide ships at 2 by default — set `stroke-width="1.75"` on the SVG or pass `{ 'stroke-width': 1.75 }` to `lucide.createIcons`.
+- **Stroke 1.75px**. Lucide ships at 2 by default - set `stroke-width="1.75"` on the SVG or pass `{ 'stroke-width': 1.75 }` to `lucide.createIcons`.
 - **Default size 20**. Use 16 in compact UI (inline with body), 24 in toolbar/header, 40+ for empty-state illustrations.
 - **Color: currentColor.** Always. No explicit fill/stroke on Lucide icons.
 - **Never colorize Lucide icons with brand color** (terracotta, gold). The only exception is the gift icon in a "reward earned" badge, which goes to `--gold-600`.
@@ -55,7 +55,7 @@ Or import individual SVGs from `https://unpkg.com/lucide-static@0.460.0/icons/<n
 
 These are NOT Lucide and live in `assets/`:
 
-- `stamp.svg` — gold-foil stamp glyph. Used in the loyalty stamp grid (filled + outlined variants).
-- `logo.svg`, `logo-mark.svg` — wordmark and mark.
+- `stamp.svg` - gold-foil stamp glyph. Used in the loyalty stamp grid (filled + outlined variants).
+- `logo.svg`, `logo-mark.svg` - wordmark and mark.
 
 If you find yourself reaching for an icon Lucide doesn't ship, prefer composing two Lucide icons over hand-drawing a new one. Hand-drawn SVG is a last resort and must be documented here.
