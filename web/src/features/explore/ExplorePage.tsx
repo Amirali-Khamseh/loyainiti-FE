@@ -31,7 +31,7 @@ type Membership = {
 };
 
 function r2Url(key: string | null | undefined): string | null {
-  // Public R2 URL is configured server-side; in dev we may not have one — return null and fallback.
+  // Public R2 URL is configured server-side; in dev we may not have one - return null and fallback.
   if (!key) return null;
   // Backend exposes R2_PUBLIC_BASE_URL but doesn't echo it; for now treat key as relative.
   return key.startsWith('http') ? key : null;
@@ -54,7 +54,7 @@ export function ExplorePage() {
       <header>
         <span className="label">The Network</span>
         <h1 className="display-2" style={{ marginTop: 8 }}>
-          {session ? `Hi ${session.user.name.split(' ')[0]} — ` : ''}explore shops on loyainiti
+          {session ? `Hi ${session.user.name.split(' ')[0]} - ` : ''}explore shops on loyainiti
         </h1>
         <p
           className="body-lg"
@@ -115,7 +115,7 @@ export function ExplorePage() {
                         ) : (
                           `${m.visitsSinceLastRedemption} / ${m.program.requiredVisits} visits`
                         )}{' '}
-                        — {m.program.rewardDescription}
+                        - {m.program.rewardDescription}
                       </p>
                     </div>
                   ) : (

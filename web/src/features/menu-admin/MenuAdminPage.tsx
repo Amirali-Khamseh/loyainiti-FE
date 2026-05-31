@@ -35,7 +35,7 @@ type LoyaltyProgram = {
   isActive: boolean;
 };
 
-/** Both menus live under the same business — fetched by slug. We need the slug. */
+/** Both menus live under the same business - fetched by slug. We need the slug. */
 function useBusinessSlug(businessId: string | null) {
   return useQuery({
     queryKey: ['business-slug', businessId],

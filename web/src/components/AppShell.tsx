@@ -153,7 +153,7 @@ export function AppShell() {
       >
         <span>
           <span className="brand-stamp" />
-          &nbsp;loyainiti — loyalty without limits
+          &nbsp;loyainiti - loyalty without limits
         </span>
         <span className="mono">v0.1.0</span>
       </footer>

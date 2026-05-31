@@ -26,7 +26,7 @@ export function KpiCard({ label, value, hint, trend }: KpiCardProps) {
                   : 'var(--fg-3)',
           }}
         >
-          {trend.direction === 'up' ? '▲' : trend.direction === 'down' ? '▼' : '—'} {trend.label}
+          {trend.direction === 'up' ? '▲' : trend.direction === 'down' ? '▼' : '-'} {trend.label}
         </span>
       )}
     </Card>

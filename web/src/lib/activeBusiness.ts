@@ -1,6 +1,6 @@
 /**
  * The admin pages all need a "which business are we managing right now" answer.
- * The BE doesn't expose `GET /api/me/businesses` yet — flagged as a follow-up —
+ * The BE doesn't expose `GET /api/me/businesses` yet - flagged as a follow-up -
  * so we cache it in localStorage. Set on business creation; cleared on sign-out.
  */
 

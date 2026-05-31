@@ -56,7 +56,7 @@ export function ScanPage() {
         method: 'POST',
         body: { qrCodeId: result?.customer ? '' : '', businessId },
       }),
-    // We need the customer's qrCodeId — store it from the scan request.
+    // We need the customer's qrCodeId - store it from the scan request.
   });
 
   // Simpler: just persist the last-scanned QR code id (not the user's id) and reuse it.

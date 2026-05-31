@@ -85,7 +85,7 @@ export function VisitsPage() {
                     />
                   </div>
                   <p className="caption" style={{ marginTop: 6 }}>
-                    {m.visitsSinceLastRedemption} / {m.program!.requiredVisits} —{' '}
+                    {m.visitsSinceLastRedemption} / {m.program!.requiredVisits} -{' '}
                     {m.program!.rewardDescription}
                   </p>
                 </div>
