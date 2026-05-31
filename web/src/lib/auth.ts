@@ -1,4 +1,5 @@
 import { createAuthClient } from 'better-auth/react';
+import { adminClient } from 'better-auth/client/plugins';
 import { API_URL } from './api';
 
 /**
@@ -14,6 +15,7 @@ import { API_URL } from './api';
  */
 export const auth = createAuthClient({
   baseURL: API_URL,
+  plugins: [adminClient()],
 });
 
 export type Role = 'customer' | 'business_owner' | 'staff' | 'admin';
