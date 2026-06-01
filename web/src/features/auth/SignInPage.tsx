@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { Store, User } from 'lucide-react';
 import { auth } from '../../lib/auth';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
@@ -41,11 +42,6 @@ export function SignInPage() {
     <AuthLayout
       title="Welcome back"
       subtitle="Sign in to your loyainiti account."
-      footer={
-        <span>
-          New here? <Link to="/sign-up">Create an account</Link>
-        </span>
-      }
     >
       <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
         <Input
@@ -78,6 +74,45 @@ export function SignInPage() {
           Forgot your password?
         </Link>
       </form>
+
+      {/* Sign-up options */}
+      <div style={{ marginTop: 24, borderTop: '1px solid var(--border-subtle)', paddingTop: 20 }}>
+        <p className="caption" style={{ color: 'var(--fg-3)', textAlign: 'center', marginBottom: 14 }}>
+          New to loyainiti? Choose your account type
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <Link to="/sign-up/customer" style={{ textDecoration: 'none' }}>
+            <div style={signupCardStyle}>
+              <User size={20} color="var(--action)" />
+              <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, marginTop: 6 }}>Customer</span>
+              <span style={{ font: 'var(--t-caption)', color: 'var(--fg-3)', marginTop: 2 }}>
+                Collect loyalty rewards
+              </span>
+            </div>
+          </Link>
+          <Link to="/sign-up/business" style={{ textDecoration: 'none' }}>
+            <div style={signupCardStyle}>
+              <Store size={20} color="var(--action)" />
+              <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, marginTop: 6 }}>Business</span>
+              <span style={{ font: 'var(--t-caption)', color: 'var(--fg-3)', marginTop: 2 }}>
+                Run a loyalty programme
+              </span>
+            </div>
+          </Link>
+        </div>
+      </div>
     </AuthLayout>
   );
 }
+
+const signupCardStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '14px 12px',
+  borderRadius: 12,
+  border: '1px solid var(--border-default)',
+  background: 'var(--bg-muted)',
+  cursor: 'pointer',
+  transition: 'border-color var(--dur-1) var(--ease-out)',
+};
