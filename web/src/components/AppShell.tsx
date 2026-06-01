@@ -1,8 +1,15 @@
 import React from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Compass, QrCode, History, LayoutDashboard, ScanLine, UtensilsCrossed, Store, LogOut, LogIn, Sparkles } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  Compass, QrCode, History, LayoutDashboard, ScanLine,
+  UtensilsCrossed, Store, Users, Shield, LogOut, LogIn, Sparkles,
+} from 'lucide-react';
 import { auth, type Role } from '../lib/auth';
+import { api } from '../lib/api';
 import logoUrl from '../design-system/assets/logo.svg';
+
+type MyBusiness = { id: string; staffRole: 'owner' | 'manager' | 'staff' };
 
 const headerStyle: React.CSSProperties = {
   position: 'sticky',
@@ -41,35 +48,42 @@ const customerItems: Item[] = [
   { to: '/visits', label: 'Visits', icon: <History size={16} /> },
 ];
 
-const businessItems: Item[] = [
-  { to: '/admin/stats', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
-  { to: '/admin/scan', label: 'Scan', icon: <ScanLine size={16} /> },
-  { to: '/admin/menus', label: 'Menus & Rewards', icon: <UtensilsCrossed size={16} /> },
-  { to: '/admin/business', label: 'Profile', icon: <Store size={16} /> },
-];
-
 export function AppShell() {
   const navigate = useNavigate();
   const { data: session, isPending } = auth.useSession();
-  // `role` is a BE-side additional field; the client types don't see it, so we cast.
   const role: Role | undefined = (session?.user as { role?: Role } | undefined)?.role;
-  const isStaff = role === 'business_owner' || role === 'staff' || role === 'admin';
-  // Shops don't need a personal QR (they're the ones scanning, not being scanned).
-  // Give staff the business nav only; customers keep the customer nav.
-  const items = isStaff ? businessItems : customerItems;
+  const isAdmin = role === 'admin';
+  const isStaff = role === 'business_owner' || role === 'staff';
+
+  // Fetch per-business role to gate Dashboard (owner/manager) and Staff (owner).
+  const myBiz = useQuery({
+    queryKey: ['my-businesses'],
+    queryFn: () => api<MyBusiness[]>('/api/me/businesses'),
+    enabled: isStaff,
+  });
+  const bizRoles = (myBiz.data ?? []).map((b) => b.staffRole);
+  const canSeeStats = bizRoles.includes('owner') || bizRoles.includes('manager');
+  const isOwner = bizRoles.includes('owner');
+
+  let items: Item[] = customerItems;
+  if (isStaff) {
+    items = [
+      ...(canSeeStats ? [{ to: '/admin/stats', label: 'Dashboard', icon: <LayoutDashboard size={16} /> }] : []),
+      { to: '/admin/scan', label: 'Scan', icon: <ScanLine size={16} /> },
+      { to: '/admin/menus', label: 'Menus & Rewards', icon: <UtensilsCrossed size={16} /> },
+      ...(isOwner ? [{ to: '/admin/staff', label: 'Staff', icon: <Users size={16} /> }] : []),
+      { to: '/admin/business', label: 'Profile', icon: <Store size={16} /> },
+    ];
+  } else if (isAdmin) {
+    items = [{ to: '/_console', label: 'Admin console', icon: <Shield size={16} /> }];
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <header style={headerStyle}>
         <div
           className="container"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 24,
-            paddingTop: 12,
-            paddingBottom: 12,
-          }}
+          style={{ display: 'flex', alignItems: 'center', gap: 24, paddingTop: 12, paddingBottom: 12 }}
         >
           <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
             <img src={logoUrl} alt="Loyainiti" style={{ height: 28 }} />
@@ -78,7 +92,7 @@ export function AppShell() {
           {session && (
             <nav style={{ display: 'flex', gap: 4, flexWrap: 'wrap', flex: 1 }}>
               {items.map((it) => (
-                <NavLink key={it.to} to={it.to} end style={getNavLinkStyle}>
+                <NavLink key={it.to} to={it.to} end={it.to === '/'} style={getNavLinkStyle}>
                   {it.icon} {it.label}
                 </NavLink>
               ))}
@@ -94,20 +108,12 @@ export function AppShell() {
                   {session.user.email}
                 </span>
                 <button
-                  onClick={async () => {
-                    await auth.signOut();
-                    navigate('/sign-in');
-                  }}
+                  onClick={async () => { await auth.signOut(); navigate('/sign-in'); }}
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    background: 'transparent',
-                    border: '1px solid var(--border-default)',
-                    borderRadius: 10,
-                    padding: '6px 12px',
-                    font: 'var(--t-body-sm)',
-                    color: 'var(--fg-2)',
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    background: 'transparent', border: '1px solid var(--border-default)',
+                    borderRadius: 10, padding: '6px 12px', font: 'var(--t-body-sm)',
+                    color: 'var(--fg-2)', cursor: 'pointer',
                   }}
                 >
                   <LogOut size={14} /> Sign out
@@ -120,12 +126,7 @@ export function AppShell() {
                 </NavLink>
                 <NavLink
                   to="/sign-up"
-                  style={() => ({
-                    ...navLinkBase,
-                    background: 'var(--action)',
-                    color: 'var(--action-fg)',
-                    fontWeight: 600,
-                  })}
+                  style={() => ({ ...navLinkBase, background: 'var(--action)', color: 'var(--action-fg)', fontWeight: 600 })}
                 >
                   <Sparkles size={14} /> Get started
                 </NavLink>
@@ -142,19 +143,11 @@ export function AppShell() {
       <footer
         className="container"
         style={{
-          paddingBlock: 24,
-          borderTop: '1px solid var(--border-subtle)',
-          marginTop: 32,
-          color: 'var(--fg-3)',
-          font: 'var(--t-caption)',
-          display: 'flex',
-          justifyContent: 'space-between',
+          paddingBlock: 24, borderTop: '1px solid var(--border-subtle)', marginTop: 32,
+          color: 'var(--fg-3)', font: 'var(--t-caption)', display: 'flex', justifyContent: 'space-between',
         }}
       >
-        <span>
-          <span className="brand-stamp" />
-          &nbsp;loyainiti - loyalty without limits
-        </span>
+        <span><span className="brand-stamp" />&nbsp;loyainiti - loyalty without limits</span>
         <span className="mono">v0.1.0</span>
       </footer>
     </div>

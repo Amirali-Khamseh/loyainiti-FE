@@ -15,9 +15,10 @@ import { MenuAdminPage } from './features/menu-admin/MenuAdminPage';
 import { BusinessProfilePage } from './features/business-profile/BusinessProfilePage';
 import { StaffPage } from './features/staff/StaffPage';
 import { ConsoleLoginPage } from './features/console/ConsoleLoginPage';
-import { ConsoleHome } from './features/console/ConsoleHome';
+import { ConsoleLayout } from './features/console/ConsoleLayout';
+import { ConsoleHomePage } from './features/console/ConsoleHomePage';
 
-const STAFF = ['business_owner', 'staff', 'admin'] as const;
+const STAFF = ['business_owner', 'staff'] as const;
 
 export const router = createBrowserRouter([
   // Auth screens (no shell)
@@ -34,30 +35,16 @@ export const router = createBrowserRouter([
       { path: 'b/:slug', element: <ShopPage /> },
       {
         path: 'my-qr',
-        element: (
-          <RequireAuth>
-            <MyQrPage />
-          </RequireAuth>
-        ),
+        element: <RequireAuth><MyQrPage /></RequireAuth>,
       },
       {
         path: 'visits',
-        element: (
-          <RequireAuth>
-            <VisitsPage />
-          </RequireAuth>
-        ),
+        element: <RequireAuth><VisitsPage /></RequireAuth>,
       },
-      // Onboarding: customer who wants to create a business. Renders the same component
-      // but doesn't require staff role - the user is promoted to business_owner the moment
-      // the business is created.
+      // Onboarding: customer creates a business (promoted to business_owner after)
       {
         path: 'onboarding/business',
-        element: (
-          <RequireAuth>
-            <BusinessProfilePage />
-          </RequireAuth>
-        ),
+        element: <RequireAuth><BusinessProfilePage /></RequireAuth>,
       },
       // Business admin (requires staff role)
       {
@@ -71,9 +58,18 @@ export const router = createBrowserRouter([
           { path: 'stats', element: <StatsPage /> },
           { path: 'scan', element: <ScanPage /> },
           { path: 'menus', element: <MenuAdminPage /> },
+          { path: 'staff', element: <StaffPage /> },
           { path: 'business', element: <BusinessProfilePage /> },
         ],
       },
     ],
+  },
+
+  // Hidden SaaS admin console (not linked from the public app)
+  { path: '/_console/login', element: <ConsoleLoginPage /> },
+  {
+    path: '/_console',
+    element: <ConsoleLayout />,
+    children: [{ index: true, element: <ConsoleHomePage /> }],
   },
 ]);

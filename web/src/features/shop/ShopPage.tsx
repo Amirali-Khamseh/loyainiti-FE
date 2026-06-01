@@ -7,6 +7,24 @@ import { auth } from '../../lib/auth';
 import { Card } from '../../components/Card';
 import { LoyaltyStamp } from '../../components/LoyaltyStamp';
 
+type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+type DayHours = { open: string; close: string; closed: boolean };
+type OpeningHours = Record<DayKey, DayHours>;
+type Category = { id: string; name: string; slug: string };
+type Photo = { id: string; r2Key: string; caption: string | null; sortOrder: number };
+
+const DAYS: [DayKey, string][] = [
+  ['mon', 'Monday'], ['tue', 'Tuesday'], ['wed', 'Wednesday'], ['thu', 'Thursday'],
+  ['fri', 'Friday'], ['sat', 'Saturday'], ['sun', 'Sunday'],
+];
+
+function r2Url(key: string | null | undefined): string | null {
+  if (!key) return null;
+  const base = import.meta.env.VITE_R2_PUBLIC_BASE_URL ?? '';
+  if (!base) return null;
+  return `${base.replace(/\/$/, '')}/${key}`;
+}
+
 type Business = {
   id: string;
   slug: string;
@@ -15,6 +33,9 @@ type Business = {
   address: string | null;
   logoR2Key: string | null;
   coverR2Key: string | null;
+  openingHours: OpeningHours | null;
+  categories: Category[];
+  photos: Photo[];
 };
 
 type MenuItem = {
@@ -107,18 +128,66 @@ export function ShopPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Cover photo */}
+      {r2Url(b.coverR2Key) && (
+        <img
+          src={r2Url(b.coverR2Key)!}
+          alt=""
+          style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 16 }}
+        />
+      )}
+
       <header>
-        <span className="label">{b.slug}</span>
-        <h1 className="display-2" style={{ marginTop: 8 }}>
-          {b.name}
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {r2Url(b.logoR2Key) && (
+            <img
+              src={r2Url(b.logoR2Key)!}
+              alt=""
+              style={{ width: 56, height: 56, borderRadius: 12, objectFit: 'cover', border: '1px solid var(--border-subtle)' }}
+            />
+          )}
+          <div>
+            <span className="label">{b.slug}</span>
+            <h1 className="display-2" style={{ marginTop: 4 }}>{b.name}</h1>
+          </div>
+        </div>
+        {b.categories.length > 0 && (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
+            {b.categories.map((c) => (
+              <span key={c.id} className="caption" style={{
+                padding: '3px 10px', borderRadius: 999,
+                background: 'var(--action-subtle-bg)', color: 'var(--action-subtle-fg)',
+              }}>
+                {c.name}
+              </span>
+            ))}
+          </div>
+        )}
         {b.description && (
-          <p className="body-lg" style={{ color: 'var(--fg-2)', marginTop: 8, maxWidth: 640 }}>
+          <p className="body-lg" style={{ color: 'var(--fg-2)', marginTop: 10, maxWidth: 640 }}>
             {b.description}
           </p>
         )}
         {b.address && <p className="body-sm" style={{ color: 'var(--fg-3)', marginTop: 4 }}>{b.address}</p>}
+        {b.openingHours && <HoursDisplay hours={b.openingHours} />}
       </header>
+
+      {/* Photo gallery */}
+      {b.photos.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 10 }}>
+          {b.photos.map((p) => {
+            const url = r2Url(p.r2Key);
+            return url ? (
+              <img
+                key={p.id}
+                src={url}
+                alt={p.caption ?? ''}
+                style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 12, border: '1px solid var(--border-subtle)' }}
+              />
+            ) : null;
+          })}
+        </div>
+      )}
 
       <nav style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border-subtle)' }}>
         {(['public', 'member', 'rewards'] as Tab[]).map((t) => (
@@ -269,6 +338,37 @@ function MenuTreeView({ tree, loading }: { tree: MenuTree | undefined; loading: 
       {tree.menu.categories.length === 0 && (
         <p className="body" style={{ color: 'var(--fg-3)' }}>The menu is empty for now.</p>
       )}
+    </div>
+  );
+}
+
+function HoursDisplay({ hours }: { hours: OpeningHours }) {
+  const today = (['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as DayKey[])[new Date().getDay()]!;
+  return (
+    <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <p className="label" style={{ marginBottom: 4 }}>Opening hours</p>
+      {DAYS.map(([key, label]) => {
+        const d = hours[key];
+        const isToday = key === today;
+        return (
+          <div key={key} style={{ display: 'flex', gap: 12 }}>
+            <span style={{
+              width: 96, font: 'var(--t-body-sm)',
+              fontWeight: isToday ? 600 : 400,
+              color: isToday ? 'var(--fg-1)' : 'var(--fg-3)',
+            }}>
+              {label}
+            </span>
+            <span style={{
+              font: 'var(--t-body-sm)',
+              color: d.closed ? 'var(--danger)' : (isToday ? 'var(--fg-1)' : 'var(--fg-2)'),
+              fontWeight: isToday ? 600 : 400,
+            }}>
+              {d.closed ? 'Closed' : `${d.open} - ${d.close}`}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
