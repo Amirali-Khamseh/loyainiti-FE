@@ -13,6 +13,9 @@ import { StatsPage } from './features/stats/StatsPage';
 import { ScanPage } from './features/scan/ScanPage';
 import { MenuAdminPage } from './features/menu-admin/MenuAdminPage';
 import { BusinessProfilePage } from './features/business-profile/BusinessProfilePage';
+import { StaffPage } from './features/staff/StaffPage';
+import { ConsoleLoginPage } from './features/console/ConsoleLoginPage';
+import { ConsoleHome } from './features/console/ConsoleHome';
 
 const STAFF = ['business_owner', 'staff', 'admin'] as const;
 
