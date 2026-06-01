@@ -4,6 +4,7 @@ import { AppShell } from './components/AppShell';
 import { RequireAuth } from './components/RequireAuth';
 import { SignInPage } from './features/auth/SignInPage';
 import { SignUpPage } from './features/auth/SignUpPage';
+import { SignUpBusinessPage } from './features/auth/SignUpBusinessPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ExplorePage } from './features/explore/ExplorePage';
 import { ShopPage } from './features/shop/ShopPage';
@@ -23,7 +24,9 @@ const STAFF = ['business_owner', 'staff'] as const;
 export const router = createBrowserRouter([
   // Auth screens (no shell)
   { path: '/sign-in', element: <SignInPage /> },
-  { path: '/sign-up', element: <SignUpPage /> },
+  { path: '/sign-up', element: <SignUpPage /> },            // customer
+  { path: '/sign-up/customer', element: <SignUpPage /> },  // explicit customer route from sign-in
+  { path: '/sign-up/business', element: <SignUpBusinessPage /> }, // business owner
   { path: '/forgot-password', element: <ForgotPasswordPage /> },
 
   // Everything else under the AppShell

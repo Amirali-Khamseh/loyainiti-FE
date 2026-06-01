@@ -16,8 +16,15 @@ type Form = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Customer sign-up — redirects to the explore page after account creation. */
-export function SignUpPage() {
+/**
+ * Business sign-up — creates a customer account then immediately goes into
+ * the business onboarding wizard. The wizard handles the POST /api/businesses
+ * call that promotes the user to business_owner.
+ *
+ * We await auth.getSession() after sign-up so the Better Auth client store
+ * is populated before the onboarding wizard's API calls fire.
+ */
+export function SignUpBusinessPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
@@ -32,8 +39,12 @@ export function SignUpPage() {
         toast.error(err.message ?? 'Sign-up failed');
         return;
       }
-      toast.success('Account created. Welcome!');
-      navigate('/');
+      // Wait for the session to be established before navigating to the
+      // onboarding wizard — avoids a race where the API call fires before
+      // the auth cookie is ready.
+      await auth.getSession();
+      toast.success('Account created. Let\'s set up your business.');
+      navigate('/onboarding/business');
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Sign-up failed');
     } finally {
@@ -43,8 +54,8 @@ export function SignUpPage() {
 
   return (
     <AuthLayout
-      title="Create a customer account"
-      subtitle="Collect stamps and unlock rewards at every shop in the network."
+      title="Create a business account"
+      subtitle="Set up your loyalty programme and start rewarding your customers."
       footer={
         <span>
           Already have an account? <Link to="/sign-in">Sign in</Link>
@@ -52,14 +63,14 @@ export function SignUpPage() {
       }
     >
       <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
-        <Input label="Name" autoComplete="name"
+        <Input label="Your name" autoComplete="name"
           {...register('name', {
             required: 'Name is required',
             minLength: { value: 2, message: 'At least 2 characters' },
           })}
           error={formState.errors.name?.message}
         />
-        <Input label="Email" type="email" autoComplete="email"
+        <Input label="Work email" type="email" autoComplete="email"
           {...register('email', {
             required: 'Email is required',
             pattern: { value: EMAIL_RE, message: 'Enter a valid email address' },
@@ -84,7 +95,7 @@ export function SignUpPage() {
           error={formState.errors.confirmPassword?.message}
         />
         <Button type="submit" loading={submitting} size="lg">
-          Create account
+          Create business account
         </Button>
       </form>
     </AuthLayout>
