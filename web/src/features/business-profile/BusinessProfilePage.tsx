@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Save, Upload, Trash2, Check } from 'lucide-react';
 import { api, ApiError } from '../../lib/api';
@@ -59,12 +59,19 @@ async function presignAndUpload(kind: UploadKind, businessId: string, file: File
 }
 
 export function BusinessProfilePage() {
+  const location = useLocation();
+  // Onboarding mode = the user reached this page from the /onboarding/* path.
+  // Use path, not localStorage, so stale activeBusinessId never bypasses the wizard.
+  const isOnboarding = location.pathname.startsWith('/onboarding');
   const businessId = getActiveBusinessId();
-  const [params] = useSearchParams();
-  const isOnboarding = params.get('onboarding') === '1' || !businessId;
 
   if (isOnboarding) return <OnboardingWizard />;
-  return <EditBusiness businessId={businessId!} />;
+  if (!businessId) return (
+    <p className="body" style={{ color: 'var(--fg-2)' }}>
+      No active business. Create one first via the onboarding flow.
+    </p>
+  );
+  return <EditBusiness businessId={businessId} />;
 }
 
 /* ===================== Onboarding wizard ===================== */
