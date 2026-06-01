@@ -41,10 +41,13 @@ export const router = createBrowserRouter([
         path: 'visits',
         element: <RequireAuth><VisitsPage /></RequireAuth>,
       },
-      // Onboarding: customer creates a business (promoted to business_owner after)
+      // Onboarding: customer creates a business (promoted to business_owner after).
+      // No RequireAuth wrapper here — the session may not be ready immediately
+      // after sign-up when React Router renders this route. The wizard's
+      // createMut will get a 401 from the API if the user somehow isn't logged in.
       {
         path: 'onboarding/business',
-        element: <RequireAuth><BusinessProfilePage /></RequireAuth>,
+        element: <BusinessProfilePage />,
       },
       // Business admin (requires staff role)
       {

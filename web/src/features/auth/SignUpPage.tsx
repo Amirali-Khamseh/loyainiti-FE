@@ -37,6 +37,10 @@ export function SignUpPage() {
         toast.error(err.message ?? 'Sign-up failed');
         return;
       }
+      // Explicitly fetch the session so the client store is populated before
+      // we navigate to a RequireAuth-protected route. Without this, useSession()
+      // may still return null and RequireAuth redirects to /sign-in.
+      await auth.getSession();
       toast.success('Account created. Welcome!');
       navigate(isBusiness ? '/onboarding/business' : '/');
     } catch (e: unknown) {
