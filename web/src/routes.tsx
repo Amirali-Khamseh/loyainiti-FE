@@ -18,6 +18,10 @@ import { StaffPage } from './features/staff/StaffPage';
 import { ConsoleLoginPage } from './features/console/ConsoleLoginPage';
 import { ConsoleLayout } from './features/console/ConsoleLayout';
 import { ConsoleHomePage } from './features/console/ConsoleHomePage';
+import { ConsoleUsersPage } from './features/console/ConsoleUsersPage';
+import { ConsoleBusinessesPage } from './features/console/ConsoleBusinessesPage';
+import { ConsoleCategoriesPage } from './features/console/ConsoleCategoriesPage';
+import { ConsoleReviewsPage } from './features/console/ConsoleReviewsPage';
 
 const STAFF = ['business_owner', 'staff'] as const;
 
@@ -73,6 +77,12 @@ export const router = createBrowserRouter([
   {
     path: '/_console',
     element: <ConsoleLayout />,
-    children: [{ index: true, element: <ConsoleHomePage /> }],
+    children: [
+      { index: true, element: <ConsoleHomePage /> },
+      { path: 'users', element: <ConsoleUsersPage /> },
+      { path: 'businesses', element: <ConsoleBusinessesPage /> },
+      { path: 'categories', element: <ConsoleCategoriesPage /> },
+      { path: 'reviews', element: <ConsoleReviewsPage /> },
+    ],
   },
 ]);
