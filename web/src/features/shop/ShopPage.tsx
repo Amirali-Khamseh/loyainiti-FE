@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { Lock } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Lock, Star } from 'lucide-react';
 import { api, ApiError } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { Card } from '../../components/Card';
+import { Button } from '../../components/Button';
 import { LoyaltyStamp } from '../../components/LoyaltyStamp';
+import { useToast } from '../../components/Toast';
 
 type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 type DayHours = { open: string; close: string; closed: boolean };
@@ -80,7 +82,21 @@ function formatPrice(cents: number, currency: string): string {
   return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(cents / 100);
 }
 
-type Tab = 'public' | 'member' | 'rewards';
+type ReviewImage = { id: string; r2Key: string; sortOrder: number };
+type Review = {
+  id: string;
+  customerUserId: string;
+  customerName: string;
+  rating: number;
+  comment: string | null;
+  isHidden: boolean;
+  images: ReviewImage[];
+  createdAt: string;
+  isOwn: boolean;
+};
+type ReviewsData = { ratingAvg: number | null; ratingCount: number; reviews: Review[] };
+
+type Tab = 'public' | 'member' | 'rewards' | 'reviews';
 
 export function ShopPage() {
   const { slug = '' } = useParams<{ slug: string }>();
@@ -114,6 +130,11 @@ export function ShopPage() {
     queryKey: ['my-memberships'],
     queryFn: () => api<Membership[]>('/api/me/memberships'),
     enabled: !!session,
+  });
+
+  const reviewsQuery = useQuery({
+    queryKey: ['reviews', slug],
+    queryFn: () => api<ReviewsData>(`/api/b/${slug}/reviews`),
   });
 
   const activeProgram = programs.data?.find((p) => p.isActive);
@@ -190,7 +211,7 @@ export function ShopPage() {
       )}
 
       <nav style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--border-subtle)' }}>
-        {(['public', 'member', 'rewards'] as Tab[]).map((t) => (
+        {(['public', 'member', 'rewards', 'reviews'] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -212,6 +233,16 @@ export function ShopPage() {
               </span>
             ) : t === 'rewards' ? (
               'Rewards'
+            ) : t === 'reviews' ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                <Star size={13} />
+                Reviews
+                {(reviewsQuery.data?.ratingCount ?? 0) > 0 && (
+                  <span style={{ fontWeight: 400, color: 'var(--fg-3)' }}>
+                    ({reviewsQuery.data!.ratingAvg?.toFixed(1)})
+                  </span>
+                )}
+              </span>
             ) : (
               'Public menu'
             )}
@@ -289,6 +320,16 @@ export function ShopPage() {
           )}
         </div>
       )}
+
+      {tab === 'reviews' && (
+        <ReviewsTab
+          slug={slug}
+          data={reviewsQuery.data}
+          loading={reviewsQuery.isLoading}
+          session={session}
+          hasMembership={!!membership}
+        />
+      )}
     </div>
   );
 }
@@ -341,6 +382,195 @@ function MenuTreeView({ tree, loading }: { tree: MenuTree | undefined; loading: 
     </div>
   );
 }
+
+/* ── Reviews ──────────────────────────────────────────────────────── */
+
+function StarRating({
+  value, onChange, size = 22,
+}: { value: number; onChange?: (v: number) => void; size?: number }) {
+  const [hover, setHover] = useState(0);
+  const display = hover || value;
+  return (
+    <div style={{ display: 'inline-flex', gap: 2 }}>
+      {[1, 2, 3, 4, 5].map((s) => (
+        <button
+          key={s}
+          type="button"
+          onClick={() => onChange?.(s)}
+          onMouseEnter={() => onChange && setHover(s)}
+          onMouseLeave={() => onChange && setHover(0)}
+          style={{ background: 'none', border: 'none', padding: 2, cursor: onChange ? 'pointer' : 'default', lineHeight: 1 }}
+          aria-label={`${s} star${s > 1 ? 's' : ''}`}
+        >
+          <Star
+            size={size}
+            fill={s <= display ? 'var(--gold-500)' : 'none'}
+            color={s <= display ? 'var(--gold-500)' : 'var(--border-default)'}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ReviewsTab({
+  slug, data, loading, session, hasMembership,
+}: {
+  slug: string;
+  data: ReviewsData | undefined;
+  loading: boolean;
+  session: { user: { id: string } } | null | undefined;
+  hasMembership: boolean;
+}) {
+  const toast = useToast();
+  const qc = useQueryClient();
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editRating, setEditRating] = useState(0);
+  const [editComment, setEditComment] = useState('');
+
+  const invalidate = () => qc.invalidateQueries({ queryKey: ['reviews', slug] });
+
+  const ownReview = data?.reviews.find((r) => r.isOwn);
+
+  const createMut = useMutation({
+    mutationFn: () => api(`/api/b/${slug}/reviews`, { method: 'POST', body: { rating, comment: comment || undefined } }),
+    onSuccess: () => { toast.success('Review posted'); setRating(0); setComment(''); invalidate(); },
+    onError: (e) => toast.error(e instanceof ApiError ? e.message : 'Could not post review'),
+  });
+
+  const updateMut = useMutation({
+    mutationFn: (id: string) =>
+      api(`/api/reviews/${id}`, { method: 'PATCH', body: { rating: editRating, comment: editComment || null } }),
+    onSuccess: () => { toast.success('Review updated'); setEditId(null); invalidate(); },
+    onError: (e) => toast.error(e instanceof ApiError ? e.message : 'Could not update'),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => api(`/api/reviews/${id}`, { method: 'DELETE' }),
+    onSuccess: () => { toast.success('Review deleted'); invalidate(); },
+    onError: (e) => toast.error(e instanceof ApiError ? e.message : 'Could not delete'),
+  });
+
+  if (loading) return <p className="body">Loading reviews…</p>;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Aggregate */}
+      {(data?.ratingCount ?? 0) > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ font: 'var(--t-num-xl)' }}>{data!.ratingAvg?.toFixed(1)}</span>
+          <div>
+            <StarRating value={Math.round(data!.ratingAvg ?? 0)} size={20} />
+            <p className="caption" style={{ color: 'var(--fg-3)', marginTop: 4 }}>
+              {data!.ratingCount} review{data!.ratingCount !== 1 ? 's' : ''}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Write / edit form */}
+      {session && hasMembership && !ownReview && (
+        <Card padding={20} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <h3 className="h3">Leave a review</h3>
+          <StarRating value={rating} onChange={setRating} />
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Share your experience…"
+            rows={3}
+            style={{
+              width: '100%', padding: '10px 14px', borderRadius: 12,
+              border: '1px solid var(--border-default)', font: 'var(--t-body)',
+              background: 'var(--bg-card)', color: 'var(--fg-1)', resize: 'vertical',
+              boxSizing: 'border-box',
+            }}
+          />
+          <Button
+            onClick={() => createMut.mutate()}
+            loading={createMut.isPending}
+            disabled={rating === 0}
+          >
+            Post review
+          </Button>
+        </Card>
+      )}
+
+      {session && !hasMembership && (
+        <Card variant="muted">
+          <p className="body" style={{ color: 'var(--fg-2)' }}>
+            Visit this business and get scanned first to leave a review.
+          </p>
+        </Card>
+      )}
+
+      {/* Review list */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {(data?.reviews ?? []).length === 0 && (
+          <p className="body" style={{ color: 'var(--fg-3)' }}>No reviews yet — be the first!</p>
+        )}
+        {(data?.reviews ?? []).map((r) => (
+          <Card key={r.id} padding={20}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+              <div>
+                <p style={{ font: 'var(--t-body)', fontWeight: 600, margin: 0 }}>{r.customerName}</p>
+                <p className="caption" style={{ color: 'var(--fg-3)', marginTop: 2 }}>
+                  {new Date(r.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+              {editId === r.id ? (
+                <StarRating value={editRating} onChange={setEditRating} size={18} />
+              ) : (
+                <StarRating value={r.rating} size={18} />
+              )}
+            </div>
+
+            {editId === r.id ? (
+              <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <textarea
+                  value={editComment}
+                  onChange={(e) => setEditComment(e.target.value)}
+                  rows={3}
+                  style={{
+                    width: '100%', padding: '10px 14px', borderRadius: 12,
+                    border: '1px solid var(--border-default)', font: 'var(--t-body)',
+                    background: 'var(--bg-card)', color: 'var(--fg-1)', resize: 'vertical',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Button size="sm" onClick={() => updateMut.mutate(r.id)} loading={updateMut.isPending} disabled={editRating === 0}>
+                    Save
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => setEditId(null)}>Cancel</Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {r.comment && (
+                  <p className="body" style={{ marginTop: 10, color: 'var(--fg-2)' }}>{r.comment}</p>
+                )}
+                {r.isOwn && (
+                  <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                    <Button size="sm" variant="ghost" onClick={() => { setEditId(r.id); setEditRating(r.rating); setEditComment(r.comment ?? ''); }}>
+                      Edit
+                    </Button>
+                    <Button size="sm" variant="danger" onClick={() => { if (confirm('Delete your review?')) deleteMut.mutate(r.id); }} loading={deleteMut.isPending}>
+                      Delete
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Hours ────────────────────────────────────────────────────────── */
 
 function HoursDisplay({ hours }: { hours: OpeningHours }) {
   const today = (['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as DayKey[])[new Date().getDay()]!;
