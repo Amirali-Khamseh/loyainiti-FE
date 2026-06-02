@@ -41,14 +41,22 @@ export function ConsoleHomePage() {
         <h1 className="display-2" style={{ marginTop: 8 }}>Overview</h1>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {kpis.map((k) => (
-          <Link key={k.label} to={k.to} style={{ textDecoration: 'none' }}>
-            <Card padding={20} style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}>
-              {k.icon}
-              <p style={{ font: 'var(--t-num-xl)', margin: 0 }}>{k.value}</p>
-              <p style={{ font: 'var(--t-body-sm)', fontWeight: 600, margin: 0 }}>{k.label}</p>
-              {k.sub && <p className="caption" style={{ color: 'var(--fg-3)', margin: 0 }}>{k.sub}</p>}
+          <Link key={k.label} to={k.to} style={{ textDecoration: 'none', flex: '1 1 180px' }}>
+            <Card padding={24} style={{ display: 'flex', alignItems: 'center', gap: 16, height: '100%' }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                background: 'var(--action-subtle-bg)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {k.icon}
+              </div>
+              <div>
+                <p style={{ font: 'var(--t-num-xl)', margin: 0, lineHeight: 1 }}>{k.value}</p>
+                <p style={{ font: 'var(--t-body-sm)', fontWeight: 600, margin: '4px 0 0' }}>{k.label}</p>
+                {k.sub && <p className="caption" style={{ color: 'var(--fg-3)', margin: 0 }}>{k.sub}</p>}
+              </div>
             </Card>
           </Link>
         ))}

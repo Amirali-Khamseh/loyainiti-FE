@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, ApiError } from '../../lib/api';
 import { Card } from '../../components/Card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/Select';
 import { useToast } from '../../components/Toast';
 
 type Role = 'customer' | 'business_owner' | 'staff' | 'admin';
@@ -21,10 +22,6 @@ const ROLE_LABELS: Record<Role, string> = {
   admin: 'Admin',
 };
 
-const selectStyle: React.CSSProperties = {
-  height: 36, borderRadius: 8, border: '1px solid var(--border-default)',
-  padding: '0 10px', font: 'var(--t-body-sm)', background: 'var(--bg-card)', color: 'var(--fg-1)',
-};
 
 export function ConsoleUsersPage() {
   const toast = useToast();
@@ -91,16 +88,18 @@ export function ConsoleUsersPage() {
                 {u.banned && (
                   <span className="label" style={{ color: 'var(--danger)' }}>Banned</span>
                 )}
-                <select
+                <Select
                   value={u.role}
-                  onChange={(e) => roleMut.mutate({ id: u.id, role: e.target.value as Role })}
+                  onValueChange={(val) => roleMut.mutate({ id: u.id, role: val as Role })}
                   disabled={roleMut.isPending}
-                  style={selectStyle}
                 >
-                  {(Object.keys(ROLE_LABELS) as Role[]).map((r) => (
-                    <option key={r} value={r}>{ROLE_LABELS[r]}</option>
-                  ))}
-                </select>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(ROLE_LABELS) as Role[]).map((r) => (
+                      <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             ))}
             {filtered.length === 0 && (
