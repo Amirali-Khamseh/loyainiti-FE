@@ -508,7 +508,7 @@ function ReviewsTab({
       {/* Review list */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {(data?.reviews ?? []).length === 0 && (
-          <p className="body" style={{ color: 'var(--fg-3)' }}>No reviews yet — be the first!</p>
+          <p className="body" style={{ color: 'var(--fg-3)' }}>No reviews yet - be the first!</p>
         )}
         {(data?.reviews ?? []).map((r) => (
           <Card key={r.id} padding={20}>
