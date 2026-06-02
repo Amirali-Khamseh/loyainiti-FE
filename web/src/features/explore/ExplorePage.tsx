@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Coffee, Star } from 'lucide-react';
+import { Coffee, Star, StarHalf } from 'lucide-react';
 import { api, API_URL } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { Card } from '../../components/Card';
@@ -16,6 +16,8 @@ type Business = {
   logoR2Key: string | null;
   coverR2Key: string | null;
   categories: Category[];
+  ratingAvg?: number | null;
+  ratingCount?: number;
 };
 
 type Membership = {
@@ -177,6 +179,17 @@ export function ExplorePage() {
                 <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)' }}>
                   {b.description ?? 'A new shop in the network.'}
                 </p>
+                {(b.ratingCount ?? 0) > 0 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                    <Star size={13} fill="var(--gold-500)" color="var(--gold-500)" />
+                    <span style={{ font: 'var(--t-body-sm)', fontWeight: 600 }}>
+                      {Number(b.ratingAvg).toFixed(1)}
+                    </span>
+                    <span className="caption" style={{ color: 'var(--fg-3)' }}>
+                      ({b.ratingCount})
+                    </span>
+                  </div>
+                )}
               </Card>
             </Link>
           ))}
