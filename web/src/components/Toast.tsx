@@ -1,7 +1,18 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+/**
+ * Toast shim around react-toastify.
+ *
+ * The rest of the app calls `useToast()` and gets back { success, error, info, show }.
+ * We keep that surface stable while delegating actual rendering to react-toastify,
+ * which gives us nicer animations, stacking, swipe-to-dismiss, and a11y for free.
+ *
+ * <ToastProvider> still exists as a no-op for backwards compatibility with the
+ * older custom provider; the real container is mounted globally in main.tsx.
+ */
+import React, { useMemo } from 'react';
+import { toast, ToastContainer, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ToastKind = 'success' | 'error' | 'info';
-type Toast = { id: number; kind: ToastKind; message: string };
 
 type ToastApi = {
   show: (message: string, kind?: ToastKind) => void;
@@ -10,105 +21,41 @@ type ToastApi = {
   info: (message: string) => void;
 };
 
-const ToastCtx = createContext<ToastApi | null>(null);
+/** Legacy wrapper - no longer required, kept so existing imports don't break. */
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
+
+/** Mount once at the app root (next to <RouterProvider>). */
+export function Toaster() {
+  return (
+    <ToastContainer
+      position="top-right"
+      autoClose={3500}
+      hideProgressBar={false}
+      newestOnTop
+      closeOnClick
+      pauseOnHover
+      draggable
+      theme="light"
+      transition={Slide}
+      style={{ zIndex: 99999 }}
+    />
+  );
+}
 
 export function useToast(): ToastApi {
-  const ctx = useContext(ToastCtx);
-  if (!ctx) throw new Error('useToast must be used inside <ToastProvider>');
-  return ctx;
-}
-
-export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const dismiss = useCallback((id: number) => {
-    setToasts((cur) => cur.filter((t) => t.id !== id));
-  }, []);
-
-  const show = useCallback(
-    (message: string, kind: ToastKind = 'info') => {
-      const id = Date.now() + Math.random();
-      setToasts((cur) => [...cur, { id, kind, message }]);
-      setTimeout(() => dismiss(id), 4000);
-    },
-    [dismiss],
-  );
-
-  const api = useMemo<ToastApi>(
+  return useMemo<ToastApi>(
     () => ({
-      show,
-      success: (m) => show(m, 'success'),
-      error: (m) => show(m, 'error'),
-      info: (m) => show(m, 'info'),
+      show: (m, kind = 'info') => {
+        if (kind === 'success') toast.success(m);
+        else if (kind === 'error') toast.error(m);
+        else toast.info(m);
+      },
+      success: (m) => toast.success(m),
+      error: (m) => toast.error(m),
+      info: (m) => toast.info(m),
     }),
-    [show],
-  );
-
-  return (
-    <ToastCtx.Provider value={api}>
-      {children}
-      <ToastViewport toasts={toasts} onDismiss={dismiss} />
-    </ToastCtx.Provider>
-  );
-}
-
-function ToastViewport({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: number) => void }) {
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 16,
-        right: 16,
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        maxWidth: 380,
-        pointerEvents: 'none',
-      }}
-    >
-      {toasts.map((t) => (
-        <ToastItem key={t.id} toast={t} onDismiss={() => onDismiss(t.id)} />
-      ))}
-    </div>
-  );
-}
-
-function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
-  const accent =
-    toast.kind === 'success'
-      ? 'var(--success, #1f8a4c)'
-      : toast.kind === 'error'
-        ? 'var(--danger, #c4302b)'
-        : 'var(--fg-2, #555)';
-
-  return (
-    <div
-      role="status"
-      onClick={onDismiss}
-      style={{
-        pointerEvents: 'auto',
-        cursor: 'pointer',
-        background: 'var(--bg-card, #fff)',
-        color: 'var(--fg-1, #111)',
-        border: '1px solid var(--border-default, #ddd)',
-        borderLeft: `4px solid ${accent}`,
-        borderRadius: 12,
-        padding: '12px 16px',
-        boxShadow: 'var(--shadow-2, 0 6px 24px rgba(0,0,0,0.08))',
-        font: 'var(--t-body-sm, 14px/1.4 system-ui)',
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(-8px)',
-        transition: 'opacity 180ms ease-out, transform 180ms ease-out',
-      }}
-    >
-      {toast.message}
-    </div>
+    [],
   );
 }

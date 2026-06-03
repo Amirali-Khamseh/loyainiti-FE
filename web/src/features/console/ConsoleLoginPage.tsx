@@ -30,6 +30,16 @@ export function ConsoleLoginPage() {
         toast.error(err.message ?? 'Sign-in failed');
         return;
       }
+      // Re-verify role before letting them into the console. Sign back out a
+      // non-admin so they don't carry an authenticated session into the app.
+      const session = await auth.getSession({ query: { disableCookieCache: true } });
+      const role = (session?.data?.user as { role?: string } | undefined)?.role;
+      if (role !== 'admin') {
+        await auth.signOut();
+        toast.error('This account does not have administrator access.');
+        return;
+      }
+      toast.success('Signed in');
       navigate('/_console');
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Sign-in failed');

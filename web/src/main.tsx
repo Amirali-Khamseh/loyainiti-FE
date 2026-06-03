@@ -19,14 +19,13 @@ import './styles/app.css';
 
 import { router } from './routes';
 import { queryClient } from './lib/queryClient';
-import { ToastProvider } from './components/Toast';
+import { Toaster } from './components/Toast';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
+      <RouterProvider router={router} />
+      <Toaster />
     </QueryClientProvider>
   </React.StrictMode>,
 );

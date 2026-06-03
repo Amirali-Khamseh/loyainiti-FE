@@ -6,6 +6,7 @@ import { getActiveBusinessId } from '../../lib/activeBusiness';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Card } from '../../components/Card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/Select';
 import { useToast } from '../../components/Toast';
 
 type StaffRole = 'owner' | 'manager' | 'staff';
@@ -116,22 +117,13 @@ export function StaffPage() {
             <p className="label" style={{ marginBottom: 6 }}>
               Role
             </p>
-            <select
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value as 'manager' | 'staff')}
-              style={{
-                height: 44,
-                borderRadius: 12,
-                border: '1px solid var(--border-default)',
-                padding: '0 12px',
-                font: 'var(--t-body)',
-                background: 'var(--bg-card)',
-                color: 'var(--fg-1)',
-              }}
-            >
-              <option value="staff">Staff</option>
-              <option value="manager">Manager</option>
-            </select>
+            <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as 'manager' | 'staff')}>
+              <SelectTrigger style={{ height: 44 }}><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="staff">Staff</SelectItem>
+                <SelectItem value="manager">Manager</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <Button type="submit" loading={inviteMut.isPending} disabled={!email.trim()}>
             <UserPlus size={16} /> Add
@@ -173,24 +165,16 @@ export function StaffPage() {
                   </span>
                 ) : (
                   <>
-                    <select
+                    <Select
                       value={m.role}
-                      onChange={(e) =>
-                        roleMut.mutate({ userId: m.userId, role: e.target.value as 'manager' | 'staff' })
-                      }
-                      style={{
-                        height: 38,
-                        borderRadius: 10,
-                        border: '1px solid var(--border-default)',
-                        padding: '0 10px',
-                        font: 'var(--t-body-sm)',
-                        background: 'var(--bg-card)',
-                        color: 'var(--fg-1)',
-                      }}
+                      onValueChange={(v) => roleMut.mutate({ userId: m.userId, role: v as 'manager' | 'staff' })}
                     >
-                      <option value="staff">Staff</option>
-                      <option value="manager">Manager</option>
-                    </select>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="staff">Staff</SelectItem>
+                        <SelectItem value="manager">Manager</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <button
                       onClick={() => {
                         if (confirm(`Remove ${m.name} from the team?`)) removeMut.mutate(m.userId);

@@ -5,6 +5,7 @@ import { api, ApiError } from '../../lib/api';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Card } from '../../components/Card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/Select';
 import { useToast } from '../../components/Toast';
 
 type AdminBusiness = {
@@ -15,11 +16,6 @@ type AdminBusiness = {
   isPublished: boolean;
   ownerEmail: string | null;
   createdAt: string;
-};
-
-const selectStyle: React.CSSProperties = {
-  height: 36, borderRadius: 8, border: '1px solid var(--border-default)',
-  padding: '0 10px', font: 'var(--t-body-sm)', background: 'var(--bg-card)', color: 'var(--fg-1)',
 };
 
 export function ConsoleBusinessesPage() {
@@ -148,10 +144,13 @@ function AssignStaffForm({
         </div>
         <div>
           <p className="label" style={{ marginBottom: 6 }}>Role</p>
-          <select value={role} onChange={(e) => setRole(e.target.value as 'manager' | 'staff')} style={{ ...selectStyle, height: 44 }}>
-            <option value="staff">Staff</option>
-            <option value="manager">Manager</option>
-          </select>
+          <Select value={role} onValueChange={(v) => setRole(v as 'manager' | 'staff')}>
+            <SelectTrigger style={{ height: 44 }}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="staff">Staff</SelectItem>
+              <SelectItem value="manager">Manager</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Button
           onClick={() => { if (email.trim()) mut.mutate(); }}
