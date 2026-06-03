@@ -6,6 +6,7 @@ import { SignInPage } from './features/auth/SignInPage';
 import { SignUpPage } from './features/auth/SignUpPage';
 import { SignUpBusinessPage } from './features/auth/SignUpBusinessPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { ExplorePage } from './features/explore/ExplorePage';
 import { ShopPage } from './features/shop/ShopPage';
 import { MyQrPage } from './features/my-qr/MyQrPage';
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
   { path: '/sign-up/customer', element: <SignUpPage /> },  // explicit customer route from sign-in
   { path: '/sign-up/business', element: <SignUpBusinessPage /> }, // business owner
   { path: '/forgot-password', element: <ForgotPasswordPage /> },
+  { path: '/reset-password', element: <ResetPasswordPage /> },
 
   // Everything else under the AppShell
   {
