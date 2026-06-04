@@ -1,0 +1,47 @@
+import React from 'react';
+import { Tabs, Redirect } from 'expo-router';
+import { Compass, QrCode, History } from 'lucide-react-native';
+import { auth } from '../../src/lib/auth';
+import { tokens } from '../../src/design-system/tokens';
+import { ActivityIndicator, View } from 'react-native';
+
+export default function CustomerLayout() {
+  const { data: session, isPending } = auth.useSession();
+
+  if (isPending) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color={tokens.colors.action} />
+      </View>
+    );
+  }
+  if (!session) return <Redirect href="/(auth)/sign-in" />;
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: tokens.colors.action,
+        tabBarInactiveTintColor: tokens.colors.fg3,
+        tabBarStyle: { backgroundColor: tokens.colors.bgCard, borderTopColor: tokens.colors.borderSubtle },
+        tabBarLabelStyle: { fontFamily: tokens.fonts.body, fontSize: 11 },
+        headerStyle: { backgroundColor: tokens.colors.bgCanvas },
+        headerShadowVisible: false,
+        headerTitleStyle: { fontFamily: tokens.fonts.display, fontWeight: '600' },
+      }}
+    >
+      <Tabs.Screen
+        name="explore"
+        options={{ title: 'Explore', tabBarIcon: ({ color, size }) => <Compass color={color} size={size} /> }}
+      />
+      <Tabs.Screen
+        name="my-qr"
+        options={{ title: 'My QR', tabBarIcon: ({ color, size }) => <QrCode color={color} size={size} /> }}
+      />
+      <Tabs.Screen
+        name="visits"
+        options={{ title: 'Visits', tabBarIcon: ({ color, size }) => <History color={color} size={size} /> }}
+      />
+      <Tabs.Screen name="shop/[slug]" options={{ href: null, title: 'Shop' }} />
+    </Tabs>
+  );
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Loyainiti mark">
+  <rect width="32" height="32" rx="8" fill="#1F1611"></rect>
+  <circle cx="16" cy="16" r="6" fill="#D4A24A"></circle>
+  <circle cx="16" cy="16" r="9.5" fill="none" stroke="#D4A24A" stroke-width="1" stroke-dasharray="1.5 2"></circle>
+</svg>
