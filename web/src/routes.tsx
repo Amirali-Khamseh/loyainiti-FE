@@ -15,6 +15,7 @@ import { ScanPage } from './features/scan/ScanPage';
 import { MenuAdminPage } from './features/menu-admin/MenuAdminPage';
 import { BusinessProfilePage } from './features/business-profile/BusinessProfilePage';
 import { StaffPage } from './features/staff/StaffPage';
+import { ProfilePage } from './features/profile/ProfilePage';
 import { ConsoleLoginPage } from './features/console/ConsoleLoginPage';
 import { ConsoleLayout } from './features/console/ConsoleLayout';
 import { ConsoleHomePage } from './features/console/ConsoleHomePage';
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
       {
         path: 'visits',
         element: <RequireAuth><VisitsPage /></RequireAuth>,
+      },
+      {
+        path: 'profile',
+        element: <RequireAuth><ProfilePage /></RequireAuth>,
       },
       // Onboarding: customer creates a business (promoted to business_owner after)
       {

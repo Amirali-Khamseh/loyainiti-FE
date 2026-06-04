@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   Compass, QrCode, History, LayoutDashboard, ScanLine,
-  UtensilsCrossed, Store, Users, Shield, LogOut, LogIn, Sparkles,
+  UtensilsCrossed, Store, Users, Shield, LogOut, LogIn, Sparkles, UserCircle,
 } from 'lucide-react';
 import { auth, type Role } from '../lib/auth';
 import { api } from '../lib/api';
@@ -46,6 +46,7 @@ const customerItems: Item[] = [
   { to: '/', label: 'Explore', icon: <Compass size={16} /> },
   { to: '/my-qr', label: 'My QR', icon: <QrCode size={16} /> },
   { to: '/visits', label: 'Visits', icon: <History size={16} /> },
+  { to: '/profile', label: 'Profile', icon: <UserCircle size={16} /> },
 ];
 
 export function AppShell() {
