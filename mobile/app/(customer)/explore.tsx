@@ -104,6 +104,14 @@ export default function Explore() {
       <View>
         <Typo variant="h2" style={{ marginBottom: 12 }}>All shops</Typo>
         <View style={{ gap: 12 }}>
+          {businesses.isLoading && (
+            <Typo variant="body" color={tokens.colors.fg3}>Loading shops…</Typo>
+          )}
+          {businesses.error && (
+            <Typo variant="body" color={tokens.colors.danger}>
+              Couldn't load shops: {(businesses.error as Error).message}
+            </Typo>
+          )}
           {businesses.data?.map((b) => (
             <Pressable
               key={b.id}
