@@ -90,7 +90,7 @@ export default function Dashboard() {
           <Typo variant="body" color={tokens.colors.fg3}>No data yet.</Typo>
         )}
         <View style={{ gap: 8 }}>
-          {top.data?.map((c, i) => (
+          {top.data?.map((c: TopCustomer, i: number) => (
             <View
               key={c.customerId}
               style={{
