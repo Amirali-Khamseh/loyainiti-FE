@@ -35,25 +35,11 @@ function buildUrl(path: string, query?: RequestOpts['query']): string {
 }
 
 /**
- * Read the bearer token without ever throwing.
- *
- * - Native (iOS/Android): expo-secure-store via Keychain / Keystore.
- * - Web: SecureStore throws ("not supported on web"); fall back to
- *   localStorage, which is what @better-auth/expo's web shim writes to.
- *
- * Failures return null so public endpoints (the bulk of the surface area)
- * still work even when no token is available - much friendlier than the
- * previous behaviour where a SecureStore exception killed every fetch
- * before it even left api.ts.
+ * Read the bearer token on native. Returns null on any failure so public
+ * endpoints still work. Web doesn't need this - it uses cookie auth (see
+ * api() below) - so this is native-only.
  */
-async function readToken(): Promise<string | null> {
-  if (Platform.OS === 'web') {
-    try {
-      return typeof window !== 'undefined' ? window.localStorage.getItem(TOKEN_KEY) : null;
-    } catch {
-      return null;
-    }
-  }
+async function readNativeToken(): Promise<string | null> {
   try {
     return await SecureStore.getItemAsync(TOKEN_KEY);
   } catch {
@@ -62,16 +48,35 @@ async function readToken(): Promise<string | null> {
 }
 
 /**
- * Fetch wrapper that auto-attaches the Better Auth bearer token persisted by
- * `@better-auth/expo`. The token key matches the `storagePrefix` configured
- * in `src/lib/auth.ts`.
+ * Fetch wrapper that talks to the loyainiti BE.
+ *
+ * Auth differs by platform because @better-auth/expo uses two different
+ * mechanisms under the hood:
+ *
+ * - Native (iOS / Android): Better Auth issues a bearer token, the expo
+ *   plugin persists it in expo-secure-store, and we forward it on every
+ *   request as `Authorization: Bearer ...`.
+ * - Web (Expo Metro web preview): Better Auth uses standard cookies set
+ *   by the BE (Set-Cookie on sign-in / sign-up). We just need to opt the
+ *   fetch into sending cross-origin cookies via `credentials: 'include'`.
+ *   The BE CORS plugin reflects the origin and allows credentials, and
+ *   Better Auth's `trustedOrigins` includes localhost:8081 since the
+ *   M1-era trustedOrigins fix.
+ *
+ * The previous "read TOKEN_KEY from localStorage on web" approach was
+ * broken because @better-auth/expo's web shim doesn't actually mirror
+ * the native bearer-token storage layout - sessions on web live in
+ * cookies, not localStorage. That mismatch made every authd request 401
+ * and surfaced as "Couldn't load your profile" / similar blank states.
  */
 export async function api<T = unknown>(path: string, opts: RequestOpts = {}): Promise<T> {
   const { method = 'GET', body, query, headers } = opts;
-  const token = await readToken();
+  const isWeb = Platform.OS === 'web';
+  const token = isWeb ? null : await readNativeToken();
 
   const res = await fetch(buildUrl(path, query), {
     method,
+    credentials: isWeb ? 'include' : 'same-origin',
     headers: {
       ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
