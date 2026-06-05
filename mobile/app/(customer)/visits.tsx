@@ -44,8 +44,8 @@ export default function Visits() {
         <Typo variant="h2" style={{ marginBottom: 12 }}>Rewards in progress</Typo>
         <View style={{ gap: 12 }}>
           {memberships.data
-            ?.filter((m) => m.program)
-            .map((m) => (
+            ?.filter((m: Membership) => m.program)
+            .map((m: Membership) => (
               <Card key={m.membershipId}>
                 <Typo variant="h3">{m.business.name}</Typo>
                 <View style={{ marginTop: 12 }}>
@@ -71,7 +71,7 @@ export default function Visits() {
                 </View>
               </Card>
             ))}
-          {memberships.data?.every((m) => !m.program) && (
+          {memberships.data?.every((m: Membership) => !m.program) && (
             <Typo variant="body" color={tokens.colors.fg3}>
               No active rewards yet.
             </Typo>
@@ -87,7 +87,7 @@ export default function Visits() {
               <Typo variant="body" color={tokens.colors.fg3}>No visits yet.</Typo>
             </View>
           )}
-          {visits.data?.map((v, i) => (
+          {visits.data?.map((v: Visit, i: number) => (
             <View
               key={v.visitId}
               style={{

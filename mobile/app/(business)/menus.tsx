@@ -129,7 +129,7 @@ function MenuEditor({
     <Card>
       <Typo variant="h2" style={{ marginBottom: 12 }}>{title}</Typo>
       <View style={{ gap: 12 }}>
-        {menu.data.menu.categories.map((cat) => (
+        {menu.data.menu.categories.map((cat: MenuTree['menu']['categories'][number]) => (
           <CategoryEditor key={cat.id} slug={slug} kind={kind} category={cat} businessId={businessId} />
         ))}
       </View>
@@ -247,7 +247,7 @@ function LoyaltyEditor({ businessId }: { businessId: string }) {
     queryKey: ['loyalty-programs', businessId],
     queryFn: () => api<LoyaltyProgram[]>(`/api/businesses/${businessId}/loyalty-programs`),
   });
-  const active = programs.data?.find((p) => p.isActive);
+  const active = programs.data?.find((p: LoyaltyProgram) => p.isActive);
 
   const [name, setName] = useState('');
   const [required, setRequired] = useState('10');
