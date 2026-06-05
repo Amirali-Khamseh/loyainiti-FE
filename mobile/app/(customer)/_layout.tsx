@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
-import { Compass, QrCode, History } from 'lucide-react-native';
+import { Compass, QrCode, History, UserCircle } from 'lucide-react-native';
 import { auth } from '../../src/lib/auth';
 import { tokens } from '../../src/design-system/tokens';
 import { ActivityIndicator, View } from 'react-native';
@@ -40,6 +40,13 @@ export default function CustomerLayout() {
       <Tabs.Screen
         name="visits"
         options={{ title: 'Visits', tabBarIcon: ({ color, size }) => <History color={color} size={size} /> }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => <UserCircle color={color} size={size} />,
+        }}
       />
       <Tabs.Screen name="shop/[slug]" options={{ href: null, title: 'Shop' }} />
     </Tabs>
