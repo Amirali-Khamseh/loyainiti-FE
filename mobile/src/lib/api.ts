@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { API_URL } from './auth';
 
@@ -34,13 +35,40 @@ function buildUrl(path: string, query?: RequestOpts['query']): string {
 }
 
 /**
+ * Read the bearer token without ever throwing.
+ *
+ * - Native (iOS/Android): expo-secure-store via Keychain / Keystore.
+ * - Web: SecureStore throws ("not supported on web"); fall back to
+ *   localStorage, which is what @better-auth/expo's web shim writes to.
+ *
+ * Failures return null so public endpoints (the bulk of the surface area)
+ * still work even when no token is available - much friendlier than the
+ * previous behaviour where a SecureStore exception killed every fetch
+ * before it even left api.ts.
+ */
+async function readToken(): Promise<string | null> {
+  if (Platform.OS === 'web') {
+    try {
+      return typeof window !== 'undefined' ? window.localStorage.getItem(TOKEN_KEY) : null;
+    } catch {
+      return null;
+    }
+  }
+  try {
+    return await SecureStore.getItemAsync(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetch wrapper that auto-attaches the Better Auth bearer token persisted by
- * `@better-auth/expo` to `expo-secure-store`. The token key matches the
- * `storagePrefix` configured in `src/lib/auth.ts`.
+ * `@better-auth/expo`. The token key matches the `storagePrefix` configured
+ * in `src/lib/auth.ts`.
  */
 export async function api<T = unknown>(path: string, opts: RequestOpts = {}): Promise<T> {
   const { method = 'GET', body, query, headers } = opts;
-  const token = await SecureStore.getItemAsync(TOKEN_KEY);
+  const token = await readToken();
 
   const res = await fetch(buildUrl(path, query), {
     method,
