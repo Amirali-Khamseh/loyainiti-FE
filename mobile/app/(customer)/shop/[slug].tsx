@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Pressable, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { ScrollView, View, Pressable, Image, TextInput, Alert } from 'react-native';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import { Lock } from 'lucide-react-native';
+import { Lock, Star } from 'lucide-react-native';
 import { api, ApiError } from '../../../src/lib/api';
 import { auth } from '../../../src/lib/auth';
 import { r2Url } from '../../../src/lib/media';
 import { Card } from '../../../src/components/Card';
 import { Typo } from '../../../src/components/Heading';
 import { LoyaltyStamp } from '../../../src/components/LoyaltyStamp';
+import { StarRating } from '../../../src/components/StarRating';
+import { Button } from '../../../src/components/Button';
 import { tokens } from '../../../src/design-system/tokens';
 
 type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
@@ -58,7 +60,21 @@ type Membership = {
   program: null | { requiredVisits: number };
 };
 
-type Tab = 'public' | 'member' | 'rewards';
+type ReviewImage = { id: string; r2Key: string; sortOrder: number };
+type Review = {
+  id: string;
+  customerUserId: string;
+  customerName: string;
+  rating: number;
+  comment: string | null;
+  isHidden: boolean;
+  images: ReviewImage[];
+  createdAt: string;
+  isOwn: boolean;
+};
+type ReviewsData = { ratingAvg: number | null; ratingCount: number; reviews: Review[] };
+
+type Tab = 'public' | 'member' | 'rewards' | 'reviews';
 
 const DAYS: [DayKey, string][] = [
   ['mon', 'Monday'],
@@ -99,6 +115,10 @@ export default function ShopDetail() {
     queryKey: ['my-memberships'],
     queryFn: () => api<Membership[]>('/api/me/memberships'),
     enabled: !!session,
+  });
+  const reviewsQuery = useQuery({
+    queryKey: ['reviews', slug],
+    queryFn: () => api<ReviewsData>(`/api/b/${slug}/reviews`),
   });
 
   if (!business.data) return null;
@@ -209,21 +229,38 @@ export default function ShopDetail() {
           borderColor: tokens.colors.borderSubtle,
         }}
       >
-        {(['public', 'member', 'rewards'] as Tab[]).map((t) => (
+        {(['public', 'member', 'rewards', 'reviews'] as Tab[]).map((t) => (
           <Pressable
             key={t}
             onPress={() => setTab(t)}
             style={{
               paddingVertical: 12,
-              paddingHorizontal: 16,
+              paddingHorizontal: 12,
               borderBottomWidth: tab === t ? 2 : 0,
               borderColor: tokens.colors.action,
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              {t === 'reviews' && (
+                <Star
+                  size={13}
+                  color={tab === t ? tokens.colors.action : tokens.colors.fg2}
+                />
+              )}
               <Typo variant="body" color={tab === t ? tokens.colors.action : tokens.colors.fg2}>
-                {t === 'public' ? 'Public' : t === 'member' ? 'Member' : 'Rewards'}
+                {t === 'public'
+                  ? 'Public'
+                  : t === 'member'
+                    ? 'Member'
+                    : t === 'rewards'
+                      ? 'Rewards'
+                      : 'Reviews'}
               </Typo>
+              {t === 'reviews' && (reviewsQuery.data?.ratingCount ?? 0) > 0 && (
+                <Typo variant="bodySm" color={tokens.colors.fg3}>
+                  ({reviewsQuery.data?.ratingAvg?.toFixed(1)})
+                </Typo>
+              )}
               {t === 'member' && !membership && <Lock size={14} color={tokens.colors.fg3} />}
             </View>
           </Pressable>
@@ -249,6 +286,16 @@ export default function ShopDetail() {
           )}
           {session && !memberLocked && <MenuTreeView tree={memberMenu.data} />}
         </>
+      )}
+
+      {tab === 'reviews' && (
+        <ReviewsTab
+          slug={slug}
+          data={reviewsQuery.data}
+          loading={reviewsQuery.isLoading}
+          session={session}
+          hasMembership={!!membership}
+        />
       )}
 
       {tab === 'rewards' && (
@@ -317,6 +364,251 @@ function HoursDisplay({ hours }: { hours: OpeningHours }) {
           </View>
         );
       })}
+    </View>
+  );
+}
+
+/* ── Reviews tab ───────────────────────────────────────────────────── */
+
+function ReviewsTab({
+  slug,
+  data,
+  loading,
+  session,
+  hasMembership,
+}: {
+  slug: string;
+  data: ReviewsData | undefined;
+  loading: boolean;
+  session: { user: { id: string } } | null | undefined;
+  hasMembership: boolean;
+}) {
+  const qc = useQueryClient();
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editRating, setEditRating] = useState(0);
+  const [editComment, setEditComment] = useState('');
+
+  const invalidate = () => qc.invalidateQueries({ queryKey: ['reviews', slug] });
+
+  const ownReview = data?.reviews.find((r: Review) => r.isOwn);
+
+  const createMut = useMutation({
+    mutationFn: () =>
+      api(`/api/b/${slug}/reviews`, {
+        method: 'POST',
+        body: { rating, comment: comment.trim() || undefined },
+      }),
+    onSuccess: () => {
+      setRating(0);
+      setComment('');
+      invalidate();
+      Alert.alert('Posted', 'Thanks for the review!');
+    },
+    onError: (e) =>
+      Alert.alert('Could not post', e instanceof ApiError ? e.message : String(e)),
+  });
+
+  const updateMut = useMutation({
+    mutationFn: (id: string) =>
+      api(`/api/reviews/${id}`, {
+        method: 'PATCH',
+        body: { rating: editRating, comment: editComment.trim() || null },
+      }),
+    onSuccess: () => {
+      setEditId(null);
+      invalidate();
+    },
+    onError: (e) =>
+      Alert.alert('Could not update', e instanceof ApiError ? e.message : String(e)),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => api(`/api/reviews/${id}`, { method: 'DELETE' }),
+    onSuccess: () => invalidate(),
+    onError: (e) =>
+      Alert.alert('Could not delete', e instanceof ApiError ? e.message : String(e)),
+  });
+
+  if (loading) {
+    return (
+      <Typo variant="body" color={tokens.colors.fg3}>
+        Loading reviews…
+      </Typo>
+    );
+  }
+
+  return (
+    <View style={{ gap: 20 }}>
+      {/* Aggregate */}
+      {(data?.ratingCount ?? 0) > 0 && (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+          <Typo variant="numLg" style={{ fontSize: 36 }}>
+            {data!.ratingAvg?.toFixed(1)}
+          </Typo>
+          <View>
+            <StarRating value={Math.round(data!.ratingAvg ?? 0)} size={18} />
+            <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 4 }}>
+              {data!.ratingCount} review{data!.ratingCount !== 1 ? 's' : ''}
+            </Typo>
+          </View>
+        </View>
+      )}
+
+      {/* Write own review */}
+      {session && hasMembership && !ownReview && (
+        <Card style={{ gap: 10 }}>
+          <Typo variant="h3">Leave a review</Typo>
+          <StarRating value={rating} onChange={setRating} />
+          <TextInput
+            value={comment}
+            onChangeText={setComment}
+            multiline
+            numberOfLines={3}
+            placeholder="Share your experience…"
+            placeholderTextColor={tokens.colors.fg3}
+            style={{
+              padding: 10,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: tokens.colors.borderDefault,
+              backgroundColor: tokens.colors.bgCard,
+              color: tokens.colors.fg1,
+              fontFamily: tokens.fonts.body,
+              minHeight: 80,
+              textAlignVertical: 'top',
+            }}
+          />
+          <Button
+            onPress={() => createMut.mutate()}
+            disabled={rating === 0}
+            loading={createMut.isPending}
+          >
+            Post review
+          </Button>
+        </Card>
+      )}
+
+      {session && !hasMembership && (
+        <Card variant="muted">
+          <Typo variant="body" color={tokens.colors.fg2}>
+            Visit this business and get scanned first to leave a review.
+          </Typo>
+        </Card>
+      )}
+
+      {/* List */}
+      {(data?.reviews ?? []).length === 0 ? (
+        <Typo variant="body" color={tokens.colors.fg3}>
+          No reviews yet - be the first!
+        </Typo>
+      ) : (
+        <View style={{ gap: 12 }}>
+          {(data?.reviews ?? []).map((r: Review) => (
+            <Card key={r.id}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  flexWrap: 'wrap',
+                  gap: 10,
+                }}
+              >
+                <View>
+                  <Typo variant="body" style={{ fontWeight: '600' }}>
+                    {r.customerName}
+                  </Typo>
+                  <Typo variant="caption" color={tokens.colors.fg3}>
+                    {new Date(r.createdAt).toLocaleDateString()}
+                  </Typo>
+                </View>
+                {editId === r.id ? (
+                  <StarRating value={editRating} onChange={setEditRating} size={18} />
+                ) : (
+                  <StarRating value={r.rating} size={18} />
+                )}
+              </View>
+
+              {editId === r.id ? (
+                <View style={{ marginTop: 10, gap: 8 }}>
+                  <TextInput
+                    value={editComment}
+                    onChangeText={setEditComment}
+                    multiline
+                    numberOfLines={3}
+                    style={{
+                      padding: 10,
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: tokens.colors.borderDefault,
+                      backgroundColor: tokens.colors.bgCard,
+                      color: tokens.colors.fg1,
+                      fontFamily: tokens.fonts.body,
+                      minHeight: 70,
+                      textAlignVertical: 'top',
+                    }}
+                  />
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
+                    <Button
+                      size="sm"
+                      onPress={() => updateMut.mutate(r.id)}
+                      loading={updateMut.isPending}
+                      disabled={editRating === 0}
+                    >
+                      Save
+                    </Button>
+                    <Button size="sm" variant="ghost" onPress={() => setEditId(null)}>
+                      Cancel
+                    </Button>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  {r.comment && (
+                    <Typo variant="body" color={tokens.colors.fg2} style={{ marginTop: 10 }}>
+                      {r.comment}
+                    </Typo>
+                  )}
+                  {r.isOwn && (
+                    <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onPress={() => {
+                          setEditId(r.id);
+                          setEditRating(r.rating);
+                          setEditComment(r.comment ?? '');
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        loading={deleteMut.isPending}
+                        onPress={() =>
+                          Alert.alert('Delete review?', 'This cannot be undone.', [
+                            { text: 'Cancel', style: 'cancel' },
+                            {
+                              text: 'Delete',
+                              style: 'destructive',
+                              onPress: () => deleteMut.mutate(r.id),
+                            },
+                          ])
+                        }
+                      >
+                        Delete
+                      </Button>
+                    </View>
+                  )}
+                </>
+              )}
+            </Card>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
