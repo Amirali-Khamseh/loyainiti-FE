@@ -20,9 +20,13 @@ export function ForgotPasswordPage() {
   const onSubmit = handleSubmit(async ({ email }) => {
     setSubmitting(true);
     try {
-      await api('/api/auth/forget-password', {
+      // Better Auth 1.6 renamed the endpoint from /forget-password to
+      // /request-password-reset. The redirectTo URL is where the user lands
+      // AFTER clicking the email link (the BE pre-validates the token, then
+      // redirects there with ?token=... or ?error=INVALID_TOKEN).
+      await api('/api/auth/request-password-reset', {
         method: 'POST',
-        body: { email, redirectTo: `${window.location.origin}/sign-in` },
+        body: { email, redirectTo: `${window.location.origin}/reset-password` },
       });
       setSent(true);
       toast.success('Check your email for a reset link');
@@ -50,7 +54,7 @@ export function ForgotPasswordPage() {
     >
       {sent ? (
         <p style={{ font: 'var(--t-body)', color: 'var(--fg-2)', margin: 0 }}>
-          In development the link is printed to the backend logs (no email is sent yet).
+          Check your inbox. The link expires in one hour.
         </p>
       ) : (
         <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
