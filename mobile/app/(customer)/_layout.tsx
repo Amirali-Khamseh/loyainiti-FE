@@ -49,6 +49,7 @@ export default function CustomerLayout() {
         }}
       />
       <Tabs.Screen name="shop/[slug]" options={{ href: null, title: 'Shop' }} />
+      <Tabs.Screen name="categories/[mainSlug]" options={{ href: null, title: 'Category' }} />
     </Tabs>
   );
 }
