@@ -193,7 +193,7 @@ export default function Explore() {
               Couldn't load shops: {(businesses.error as Error).message}
             </Typo>
           )}
-          {businesses.data?.map((b) => (
+          {businesses.data?.map((b: Business) => (
             <Pressable
               key={b.id}
               onPress={() => router.push(`/(customer)/shop/${b.slug}` as const)}
