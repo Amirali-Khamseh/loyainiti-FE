@@ -15,7 +15,7 @@
  *    categories, hours and photos.
  */
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Pressable, Image, TextInput, Alert, Platform } from 'react-native';
+import { ScrollView, View, Pressable, Image, TextInput, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
@@ -27,6 +27,7 @@ import { getActiveBusinessId, setActiveBusinessId } from '../../src/lib/activeBu
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { Card } from '../../src/components/Card';
+import { ConfirmDialog } from '../../src/components/Modal';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
@@ -472,36 +473,42 @@ function EditBusiness({ businessId }: { businessId: string }) {
 function SignOutButton() {
   const router = useRouter();
   const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+
   const doSignOut = async () => {
-    await auth.signOut();
-    qc.clear();
-    router.replace('/(auth)/sign-in');
+    setBusy(true);
+    try {
+      await auth.signOut();
+      qc.clear();
+      router.replace('/(auth)/sign-in');
+    } finally {
+      setBusy(false);
+      setOpen(false);
+    }
   };
+
   return (
-    <Button
-      variant="ghost"
-      onPress={() => {
-        // Alert.alert is native-only - on web it silently no-ops and the
-        // button looks broken. Use window.confirm on web.
-        if (Platform.OS === 'web') {
-          if (window.confirm('Sign out? You can sign back in any time.')) {
-            doSignOut();
-          }
-          return;
-        }
-        Alert.alert('Sign out?', 'You can sign back in any time.', [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Sign out', style: 'destructive', onPress: doSignOut },
-        ]);
-      }}
-    >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <LogOut size={16} color={tokens.colors.fg2} />
-        <Typo variant="body" color={tokens.colors.fg2}>
-          Sign out
-        </Typo>
-      </View>
-    </Button>
+    <>
+      <Button variant="ghost" onPress={() => setOpen(true)}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <LogOut size={16} color={tokens.colors.fg2} />
+          <Typo variant="body" color={tokens.colors.fg2}>
+            Sign out
+          </Typo>
+        </View>
+      </Button>
+      <ConfirmDialog
+        visible={open}
+        title="Sign out?"
+        message="You can sign back in any time."
+        confirmLabel="Sign out"
+        destructive
+        loading={busy}
+        onConfirm={doSignOut}
+        onCancel={() => setOpen(false)}
+      />
+    </>
   );
 }
 

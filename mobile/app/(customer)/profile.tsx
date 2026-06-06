@@ -8,7 +8,7 @@
  * Google photo with no further code changes.
  */
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, TextInput, Pressable, Image, Alert, Platform } from 'react-native';
+import { ScrollView, View, TextInput, Pressable, Image, Alert } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,6 +19,7 @@ import { r2Url } from '../../src/lib/media';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { Card } from '../../src/components/Card';
+import { ConfirmDialog } from '../../src/components/Modal';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
@@ -70,10 +71,19 @@ export default function CustomerProfileScreen() {
   const qc = useQueryClient();
   const me = useQuery({ queryKey: ['me'], queryFn: () => api<Me>('/api/me') });
 
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+
   const signOut = async () => {
-    await auth.signOut();
-    qc.clear();
-    router.replace('/(auth)/sign-in');
+    setSigningOut(true);
+    try {
+      await auth.signOut();
+      qc.clear();
+      router.replace('/(auth)/sign-in');
+    } finally {
+      setSigningOut(false);
+      setSignOutOpen(false);
+    }
   };
 
   const [displayName, setDisplayName] = useState('');
@@ -282,23 +292,7 @@ export default function CustomerProfileScreen() {
         </Typo>
       </Card>
 
-      <Button
-        variant="ghost"
-        onPress={() => {
-          // Alert.alert is native-only - on web it silently no-ops and the
-          // button looks broken. Use window.confirm on web.
-          if (Platform.OS === 'web') {
-            if (window.confirm('Sign out? You can sign back in any time.')) {
-              signOut();
-            }
-            return;
-          }
-          Alert.alert('Sign out?', 'You can sign back in any time.', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Sign out', style: 'destructive', onPress: signOut },
-          ]);
-        }}
-      >
+      <Button variant="ghost" onPress={() => setSignOutOpen(true)}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <LogOut size={16} color={tokens.colors.fg2} />
           <Typo variant="body" color={tokens.colors.fg2}>
@@ -306,6 +300,17 @@ export default function CustomerProfileScreen() {
           </Typo>
         </View>
       </Button>
+
+      <ConfirmDialog
+        visible={signOutOpen}
+        title="Sign out?"
+        message="You can sign back in any time."
+        confirmLabel="Sign out"
+        destructive
+        loading={signingOut}
+        onConfirm={signOut}
+        onCancel={() => setSignOutOpen(false)}
+      />
     </ScrollView>
   );
 }
