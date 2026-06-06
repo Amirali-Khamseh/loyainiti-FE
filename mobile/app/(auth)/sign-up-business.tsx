@@ -49,7 +49,7 @@ export default function SignUpBusiness() {
       // Wait for session to be persisted before the next screen's API calls
       // fire - same fix as the web SignUpBusinessPage.
       await auth.getSession();
-      router.replace('/(business)/profile?onboarding=1');
+      router.replace('/(business)/business?onboarding=1');
     } finally {
       setBusy(false);
     }

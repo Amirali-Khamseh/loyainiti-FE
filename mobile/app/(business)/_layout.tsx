@@ -60,9 +60,9 @@ export default function BusinessLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="business"
         options={{
-          title: 'Profile',
+          title: 'Business',
           tabBarIcon: ({ color, size }) => <Store color={color} size={size} />,
         }}
       />
