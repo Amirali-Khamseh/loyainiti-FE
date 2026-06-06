@@ -19,7 +19,7 @@ import { ScrollView, View, Pressable, Image, TextInput, Alert } from 'react-nati
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
-import { Check, Upload, Trash2 } from 'lucide-react-native';
+import { Check, Upload, Trash2, LogOut } from 'lucide-react-native';
 import { api, ApiError } from '../../src/lib/api';
 import { auth } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
@@ -463,7 +463,37 @@ function EditBusiness({ businessId }: { businessId: string }) {
           Save changes
         </Button>
       </Card>
+
+      <SignOutButton />
     </ScrollView>
+  );
+}
+
+function SignOutButton() {
+  const router = useRouter();
+  const qc = useQueryClient();
+  const doSignOut = async () => {
+    await auth.signOut();
+    qc.clear();
+    router.replace('/(auth)/sign-in');
+  };
+  return (
+    <Button
+      variant="ghost"
+      onPress={() =>
+        Alert.alert('Sign out?', 'You can sign back in any time.', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Sign out', style: 'destructive', onPress: doSignOut },
+        ])
+      }
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <LogOut size={16} color={tokens.colors.fg2} />
+        <Typo variant="body" color={tokens.colors.fg2}>
+          Sign out
+        </Typo>
+      </View>
+    </Button>
   );
 }
 
