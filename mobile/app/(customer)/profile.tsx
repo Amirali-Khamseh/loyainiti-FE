@@ -10,9 +10,11 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, TextInput, Pressable, Image, Alert } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { Upload, Trash2, UserCircle } from 'lucide-react-native';
+import { Upload, Trash2, UserCircle, LogOut } from 'lucide-react-native';
 import { api, ApiError } from '../../src/lib/api';
+import { auth } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
@@ -64,8 +66,15 @@ async function pickAndUploadAvatar(): Promise<string | null> {
 }
 
 export default function CustomerProfileScreen() {
+  const router = useRouter();
   const qc = useQueryClient();
   const me = useQuery({ queryKey: ['me'], queryFn: () => api<Me>('/api/me') });
+
+  const signOut = async () => {
+    await auth.signOut();
+    qc.clear();
+    router.replace('/(auth)/sign-in');
+  };
 
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
@@ -272,6 +281,23 @@ export default function CustomerProfileScreen() {
           Sign-in details and password are managed separately - use Forgot password from sign-in.
         </Typo>
       </Card>
+
+      <Button
+        variant="ghost"
+        onPress={() =>
+          Alert.alert('Sign out?', 'You can sign back in any time.', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Sign out', style: 'destructive', onPress: signOut },
+          ])
+        }
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <LogOut size={16} color={tokens.colors.fg2} />
+          <Typo variant="body" color={tokens.colors.fg2}>
+            Sign out
+          </Typo>
+        </View>
+      </Button>
     </ScrollView>
   );
 }
