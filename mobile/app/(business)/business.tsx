@@ -15,7 +15,7 @@
  *    categories, hours and photos.
  */
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Pressable, Image, TextInput, Alert } from 'react-native';
+import { ScrollView, View, Pressable, Image, TextInput, Alert, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
@@ -480,12 +480,20 @@ function SignOutButton() {
   return (
     <Button
       variant="ghost"
-      onPress={() =>
+      onPress={() => {
+        // Alert.alert is native-only - on web it silently no-ops and the
+        // button looks broken. Use window.confirm on web.
+        if (Platform.OS === 'web') {
+          if (window.confirm('Sign out? You can sign back in any time.')) {
+            doSignOut();
+          }
+          return;
+        }
         Alert.alert('Sign out?', 'You can sign back in any time.', [
           { text: 'Cancel', style: 'cancel' },
           { text: 'Sign out', style: 'destructive', onPress: doSignOut },
-        ])
-      }
+        ]);
+      }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <LogOut size={16} color={tokens.colors.fg2} />
