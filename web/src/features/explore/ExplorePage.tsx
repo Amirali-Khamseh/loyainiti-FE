@@ -46,9 +46,11 @@ export function ExplorePage() {
   const { data: session } = auth.useSession();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
+  // Main categories only - filtering by a main slug returns every business in
+  // any of its sub-categories (BE expands the slug). Keeps the chip row short.
   const categories = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => api<Category[]>('/api/categories'),
+    queryKey: ['categories-main'],
+    queryFn: () => api<Category[]>('/api/categories/main'),
   });
 
   const businesses = useQuery({
