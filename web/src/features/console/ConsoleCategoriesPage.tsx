@@ -6,6 +6,7 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Card } from '../../components/Card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/Select';
+import { IconPicker, iconByName } from '../../components/IconPicker';
 import { useToast } from '../../components/Toast';
 
 type Category = {
@@ -126,8 +127,15 @@ export function ConsoleCategoriesPage() {
       {/* Create */}
       <Card padding={20}>
         <p className="label" style={{ marginBottom: 10 }}>Add a category</p>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 200px' }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
+          {/* Icon picker only matters for main categories (parent = None). */}
+          {newParent === NONE && (
+            <div>
+              <p className="label" style={{ marginBottom: 6 }}>Icon</p>
+              <IconPicker value={newIcon || null} onChange={(v) => setNewIcon(v ?? '')} />
+            </div>
+          )}
+          <div style={{ flex: 1, minWidth: 0 }}>
             <Input
               label="Name"
               value={newName}
@@ -147,15 +155,6 @@ export function ConsoleCategoriesPage() {
               </SelectContent>
             </Select>
           </div>
-          <div style={{ width: 160 }}>
-            <Input
-              label="Icon (main only)"
-              value={newIcon}
-              onChange={(e) => setNewIcon(e.target.value)}
-              placeholder="coffee"
-              hint="Lucide name"
-            />
-          </div>
           <Button
             onClick={() => { if (newName.trim()) createMut.mutate(); }}
             loading={createMut.isPending}
@@ -165,8 +164,8 @@ export function ConsoleCategoriesPage() {
           </Button>
         </div>
         <p className="caption" style={{ color: 'var(--fg-3)', marginTop: 10 }}>
-          Icons use <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" style={{ color: 'var(--action)' }}>Lucide</a> names
-          (e.g. <code>utensils-crossed</code>, <code>dumbbell</code>, <code>scissors</code>). Only main categories show an icon.
+          Main categories show as cards with an icon on the Explore page. Pick a parent to make
+          this a sub-category instead (sub-categories don't need an icon).
         </p>
       </Card>
 
@@ -262,14 +261,18 @@ function CategoryRow({
   saving: boolean;
 }) {
   if (editing) {
+    const willBeMain = editParent === NONE;
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px' }}>
+        {willBeMain && (
+          <IconPicker value={editIcon || null} onChange={(v) => setEditIcon(v ?? '')} />
+        )}
         <input
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
           autoFocus
           style={{
-            flex: '1 1 160px', padding: '8px 12px', borderRadius: 10,
+            flex: 1, minWidth: 0, padding: '8px 12px', borderRadius: 10,
             border: '1px solid var(--action)', font: 'var(--t-body)',
             background: 'var(--bg-card)', color: 'var(--fg-1)', outline: 'none',
           }}
@@ -284,32 +287,30 @@ function CategoryRow({
             ))}
           </SelectContent>
         </Select>
-        <input
-          value={editIcon}
-          onChange={(e) => setEditIcon(e.target.value)}
-          placeholder="icon"
-          style={{
-            width: 120, padding: '8px 12px', borderRadius: 10,
-            border: '1px solid var(--border-default)', font: 'var(--t-body)',
-            background: 'var(--bg-card)', color: 'var(--fg-1)', outline: 'none',
-          }}
-        />
         <button onClick={onSave} disabled={saving} style={iconBtnStyle}><Check size={16} color="var(--success)" /></button>
         <button onClick={onCancel} style={iconBtnStyle}><X size={16} color="var(--fg-3)" /></button>
       </div>
     );
   }
 
+  const RowIcon = iconByName(cat.icon);
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px' }}>
+      {isMain && (
+        <span
+          style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 28, height: 28, borderRadius: 8,
+            background: cat.icon ? 'var(--action-subtle-bg)' : 'transparent',
+            color: cat.icon ? 'var(--action)' : 'var(--fg-3)',
+          }}
+        >
+          <RowIcon size={16} />
+        </span>
+      )}
       <p style={{ font: 'var(--t-body)', margin: 0, flex: 1, fontWeight: isMain ? 600 : 400 }}>
         {cat.name}
       </p>
-      {isMain && cat.icon && (
-        <span className="mono" style={{ font: 'var(--t-caption)', color: 'var(--action)' }}>
-          {cat.icon}
-        </span>
-      )}
       <span className="mono" style={{ font: 'var(--t-caption)', color: 'var(--fg-3)' }}>{cat.slug}</span>
       <button onClick={onStartEdit} style={iconBtnStyle}><Pencil size={15} color="var(--fg-2)" /></button>
       <button onClick={onDelete} style={iconBtnStyle}><Trash2 size={15} color="var(--danger)" /></button>
