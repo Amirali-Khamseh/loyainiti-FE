@@ -8,17 +8,12 @@
    ========================================================================= */
 
 /* ----- Fonts -------------------------------------------------------------
-   Display:  Fraunces  - variable serif (optical sizing) for hero numbers,
-                          card titles. Note: Fraunces is on our project's
-                          "avoid" list as overused; we use it sparingly and
-                          only at large sizes for editorial flavor. Substitute
-                          Source Serif 4 if you want a quieter alternative.
-   Body:     Söhne     - proprietary; we substitute Inter Tight as the nearest
-                          Google Fonts match (geometric grotesk, similar
-                          width). FLAG: please ship Söhne if available.
-   Mono:     JetBrains Mono - for KPI numerals, code, QR-code hashes.
+   Roboto across the whole app (display, body and numerals). Self-hosted via
+   @fontsource/roboto (imported in main.tsx); the @import below is a CDN
+   fallback so styles still render if the bundled fonts fail to load.
+   Weights used: 400 / 500 / 700.
    --------------------------------------------------------------------- */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 :root {
   /* ===== Brand core ===== */
@@ -98,9 +93,12 @@
   --danger-border: var(--rose-200);
 
   /* ===== Type families ===== */
-  --font-display: 'Fraunces', 'Source Serif 4', Georgia, serif;
-  --font-body:    'Inter Tight', 'Söhne', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono:    'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  /* All three roles now resolve to Roboto. The variable names are kept so
+     existing component styles (var(--font-display) etc.) don't need touching.
+     Numerals keep tabular figures via font-feature-settings where needed. */
+  --font-display: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body:    'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'Roboto', ui-monospace, 'SF Mono', monospace;
 
   /* ===== Type scale (px, line-height, weight) ===== */
   --t-display-1: 700 56px/1.04 var(--font-display);
