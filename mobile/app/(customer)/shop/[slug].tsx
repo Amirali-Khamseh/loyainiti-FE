@@ -138,7 +138,7 @@ export default function ShopDetail() {
       {coverUrl && (
         <Image
           source={{ uri: coverUrl }}
-          style={{ width: '100%', height: 180, borderRadius: 16 }}
+          style={{ width: '100%', height: 180, borderRadius: 4 }}
         />
       )}
 
@@ -151,7 +151,7 @@ export default function ShopDetail() {
               style={{
                 width: 56,
                 height: 56,
-                borderRadius: 12,
+                borderRadius: 4,
                 borderWidth: 1,
                 borderColor: tokens.colors.borderSubtle,
               }}
@@ -173,7 +173,7 @@ export default function ShopDetail() {
                 style={{
                   paddingVertical: 3,
                   paddingHorizontal: 10,
-                  borderRadius: 999,
+                  borderRadius: 4,
                   backgroundColor: tokens.colors.actionSubtleBg,
                 }}
               >
@@ -211,7 +211,7 @@ export default function ShopDetail() {
                 style={{
                   width: 140,
                   height: 140,
-                  borderRadius: 12,
+                  borderRadius: 4,
                   borderWidth: 1,
                   borderColor: tokens.colors.borderSubtle,
                 }}
@@ -470,7 +470,7 @@ function ReviewsTab({
             placeholderTextColor={tokens.colors.fg3}
             style={{
               padding: 10,
-              borderRadius: 12,
+              borderRadius: 4,
               borderWidth: 1,
               borderColor: tokens.colors.borderDefault,
               backgroundColor: tokens.colors.bgCard,
@@ -540,7 +540,7 @@ function ReviewsTab({
                     numberOfLines={3}
                     style={{
                       padding: 10,
-                      borderRadius: 12,
+                      borderRadius: 4,
                       borderWidth: 1,
                       borderColor: tokens.colors.borderDefault,
                       backgroundColor: tokens.colors.bgCard,

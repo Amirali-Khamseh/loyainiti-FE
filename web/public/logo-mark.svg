@@ -1,5 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Loyainiti mark">
-  <rect width="32" height="32" rx="8" fill="#1F1611"></rect>
-  <circle cx="16" cy="16" r="6" fill="#D4A24A"></circle>
-  <circle cx="16" cy="16" r="9.5" fill="none" stroke="#D4A24A" stroke-width="1" stroke-dasharray="1.5 2"></circle>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Loyainiti">
+  <!-- dark canvas bg with rounded corners -->
+  <rect width="32" height="32" rx="6" fill="#060E2B"/>
+  <!-- infinity mark: same bezier paths as the logo, scaled to fit 29×9 px centred in the 32×32 tile -->
+  <g transform="translate(3.5 12.8) scale(0.115)">
+    <path fill-rule="evenodd" fill="#116BF8" d="
+      M 109 28
+      C 76 -6, -18 -10, -18 28 C -18 66, 76 62, 109 28
+      C 142 -6, 236 -10, 236 28 C 236 66, 142 62, 109 28 Z
+      M 109 28
+      C 95 12, 36 12, 36 28 C 36 44, 95 44, 109 28
+      C 123 12, 182 12, 182 28 C 182 44, 123 44, 109 28 Z"/>
+  </g>
 </svg>

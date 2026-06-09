@@ -26,8 +26,8 @@ export function Leaderboard({ title, rows }: { title: string; rows: Row[] }) {
                 alignItems: 'center',
                 gap: 12,
                 padding: '8px 12px',
-                borderRadius: 12,
-                background: idx === 0 ? 'var(--gold-50)' : 'transparent',
+                borderRadius: 4,
+                background: idx === 0 ? 'var(--cyan-50)' : 'transparent',
               }}
             >
               <span

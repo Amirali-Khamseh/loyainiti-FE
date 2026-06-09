@@ -31,8 +31,8 @@ export function StarRating({ value, onChange, size = 22 }: Props) {
         >
           <Star
             size={size}
-            fill={s <= display ? tokens.colors.gold500 : 'transparent'}
-            color={s <= display ? tokens.colors.gold500 : tokens.colors.borderDefault}
+            fill={s <= display ? tokens.colors.cyan500 : 'transparent'}
+            color={s <= display ? tokens.colors.cyan500 : tokens.colors.borderDefault}
           />
         </Pressable>
       ))}

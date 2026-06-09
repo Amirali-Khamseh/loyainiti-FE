@@ -115,12 +115,12 @@ export function ExplorePage() {
                   </p>
                   {m.program ? (
                     <div style={{ marginTop: 12 }}>
-                      <div style={{ height: 8, background: 'var(--paper-200)', borderRadius: 999, overflow: 'hidden' }}>
+                      <div style={{ height: 8, background: 'var(--slate-200)', borderRadius: 4, overflow: 'hidden' }}>
                         <div
                           style={{
                             width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program.requiredVisits) * 100)}%`,
                             height: '100%',
-                            background: m.program.rewardEligible ? 'var(--success)' : 'var(--gold-500)',
+                            background: m.program.rewardEligible ? 'var(--success)' : 'var(--cyan-500)',
                             transition: 'width var(--dur-3) var(--ease-out)',
                           }}
                         />
@@ -156,13 +156,13 @@ export function ExplorePage() {
         )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {businesses.data?.map((b) => (
-            <Link key={b.id} to={`/b/${b.slug}`} style={{ textDecoration: 'none' }}>
-              <Card>
+            <Link key={b.id} to={`/b/${b.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+              <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {r2Url(b.coverR2Key) && (
                   <img
                     src={r2Url(b.coverR2Key)!}
                     alt=""
-                    style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 12, marginBottom: 12 }}
+                    style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 4, marginBottom: 12 }}
                   />
                 )}
                 <h3 className="h3">{b.name}</h3>
@@ -170,21 +170,22 @@ export function ExplorePage() {
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
                     {b.categories.slice(0, 3).map((c) => (
                       <span key={c.id} className="caption" style={{
-                        padding: '2px 8px', borderRadius: 999,
+                        padding: '2px 8px', borderRadius: 4,
                         background: 'var(--action-subtle-bg)', color: 'var(--action-subtle-fg)',
+                        border: '0.5px solid rgba(255,255,255,0.35)',
                       }}>
                         {c.name}
                       </span>
                     ))}
                   </div>
                 )}
-                <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)' }}>
+                <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)', flex: 1 }}>
                   {b.description ?? 'A new shop in the network.'}
                 </p>
                 {(b.ratingCount ?? 0) > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-                    <Star size={13} fill="var(--gold-500)" color="var(--gold-500)" />
-                    <span style={{ font: 'var(--t-body-sm)', fontWeight: 600 }}>
+                    <Star size={13} fill="var(--cyan-500)" color="var(--cyan-500)" />
+                    <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, color: '#ffffff' }}>
                       {Number(b.ratingAvg).toFixed(1)}
                     </span>
                     <span className="caption" style={{ color: 'var(--fg-3)' }}>
@@ -209,7 +210,7 @@ export function ExplorePage() {
 function chipStyle(active: boolean): React.CSSProperties {
   return {
     padding: '6px 14px',
-    borderRadius: 999,
+    borderRadius: 4,
     border: `1px solid ${active ? 'var(--action)' : 'var(--border-default)'}`,
     background: active ? 'var(--action-subtle-bg)' : 'var(--bg-card)',
     color: active ? 'var(--action-subtle-fg)' : 'var(--fg-2)',

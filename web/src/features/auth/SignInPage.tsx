@@ -110,7 +110,7 @@ const signupCardStyle: React.CSSProperties = {
   flexDirection: 'column',
   alignItems: 'center',
   padding: '14px 12px',
-  borderRadius: 12,
+  borderRadius: 4,
   border: '1px solid var(--border-default)',
   background: 'var(--bg-muted)',
   cursor: 'pointer',

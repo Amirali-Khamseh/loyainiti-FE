@@ -26,7 +26,7 @@ export function Card({ variant = 'default', padding = 20, style, ...rest }: Card
     <div
       {...rest}
       style={{
-        borderRadius: 16,
+        borderRadius: 4,
         padding,
         ...variants[variant],
         ...style,

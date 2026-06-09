@@ -52,7 +52,7 @@ export function ConsoleHome() {
               gap: 6,
               background: 'transparent',
               border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: 10,
+              borderRadius: 4,
               padding: '6px 12px',
               font: 'var(--t-body-sm)',
               color: 'inherit',

@@ -33,7 +33,7 @@ export function ConsoleLayout() {
             {navItems.map((it) => (
               <NavLink key={it.to} to={it.to} end={it.end} style={({ isActive }) => ({
                 display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '6px 12px', borderRadius: 8, textDecoration: 'none',
+                padding: '6px 12px', borderRadius: 4, textDecoration: 'none',
                 font: 'var(--t-body-sm)', fontWeight: 500,
                 color: isActive ? 'var(--fg-on-dark)' : 'rgba(255,255,255,0.55)',
                 background: isActive ? 'rgba(255,255,255,0.12)' : 'transparent',
@@ -51,7 +51,7 @@ export function ConsoleLayout() {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer',
                 background: 'transparent', border: '1px solid rgba(255,255,255,0.25)',
-                borderRadius: 8, padding: '6px 12px', font: 'var(--t-body-sm)',
+                borderRadius: 4, padding: '6px 12px', font: 'var(--t-body-sm)',
                 color: 'var(--fg-on-dark)',
               }}>
               <LogOut size={14} /> Sign out

@@ -175,7 +175,7 @@ export default function CustomerProfileScreen() {
             style={{
               width: 80,
               height: 80,
-              borderRadius: 40,
+              borderRadius: 4,
               backgroundColor: tokens.colors.bgMuted,
               borderWidth: 1,
               borderColor: tokens.colors.borderDefault,
@@ -239,7 +239,7 @@ export default function CustomerProfileScreen() {
             placeholderTextColor={tokens.colors.fg3}
             style={{
               padding: 12,
-              borderRadius: 12,
+              borderRadius: 4,
               borderWidth: 1,
               borderColor: tokens.colors.borderDefault,
               backgroundColor: tokens.colors.bgCard,

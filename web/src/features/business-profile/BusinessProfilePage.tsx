@@ -413,7 +413,7 @@ function CategoryPicker({ selected, onChange }: { selected: string[]; onChange: 
               alignItems: 'center',
               gap: 6,
               padding: '8px 14px',
-              borderRadius: 999,
+              borderRadius: 4,
               cursor: 'pointer',
               font: 'var(--t-body-sm)',
               fontWeight: 500,
@@ -524,7 +524,7 @@ function PhotoManager({
               style={{
                 position: 'relative',
                 aspectRatio: '1',
-                borderRadius: 12,
+                borderRadius: 4,
                 overflow: 'hidden',
                 border: '1px solid var(--border-subtle)',
                 background: 'var(--bg-muted)',
@@ -545,7 +545,7 @@ function PhotoManager({
                   right: 6,
                   display: 'inline-flex',
                   padding: 6,
-                  borderRadius: 8,
+                  borderRadius: 4,
                   border: 'none',
                   background: 'rgba(0,0,0,0.6)',
                   color: '#fff',
@@ -634,7 +634,7 @@ function UploadField({
       <div
         style={{
           border: '1px dashed var(--border-default)',
-          borderRadius: 12,
+          borderRadius: 4,
           padding: 16,
           display: 'flex',
           alignItems: 'center',
@@ -672,7 +672,7 @@ function UploadField({
 const timeStyle: React.CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid var(--border-default)',
-  borderRadius: 10,
+  borderRadius: 4,
   padding: '8px 12px',
   font: 'var(--t-body)',
   color: 'var(--fg-1)',

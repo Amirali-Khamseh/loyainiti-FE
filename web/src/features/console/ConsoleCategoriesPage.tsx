@@ -272,7 +272,7 @@ function CategoryRow({
           onChange={(e) => setEditName(e.target.value)}
           autoFocus
           style={{
-            flex: 1, minWidth: 0, padding: '8px 12px', borderRadius: 10,
+            flex: 1, minWidth: 0, padding: '8px 12px', borderRadius: 4,
             border: '1px solid var(--action)', font: 'var(--t-body)',
             background: 'var(--bg-card)', color: 'var(--fg-1)', outline: 'none',
           }}
@@ -300,7 +300,7 @@ function CategoryRow({
         <span
           style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 28, height: 28, borderRadius: 8,
+            width: 28, height: 28, borderRadius: 4,
             background: cat.icon ? 'var(--action-subtle-bg)' : 'transparent',
             color: cat.icon ? 'var(--action)' : 'var(--fg-3)',
           }}
@@ -320,6 +320,6 @@ function CategoryRow({
 
 const iconBtnStyle: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-  background: 'transparent', border: 'none', padding: 6, borderRadius: 8,
+  background: 'transparent', border: 'none', padding: 6, borderRadius: 4,
   cursor: 'pointer',
 };

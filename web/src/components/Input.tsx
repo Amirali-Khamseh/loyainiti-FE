@@ -26,7 +26,7 @@ const fieldStyle: React.CSSProperties = {
   gap: 8,
   background: 'var(--bg-card)',
   border: '1px solid var(--border-default)',
-  borderRadius: 12,
+  borderRadius: 4,
   padding: '10px 14px',
   font: 'var(--t-body)',
   color: 'var(--fg-1)',

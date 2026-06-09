@@ -51,7 +51,7 @@ export function ConsoleBusinessesPage() {
         onChange={(e) => setSearch(e.target.value)}
         style={{
           width: '100%', maxWidth: 400, padding: '10px 14px',
-          borderRadius: 12, border: '1px solid var(--border-default)',
+          borderRadius: 4, border: '1px solid var(--border-default)',
           font: 'var(--t-body)', background: 'var(--bg-card)', color: 'var(--fg-1)',
         }}
       />
@@ -75,7 +75,7 @@ export function ConsoleBusinessesPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <p style={{ font: 'var(--t-body)', fontWeight: 600, margin: 0 }}>{b.name}</p>
                       <span className="caption" style={{
-                        padding: '2px 8px', borderRadius: 999,
+                        padding: '2px 8px', borderRadius: 4,
                         background: b.isPublished ? 'var(--success-bg)' : 'var(--bg-muted)',
                         color: b.isPublished ? 'var(--success)' : 'var(--fg-3)',
                       }}>

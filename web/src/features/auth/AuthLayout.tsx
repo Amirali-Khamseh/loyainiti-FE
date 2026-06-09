@@ -18,18 +18,18 @@ export function AuthLayout({ title, subtitle, children, footer }: Props) {
         placeItems: 'center',
         padding: 24,
         background:
-          'radial-gradient(1200px 600px at 80% -10%, var(--terracotta-50), transparent), var(--bg-canvas)',
+          'radial-gradient(900px 500px at 75% -5%, rgba(17,107,248,0.18), transparent), var(--bg-canvas)',
       }}
     >
       <div style={{ width: '100%', maxWidth: 440 }}>
         <Link to="/" style={{ display: 'inline-flex' }}>
-          <img src={logoUrl} alt="Loyainiti" style={{ height: 32, marginBottom: 32 }} />
+          <img src={logoUrl} alt="Loyainiti" style={{ height: 36, marginBottom: 32 }} />
         </Link>
         <div
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border-subtle)',
-            borderRadius: 20,
+            borderRadius: 4,
             padding: 32,
             boxShadow: 'var(--shadow-2)',
           }}

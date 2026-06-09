@@ -99,7 +99,7 @@ export default function Dashboard() {
                 gap: 12,
                 padding: 12,
                 borderRadius: tokens.radius.lg,
-                backgroundColor: i === 0 ? tokens.colors.gold50 : 'transparent',
+                backgroundColor: i === 0 ? tokens.colors.cyan50 : 'transparent',
               }}
             >
               <Typo variant="num" color={tokens.colors.fg3} style={{ width: 24, textAlign: 'right' }}>
