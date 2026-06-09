@@ -77,7 +77,7 @@ export function ConsoleLoginPage() {
           style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border-subtle)',
-            borderRadius: 20,
+            borderRadius: 4,
             padding: 32,
             boxShadow: 'var(--shadow-2)',
           }}

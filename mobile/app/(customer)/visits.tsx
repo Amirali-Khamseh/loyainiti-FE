@@ -52,8 +52,8 @@ export default function Visits() {
                   <View
                     style={{
                       height: 8,
-                      backgroundColor: tokens.colors.paper200,
-                      borderRadius: 999,
+                      backgroundColor: tokens.colors.slate200,
+                      borderRadius: 4,
                       overflow: 'hidden',
                     }}
                   >
@@ -61,7 +61,7 @@ export default function Visits() {
                       style={{
                         width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program!.requiredVisits) * 100)}%`,
                         height: '100%',
-                        backgroundColor: tokens.colors.gold500,
+                        backgroundColor: tokens.colors.cyan500,
                       }}
                     />
                   </View>

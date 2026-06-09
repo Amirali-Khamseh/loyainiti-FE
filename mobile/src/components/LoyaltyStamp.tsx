@@ -21,13 +21,13 @@ export function LoyaltyStamp({ required, earned, rewardLabel }: Props) {
             style={{
               width: 40,
               height: 40,
-              borderRadius: 999,
+              borderRadius: 4,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: filled ? tokens.colors.gold500 : 'transparent',
+              backgroundColor: filled ? tokens.colors.cyan500 : 'transparent',
               borderWidth: filled ? 1 : 1.5,
               borderStyle: filled ? 'solid' : 'dashed',
-              borderColor: filled ? tokens.colors.gold600 : tokens.colors.paper300,
+              borderColor: filled ? tokens.colors.cyan700 : tokens.colors.slate300,
             }}
           >
             <Text
@@ -35,7 +35,7 @@ export function LoyaltyStamp({ required, earned, rewardLabel }: Props) {
                 fontFamily: tokens.fonts.body,
                 fontWeight: '600',
                 fontSize: 13,
-                color: filled ? tokens.colors.espresso900 : tokens.colors.paper400,
+                color: filled ? tokens.colors.slate900 : tokens.colors.slate400,
               }}
             >
               {filled ? '★' : i + 1}

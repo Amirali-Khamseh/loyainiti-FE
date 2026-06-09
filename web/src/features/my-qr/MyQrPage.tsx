@@ -39,7 +39,7 @@ export function MyQrPage() {
           style={{
             padding: 20,
             background: '#fff',
-            borderRadius: 16,
+            borderRadius: 4,
             border: '1px solid var(--border-subtle)',
             boxShadow: 'var(--shadow-2)',
           }}

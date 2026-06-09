@@ -77,7 +77,7 @@ export default function CategoryDrillDown() {
             style={{
               width: 48,
               height: 48,
-              borderRadius: 12,
+              borderRadius: 4,
               backgroundColor: tokens.colors.actionSubtleBg,
               alignItems: 'center',
               justifyContent: 'center',
@@ -128,7 +128,7 @@ export default function CategoryDrillDown() {
                   {coverUrl && (
                     <Image
                       source={{ uri: coverUrl }}
-                      style={{ width: '100%', height: 120, borderRadius: 12, marginBottom: 12 }}
+                      style={{ width: '100%', height: 120, borderRadius: 4, marginBottom: 12 }}
                     />
                   )}
                   <View
@@ -145,7 +145,7 @@ export default function CategoryDrillDown() {
                           style={{
                             paddingVertical: 2,
                             paddingHorizontal: 8,
-                            borderRadius: 999,
+                            borderRadius: 4,
                             backgroundColor: tokens.colors.actionSubtleBg,
                           }}
                         >
@@ -161,7 +161,7 @@ export default function CategoryDrillDown() {
                   </Typo>
                   {(b.ratingCount ?? 0) > 0 && (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 }}>
-                      <Star size={13} color={tokens.colors.gold500} fill={tokens.colors.gold500} />
+                      <Star size={13} color={tokens.colors.cyan500} fill={tokens.colors.cyan500} />
                       <Typo variant="bodySm" style={{ fontWeight: '600' }}>
                         {Number(b.ratingAvg).toFixed(1)}
                       </Typo>
@@ -200,7 +200,7 @@ function Chip({
       style={{
         paddingVertical: 6,
         paddingHorizontal: 14,
-        borderRadius: 999,
+        borderRadius: 4,
         borderWidth: 1,
         borderColor: active ? tokens.colors.action : tokens.colors.borderDefault,
         backgroundColor: active ? tokens.colors.actionSubtleBg : tokens.colors.bgCard,

@@ -15,8 +15,8 @@ const headerStyle: React.CSSProperties = {
   position: 'sticky',
   top: 0,
   zIndex: 10,
-  background: 'rgba(251, 248, 243, 0.92)',
-  backdropFilter: 'blur(8px)',
+  background: 'rgba(13, 29, 92, 0.92)',
+  backdropFilter: 'blur(12px)',
   borderBottom: '1px solid var(--border-subtle)',
 };
 
@@ -25,7 +25,7 @@ const navLinkBase: React.CSSProperties = {
   alignItems: 'center',
   gap: 6,
   padding: '8px 12px',
-  borderRadius: 10,
+  borderRadius: 4,
   textDecoration: 'none',
   font: 'var(--t-body-sm)',
   fontWeight: 500,
@@ -113,7 +113,7 @@ export function AppShell() {
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     background: 'transparent', border: '1px solid var(--border-default)',
-                    borderRadius: 10, padding: '6px 12px', font: 'var(--t-body-sm)',
+                    borderRadius: 4, padding: '6px 12px', font: 'var(--t-body-sm)',
                     color: 'var(--fg-2)', cursor: 'pointer',
                   }}
                 >

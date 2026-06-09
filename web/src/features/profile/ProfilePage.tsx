@@ -199,7 +199,7 @@ export function ProfilePage() {
             rows={3}
             placeholder="Coffee lover, runner, generally insufferable on Mondays."
             style={{
-              width: '100%', padding: '10px 14px', borderRadius: 12,
+              width: '100%', padding: '10px 14px', borderRadius: 4,
               border: '1px solid var(--border-default)', font: 'var(--t-body)',
               background: 'var(--bg-card)', color: 'var(--fg-1)', resize: 'vertical',
               boxSizing: 'border-box', outline: 'none',

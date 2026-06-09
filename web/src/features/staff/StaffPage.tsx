@@ -185,7 +185,7 @@ export function StaffPage() {
                         alignItems: 'center',
                         background: 'transparent',
                         border: '1px solid var(--border-default)',
-                        borderRadius: 10,
+                        borderRadius: 4,
                         padding: 8,
                         color: 'var(--danger)',
                         cursor: 'pointer',

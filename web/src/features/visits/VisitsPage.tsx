@@ -49,7 +49,7 @@ export function VisitsPage() {
 
       <section>
         <h2 className="h2" style={{ marginBottom: 16 }}>
-          <Gift size={20} style={{ verticalAlign: 'middle', marginRight: 6, color: 'var(--gold-500)' }} />
+          <Gift size={20} style={{ verticalAlign: 'middle', marginRight: 6, color: 'var(--cyan-500)' }} />
           Rewards in progress
         </h2>
         {memberships.isLoading && <p className="body">Loading…</p>}
@@ -71,8 +71,8 @@ export function VisitsPage() {
                   <div
                     style={{
                       height: 8,
-                      background: 'var(--paper-200)',
-                      borderRadius: 999,
+                      background: 'var(--slate-200)',
+                      borderRadius: 4,
                       overflow: 'hidden',
                     }}
                   >
@@ -80,7 +80,7 @@ export function VisitsPage() {
                       style={{
                         width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program!.requiredVisits) * 100)}%`,
                         height: '100%',
-                        background: 'var(--gold-500)',
+                        background: 'var(--cyan-500)',
                       }}
                     />
                   </div>

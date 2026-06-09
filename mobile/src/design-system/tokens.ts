@@ -8,87 +8,92 @@
  */
 
 export const colors = {
-  // Brand core
-  espresso900: '#1F1611',
-  espresso800: '#2A1F18',
-  espresso700: '#3D2E22',
-  espresso600: '#5C4836',
+  // Brand navy
+  navy900: '#000D2E',
+  navy800: '#030918',
+  navy700: '#052698', // deep brand navy — hero blocks, bg-inverse
+  navy600: '#0832B8',
 
-  terracotta700: '#A8482B',
-  terracotta600: '#C45A36', // primary action
-  terracotta500: '#DB7351',
-  terracotta200: '#F3D2C2',
-  terracotta50: '#FBEFE8',
+  // Brand blue (primary action)
+  blue700: '#0443C7', // pressed
+  blue600: '#116BF8', // primary action
+  blue500: '#3D83F9', // hover on dark
+  blue200: '#B3CCFD',
+  blue50:  '#EBF2FF',
 
-  gold600: '#B58A3C',
-  gold500: '#D4A24A', // loyalty stamp
-  gold200: '#F0DDB0',
-  gold50: '#FBF4E0',
+  // Cyan accent
+  cyan700: '#1292BE',
+  cyan500: '#21BCEE', // accent
+  cyan200: '#A8E2F7',
+  cyan50:  '#E5F7FD',
 
-  sage700: '#4F6B52',
-  sage500: '#7B9C7E',
-  sage200: '#CFDDC9',
-  sage50: '#EDF2E7',
+  // Sage (success — brightened for dark bg)
+  sage700: '#4F9B5A',
+  sage500: '#6DBF79',
+  sage200: '#B4E6BA',
+  sage50:  '#0D2B10',
 
-  rose600: '#B43F4D',
-  rose200: '#F2C8CD',
-  rose50: '#FCEDEE',
+  // Rose (danger — brightened for dark bg)
+  rose600: '#E84C5C',
+  rose200: '#F5A8B0',
+  rose50:  '#2B0A0E',
 
-  // Paper / neutrals
-  paper50: '#FBF8F3',
-  paper100: '#F6F1E8',
-  paper200: '#ECE4D4',
-  paper300: '#D9CDB4',
-  paper400: '#B8A98A',
-  paper500: '#8E7F66',
-  paper600: '#6B5E48',
-  paper700: '#4A4233',
+  // Slate neutrals
+  slate50:  '#F5F8FA',
+  slate100: '#EBF0F5',
+  slate200: '#DCE3EB', // secondary text on dark, light surfaces
+  slate300: '#BEC8D4',
+  slate400: '#A0ACBC',
+  slate500: '#878EA0', // tertiary text, borders
+  slate600: '#5A6070',
+  slate700: '#3B3F4E',
+  slate900: '#000000', // canvas
 
   // Semantic foreground
-  fg1: '#1F1611',
-  fg2: '#4A4233',
-  fg3: '#8E7F66',
-  fgOnDark: '#FBF8F3',
+  fg1: '#FFFFFF',
+  fg2: '#DCE3EB',
+  fg3: '#878EA0',
+  fgOnDark: '#FFFFFF',
   fgOnAccent: '#FFFFFF',
 
-  // Semantic background
-  bgCanvas: '#FBF8F3',
-  bgCard: '#FFFFFF',
-  bgMuted: '#F6F1E8',
-  bgSunken: '#ECE4D4',
-  bgInverse: '#1F1611',
+  // Semantic background (dark hierarchy)
+  bgCanvas: '#060E2B',
+  bgCard: '#0D1D5C',
+  bgMuted: '#091540',
+  bgSunken: '#040B1E',
+  bgInverse: '#052698',
 
   // Borders
-  borderSubtle: '#ECE4D4',
-  borderDefault: '#D9CDB4',
-  borderStrong: '#B8A98A',
+  borderSubtle: '#152555',
+  borderDefault: '#1E3880',
+  borderStrong: '#878EA0',
 
   // Action
-  action: '#C45A36',
-  actionHover: '#A8482B',
-  actionPress: '#8E3922',
+  action: '#116BF8',
+  actionHover: '#3D83F9',
+  actionPress: '#0443C7',
   actionFg: '#FFFFFF',
-  actionSubtleBg: '#FBEFE8',
-  actionSubtleFg: '#A8482B',
+  actionSubtleBg: '#0A1F55',
+  actionSubtleFg: '#21BCEE',
 
   // Status
-  success: '#4F6B52',
-  successBg: '#EDF2E7',
-  successBorder: '#CFDDC9',
+  success: '#4F9B5A',
+  successBg: '#0D2B10',
+  successBorder: '#1A5C22',
 
-  warning: '#A86A12',
-  warningBg: '#FBF4E0',
-  warningBorder: '#F0DDB0',
+  warning: '#F5A623',
+  warningBg: '#2B1A00',
+  warningBorder: '#6B4200',
 
-  danger: '#B43F4D',
-  dangerBg: '#FCEDEE',
-  dangerBorder: '#F2C8CD',
+  danger: '#E84C5C',
+  dangerBg: '#2B0A0E',
+  dangerBorder: '#6B1520',
 } as const;
 
 export const fonts = {
-  display: 'Fraunces', // serif, display
-  body: 'InterTight', // grotesk, body
-  mono: 'JetBrainsMono', // monospace, numerals
+  display: 'Fraunces',
+  body: 'InterTight',
+  mono: 'JetBrainsMono',
 } as const;
 
 /** Spacing scale, 4-base. */
@@ -133,27 +138,27 @@ export const type = {
   num: { fontFamily: fonts.mono, fontSize: 15, lineHeight: 21, fontWeight: '500' as const },
 } as const;
 
-/** Light shadow scale (RN ios-shadow style; android uses elevation). */
+/** Shadow scale — blue glow on dark. */
 export const shadow = {
   1: {
-    shadowColor: '#1F1611',
+    shadowColor: '#116BF8',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
     elevation: 1,
   },
   2: {
-    shadowColor: '#1F1611',
+    shadowColor: '#116BF8',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
     elevation: 3,
   },
   3: {
-    shadowColor: '#1F1611',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.18,
-    shadowRadius: 32,
+    shadowColor: '#116BF8',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.22,
+    shadowRadius: 40,
     elevation: 8,
   },
 } as const;

@@ -32,8 +32,8 @@ function StarDisplay({ value }: { value: number }) {
         <Star
           key={s}
           size={14}
-          fill={s <= value ? 'var(--gold-500)' : 'none'}
-          color={s <= value ? 'var(--gold-500)' : 'var(--border-default)'}
+          fill={s <= value ? 'var(--cyan-500)' : 'none'}
+          color={s <= value ? 'var(--cyan-500)' : 'var(--border-default)'}
         />
       ))}
     </div>

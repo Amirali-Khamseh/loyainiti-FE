@@ -111,22 +111,22 @@ export function StatsPage() {
             <div style={{ width: '100%', height: 280 }}>
               <ResponsiveContainer>
                 <LineChart data={daily.data?.series ?? []} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-                  <CartesianGrid stroke="var(--paper-200)" strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid stroke="var(--slate-200)" strokeDasharray="3 3" vertical={false} />
                   <XAxis
                     dataKey="day"
                     tick={{ fill: 'var(--fg-3)', fontFamily: 'var(--font-mono)', fontSize: 11 }}
-                    stroke="var(--paper-300)"
+                    stroke="var(--slate-300)"
                   />
                   <YAxis
                     tick={{ fill: 'var(--fg-3)', fontFamily: 'var(--font-mono)', fontSize: 11 }}
-                    stroke="var(--paper-300)"
+                    stroke="var(--slate-300)"
                     allowDecimals={false}
                   />
                   <Tooltip
                     contentStyle={{
                       background: 'var(--bg-card)',
                       border: '1px solid var(--border-default)',
-                      borderRadius: 8,
+                      borderRadius: 4,
                       fontFamily: 'var(--font-body)',
                     }}
                   />

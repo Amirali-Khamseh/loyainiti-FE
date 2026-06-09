@@ -1,10 +1,8 @@
 /* =========================================================================
    Loyainiti - Core Color + Type Tokens
    ------------------------------------------------------------------------
-   The brand sits at the intersection of warm hospitality and modern SaaS:
-   espresso browns, cream paper, terracotta highlights, and a slim gold
-   accent that recalls a stamped loyalty card. Mediterranean light, not
-   tech-blue.
+   Dark-first brand: pure black canvas, deep navy hero blocks, electric
+   blue action, cyan accent. White text on dark. Matryx-inspired.
    ========================================================================= */
 
 /* ----- Fonts -------------------------------------------------------------
@@ -17,85 +15,84 @@
 
 :root {
   /* ===== Brand core ===== */
-  --espresso-900: #1F1611;   /* near-black, warm */
-  --espresso-800: #2A1F18;
-  --espresso-700: #3D2E22;
-  --espresso-600: #5C4836;
+  --navy-900: #000D2E;
+  --navy-800: #030918;
+  --navy-700: #052698;        /* deep brand navy — hero blocks, bg-inverse */
+  --navy-600: #0832B8;
 
-  --terracotta-700: #A8482B;
-  --terracotta-600: #C45A36;  /* primary action */
-  --terracotta-500: #DB7351;
-  --terracotta-200: #F3D2C2;
-  --terracotta-50:  #FBEFE8;
+  --blue-700: #0443C7;        /* action pressed */
+  --blue-600: #116BF8;        /* primary action */
+  --blue-500: #3D83F9;        /* hover on dark */
+  --blue-200: #B3CCFD;
+  --blue-50:  #EBF2FF;
 
-  --gold-600: #B58A3C;        /* loyalty stamp accent */
-  --gold-500: #D4A24A;
-  --gold-200: #F0DDB0;
-  --gold-50:  #FBF4E0;
+  --cyan-700:  #1292BE;
+  --cyan-500:  #21BCEE;       /* accent */
+  --cyan-200:  #A8E2F7;
+  --cyan-50:   #E5F7FD;
 
-  --sage-700:  #4F6B52;        /* positive / success */
-  --sage-500:  #7B9C7E;
-  --sage-200:  #CFDDC9;
-  --sage-50:   #EDF2E7;
+  --sage-700:  #4F9B5A;        /* positive / success — brightened for dark bg */
+  --sage-500:  #6DBF79;
+  --sage-200:  #B4E6BA;
+  --sage-50:   #0D2B10;
 
-  --rose-600:  #B43F4D;        /* destructive / alerts */
-  --rose-200:  #F2C8CD;
-  --rose-50:   #FCEDEE;
+  --rose-600:  #E84C5C;        /* destructive — brightened for dark bg */
+  --rose-200:  #F5A8B0;
+  --rose-50:   #2B0A0E;
 
-  /* ===== Paper / neutrals - warm, not gray ===== */
-  --paper-50:  #FBF8F3;   /* primary canvas */
-  --paper-100: #F6F1E8;   /* card on canvas */
-  --paper-200: #ECE4D4;   /* divider, subtle fill */
-  --paper-300: #D9CDB4;   /* border */
-  --paper-400: #B8A98A;
-  --paper-500: #8E7F66;
-  --paper-600: #6B5E48;
-  --paper-700: #4A4233;
+  /* ===== Slate / neutrals ===== */
+  --slate-50:  #F5F8FA;
+  --slate-100: #EBF0F5;
+  --slate-200: #DCE3EB;        /* secondary text on dark, light surfaces */
+  --slate-300: #BEC8D4;
+  --slate-400: #A0ACBC;
+  --slate-500: #878EA0;        /* tertiary text, borders */
+  --slate-600: #5A6070;
+  --slate-700: #3B3F4E;
+  --slate-900: #000000;        /* canvas */
 
   /* ===== Semantic foreground ===== */
-  --fg-1: var(--espresso-900);     /* primary text */
-  --fg-2: var(--paper-700);        /* secondary text, labels */
-  --fg-3: var(--paper-500);        /* tertiary, captions, placeholders */
-  --fg-on-dark: var(--paper-50);
-  --fg-on-accent: #ffffff;
+  --fg-1: #FFFFFF;                     /* primary text — white on black */
+  --fg-2: var(--slate-200);            /* secondary text */
+  --fg-3: var(--slate-500);            /* tertiary, captions, placeholders */
+  --fg-on-dark: #FFFFFF;
+  --fg-on-accent: #FFFFFF;
 
-  /* ===== Semantic background ===== */
-  --bg-canvas: var(--paper-50);
-  --bg-card:   #FFFFFF;
-  --bg-muted:  var(--paper-100);
-  --bg-sunken: var(--paper-200);
-  --bg-inverse: var(--espresso-900);
+  /* ===== Semantic background (dark hierarchy) ===== */
+  --bg-canvas:  #060E2B;               /* dark navy — main app canvas */
+  --bg-card:    #0D1D5C;               /* lighter navy — cards, header */
+  --bg-muted:   #091540;               /* subtle section between sunken/canvas */
+  --bg-sunken:  #040B1E;               /* deepest — recessed / inset areas */
+  --bg-inverse: var(--navy-700);       /* #052698 — branded navy hero blocks */
 
   /* ===== Semantic border ===== */
-  --border-subtle: var(--paper-200);
-  --border-default: var(--paper-300);
-  --border-strong:  var(--paper-400);
+  --border-subtle:  #152555;           /* visible on navy canvas */
+  --border-default: #1E3880;
+  --border-strong:  var(--slate-500);
 
   /* ===== Action ===== */
-  --action: var(--terracotta-600);
-  --action-hover: var(--terracotta-700);
-  --action-press: #8E3922;
+  --action: var(--blue-600);
+  --action-hover: var(--blue-500);     /* lighter on hover (dark bg) */
+  --action-press: var(--blue-700);
   --action-fg:   #ffffff;
-  --action-subtle-bg: var(--terracotta-50);
-  --action-subtle-fg: var(--terracotta-700);
+  --action-subtle-bg: #0A1F55;
+  --action-subtle-fg: var(--cyan-500);
 
   /* ===== Status ===== */
   --success: var(--sage-700);
   --success-bg: var(--sage-50);
-  --success-border: var(--sage-200);
+  --success-border: #1A5C22;
 
-  --warning: #A86A12;
-  --warning-bg: var(--gold-50);
-  --warning-border: var(--gold-200);
+  --warning: #F5A623;
+  --warning-bg: #2B1A00;
+  --warning-border: #6B4200;
 
   --danger: var(--rose-600);
   --danger-bg: var(--rose-50);
-  --danger-border: var(--rose-200);
+  --danger-border: #6B1520;
 
   /* ===== Type families ===== */
-  /* All three roles now resolve to Roboto. The variable names are kept so
-     existing component styles (var(--font-display) etc.) don't need touching.
-     Numerals keep tabular figures via font-feature-settings where needed. */
+  /* All three roles resolve to Roboto. */
   --font-display: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body:    'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono:    'Roboto', ui-monospace, 'SF Mono', monospace;
@@ -110,8 +107,8 @@
   --t-body:      400 15px/1.55 var(--font-body);
   --t-body-sm:   400 13px/1.50 var(--font-body);
   --t-caption:   500 12px/1.40 var(--font-body);
-  --t-label:     500 11px/1.20 var(--font-body); /* uppercase eyebrow */
-  --t-num-xl:    600 40px/1.0 var(--font-mono);  /* KPIs */
+  --t-label:     500 11px/1.20 var(--font-body);
+  --t-num-xl:    600 40px/1.0 var(--font-mono);
   --t-num-lg:    600 28px/1.0 var(--font-mono);
   --t-num:       500 15px/1.4 var(--font-mono);
 
@@ -129,19 +126,19 @@
   --s-16: 64px;
   --s-20: 80px;
 
-  /* ===== Radii - soft, never pill-y by default ===== */
+  /* ===== Radii ===== */
   --r-1: 4px;
-  --r-2: 8px;
-  --r-3: 12px;   /* default card */
-  --r-4: 16px;
-  --r-5: 20px;
-  --r-pill: 999px;
+  --r-2: 4px;
+  --r-3: 4px;
+  --r-4: 4px;
+  --r-5: 4px;
+  --r-pill: 4px;
 
-  /* ===== Shadows - low, warm, almost not-there ===== */
-  --shadow-1: 0 1px 2px rgba(31, 22, 17, 0.04), 0 0 0 1px rgba(31, 22, 17, 0.04);
-  --shadow-2: 0 4px 12px -2px rgba(31, 22, 17, 0.08), 0 0 0 1px rgba(31, 22, 17, 0.04);
-  --shadow-3: 0 12px 32px -8px rgba(31, 22, 17, 0.18), 0 0 0 1px rgba(31, 22, 17, 0.06);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  /* ===== Shadows — blue glow on dark ===== */
+  --shadow-1: 0 1px 3px rgba(17, 107, 248, 0.08), 0 0 0 1px rgba(17, 107, 248, 0.06);
+  --shadow-2: 0 4px 16px rgba(17, 107, 248, 0.14), 0 0 0 1px rgba(17, 107, 248, 0.08);
+  --shadow-3: 0 8px 40px rgba(17, 107, 248, 0.22), 0 0 0 1px rgba(17, 107, 248, 0.12);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
   /* ===== Motion ===== */
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -152,8 +149,7 @@
 }
 
 /* =========================================================================
-   Semantic element styles - use these directly in markup. Keeps consumers
-   honest with the type ramp.
+   Semantic element styles
    ========================================================================= */
 .display-1 { font: var(--t-display-1); letter-spacing: -0.02em; color: var(--fg-1); }
 .display-2 { font: var(--t-display-2); letter-spacing: -0.018em; color: var(--fg-1); }
@@ -171,20 +167,18 @@ p, .body  { font: var(--t-body); color: var(--fg-1); margin: 0; text-wrap: prett
 code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
 
 a {
-  color: var(--action);
+  color: var(--blue-500);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
-a:hover { color: var(--action-hover); }
+a:hover { color: var(--cyan-500); }
 
 html, body { background: var(--bg-canvas); color: var(--fg-1); font-family: var(--font-body); }
 
-/* QR-stamp accent: a small punched dot used as a decorative motif
-   throughout the brand (loyalty card metaphor). */
 .brand-stamp {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--gold-500);
+  background: var(--cyan-500);
   display: inline-block;
   vertical-align: middle;
 }

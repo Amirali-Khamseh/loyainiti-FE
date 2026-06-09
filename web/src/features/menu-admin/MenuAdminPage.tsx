@@ -239,7 +239,7 @@ function CategoryEditor({
   return (
     <div
       style={{
-        borderRadius: 12,
+        borderRadius: 4,
         border: '1px solid var(--border-subtle)',
         padding: 16,
       }}
@@ -256,7 +256,7 @@ function CategoryEditor({
               justifyContent: 'space-between',
               padding: '10px 12px',
               background: 'var(--bg-muted)',
-              borderRadius: 10,
+              borderRadius: 4,
             }}
           >
             <div style={{ flex: 1 }}>

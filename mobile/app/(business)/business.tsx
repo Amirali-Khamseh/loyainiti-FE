@@ -449,7 +449,7 @@ function EditBusiness({ businessId }: { businessId: string }) {
         >
           <View
             style={{
-              width: 22, height: 22, borderRadius: 6,
+              width: 22, height: 22, borderRadius: 4,
               borderWidth: 2,
               borderColor: isPublished ? tokens.colors.action : tokens.colors.borderDefault,
               backgroundColor: isPublished ? tokens.colors.action : 'transparent',
@@ -555,7 +555,7 @@ function CategoryPicker({
               gap: 6,
               paddingVertical: 8,
               paddingHorizontal: 14,
-              borderRadius: 999,
+              borderRadius: 4,
               borderWidth: 1,
               borderColor: on ? tokens.colors.action : tokens.colors.borderDefault,
               backgroundColor: on ? tokens.colors.actionSubtleBg : tokens.colors.bgCard,
@@ -691,7 +691,7 @@ function PhotoManager({
             <View
               key={p.id}
               style={{
-                width: 100, height: 100, borderRadius: 12,
+                width: 100, height: 100, borderRadius: 4,
                 borderWidth: 1, borderColor: tokens.colors.borderSubtle,
                 backgroundColor: tokens.colors.bgMuted, overflow: 'hidden',
               }}
@@ -709,7 +709,7 @@ function PhotoManager({
                 onPress={() => remove(p.id)}
                 style={{
                   position: 'absolute', top: 4, right: 4,
-                  backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 6, padding: 4,
+                  backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 4, padding: 4,
                 }}
               >
                 <Trash2 size={14} color="#fff" />
@@ -770,7 +770,7 @@ function SingleImageField({
           borderWidth: 1,
           borderStyle: 'dashed',
           borderColor: tokens.colors.borderDefault,
-          borderRadius: 12,
+          borderRadius: 4,
           padding: 12,
           alignItems: 'center',
           gap: 8,
@@ -779,7 +779,7 @@ function SingleImageField({
         }}
       >
         {url ? (
-          <Image source={{ uri: url }} style={{ width: 64, height: 64, borderRadius: 8 }} />
+          <Image source={{ uri: url }} style={{ width: 64, height: 64, borderRadius: 4 }} />
         ) : (
           <Typo variant="caption" color={tokens.colors.fg3}>
             No image
@@ -816,7 +816,7 @@ const timeStyle = {
   backgroundColor: tokens.colors.bgCard,
   borderWidth: 1,
   borderColor: tokens.colors.borderDefault,
-  borderRadius: 10,
+  borderRadius: 4,
   paddingHorizontal: 10,
   paddingVertical: 6,
   fontFamily: tokens.fonts.body,

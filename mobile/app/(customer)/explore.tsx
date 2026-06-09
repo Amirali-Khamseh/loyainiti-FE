@@ -110,7 +110,7 @@ export default function Explore() {
                     style={{
                       width: 44,
                       height: 44,
-                      borderRadius: 12,
+                      borderRadius: 4,
                       backgroundColor: tokens.colors.actionSubtleBg,
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -155,8 +155,8 @@ export default function Explore() {
                       <View
                         style={{
                           height: 8,
-                          backgroundColor: tokens.colors.paper200,
-                          borderRadius: 999,
+                          backgroundColor: tokens.colors.slate200,
+                          borderRadius: 4,
                           overflow: 'hidden',
                         }}
                       >
@@ -169,7 +169,7 @@ export default function Explore() {
                             height: '100%',
                             backgroundColor: m.program.rewardEligible
                               ? tokens.colors.success
-                              : tokens.colors.gold500,
+                              : tokens.colors.cyan500,
                           }}
                         />
                       </View>
