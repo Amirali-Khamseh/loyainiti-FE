@@ -8,6 +8,7 @@ import {
 import { auth, type Role } from '../lib/auth';
 import { api } from '../lib/api';
 import logoUrl from '../design-system/assets/logo.svg';
+import logoDarkUrl from '../design-system/assets/logo-dark.svg';
 
 type MyBusiness = { id: string; staffRole: 'owner' | 'manager' | 'staff' };
 
@@ -15,9 +16,10 @@ const headerStyle: React.CSSProperties = {
   position: 'sticky',
   top: 0,
   zIndex: 10,
-  background: 'rgba(13, 29, 92, 0.92)',
+  background: '#FFFFFF',
   backdropFilter: 'blur(12px)',
-  borderBottom: '1px solid var(--border-subtle)',
+  borderBottom: '1px solid rgba(5, 38, 152, 0.12)',
+  boxShadow: '0 1px 8px rgba(5, 38, 152, 0.08)',
 };
 
 const navLinkBase: React.CSSProperties = {
@@ -29,14 +31,14 @@ const navLinkBase: React.CSSProperties = {
   textDecoration: 'none',
   font: 'var(--t-body-sm)',
   fontWeight: 500,
-  color: 'var(--fg-2)',
+  color: '#052698',
 };
 
 function getNavLinkStyle({ isActive }: { isActive: boolean }): React.CSSProperties {
   return {
     ...navLinkBase,
-    color: isActive ? 'var(--action)' : 'var(--fg-2)',
-    background: isActive ? 'var(--action-subtle-bg)' : 'transparent',
+    color: isActive ? 'var(--action)' : '#052698',
+    background: isActive ? 'rgba(17, 107, 248, 0.08)' : 'transparent',
   };
 }
 
@@ -87,7 +89,7 @@ export function AppShell() {
           style={{ display: 'flex', alignItems: 'center', gap: 24, paddingTop: 12, paddingBottom: 12 }}
         >
           <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-            <img src={logoUrl} alt="Loyainiti" style={{ height: 28 }} />
+            <img src={logoDarkUrl} alt="Loyainiti" style={{ height: 28 }} />
           </Link>
 
           {session && (
@@ -105,16 +107,16 @@ export function AppShell() {
               <span className="spinner" />
             ) : session ? (
               <>
-                <span className="caption" style={{ color: 'var(--fg-3)' }}>
+                <span className="caption" style={{ color: '#878EA0' }}>
                   {session.user.email}
                 </span>
                 <button
                   onClick={async () => { await auth.signOut(); navigate('/sign-in'); }}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
-                    background: 'transparent', border: '1px solid var(--border-default)',
+                    background: 'transparent', border: '1px solid rgba(5, 38, 152, 0.25)',
                     borderRadius: 4, padding: '6px 12px', font: 'var(--t-body-sm)',
-                    color: 'var(--fg-2)', cursor: 'pointer',
+                    color: '#052698', cursor: 'pointer',
                   }}
                 >
                   <LogOut size={14} /> Sign out

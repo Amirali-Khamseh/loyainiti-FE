@@ -1,17 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-22 -12 268 80" width="268" height="80" role="img" aria-label="loyainiti">
-  <defs>
-    <linearGradient id="foilDark" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0%" stop-color="#EAC57C"></stop>
-      <stop offset="50%" stop-color="#D4A24A"></stop>
-      <stop offset="100%" stop-color="#B88A38"></stop>
-    </linearGradient>
-  </defs>
-  
-  <path fill="url(#foilDark)" d="&#xA;    M -18 28&#xA;    C -18 4, 16 -8, 42 -8 C 72 -8, 92 1, 109 7&#xA;    C 126 1, 146 -8, 176 -8 C 202 -8, 236 4, 236 28&#xA;    C 236 52, 202 64, 176 64 C 146 64, 126 55, 109 49&#xA;    C 92 55, 72 64, 42 64 C 16 64, -18 52, -18 28 Z"></path>
-  <g fill="none" stroke="#A8802F" stroke-width="1.5" opacity="0.65">
-    <path d="M 109 28 C 95 13, 44 12, 44 28 C 44 44, 95 43, 109 28"></path>
-    <path d="M 109 28 C 123 13, 174 12, 174 28 C 174 44, 123 43, 109 28"></path>
-  </g>
-  <path fill="none" stroke="#8A6726" stroke-width="1.6" d="&#xA;    M -18 28 C -18 4, 16 -8, 42 -8 C 72 -8, 92 1, 109 7&#xA;    C 126 1, 146 -8, 176 -8 C 202 -8, 236 4, 236 28&#xA;    C 236 52, 202 64, 176 64 C 146 64, 126 55, 109 49&#xA;    C 92 55, 72 64, 42 64 C 16 64, -18 52, -18 28 Z"></path>
-  <text x="2" y="40" font-family="Fraunces,&#39;Source Serif 4&#39;,Georgia,serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#1F1611">loyainiti</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -12 264 80" width="264" height="80" role="img" aria-label="loyainiti">
+
+  <path fill-rule="evenodd" fill="#DCE3EB" d="
+    M 109 28
+    C 76 -6, -18 -10, -18 28 C -18 66, 76 62, 109 28
+    C 142 -6, 236 -10, 236 28 C 236 66, 142 62, 109 28 Z
+    M 109 28
+    C 95 12, 36 12, 36 28 C 36 44, 95 44, 109 28
+    C 123 12, 182 12, 182 28 C 182 44, 123 44, 109 28 Z"></path>
+  <path fill="none" stroke="#116BF8" stroke-width="2.2" d="
+    M 109 28 C 76 -6, -18 -10, -18 28 C -18 66, 76 62, 109 28
+    C 142 -6, 236 -10, 236 28 C 236 66, 142 62, 109 28 Z"></path>
+  <text x="2" y="40" font-family="Fraunces,'Source Serif 4',Georgia,serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#052698">loyainiti</text>
 </svg>

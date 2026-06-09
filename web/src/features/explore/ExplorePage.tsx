@@ -156,8 +156,8 @@ export function ExplorePage() {
         )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {businesses.data?.map((b) => (
-            <Link key={b.id} to={`/b/${b.slug}`} style={{ textDecoration: 'none' }}>
-              <Card>
+            <Link key={b.id} to={`/b/${b.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+              <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {r2Url(b.coverR2Key) && (
                   <img
                     src={r2Url(b.coverR2Key)!}
@@ -172,19 +172,20 @@ export function ExplorePage() {
                       <span key={c.id} className="caption" style={{
                         padding: '2px 8px', borderRadius: 4,
                         background: 'var(--action-subtle-bg)', color: 'var(--action-subtle-fg)',
+                        border: '0.5px solid rgba(255,255,255,0.35)',
                       }}>
                         {c.name}
                       </span>
                     ))}
                   </div>
                 )}
-                <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)' }}>
+                <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)', flex: 1 }}>
                   {b.description ?? 'A new shop in the network.'}
                 </p>
                 {(b.ratingCount ?? 0) > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
                     <Star size={13} fill="var(--cyan-500)" color="var(--cyan-500)" />
-                    <span style={{ font: 'var(--t-body-sm)', fontWeight: 600 }}>
+                    <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, color: '#ffffff' }}>
                       {Number(b.ratingAvg).toFixed(1)}
                     </span>
                     <span className="caption" style={{ color: 'var(--fg-3)' }}>
