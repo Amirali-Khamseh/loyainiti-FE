@@ -84,8 +84,11 @@ export function ExplorePage() {
         </p>
       </header>
 
+      <hr style={divider} />
+
       {/* ── Browse by category ── */}
       {(mainCategories.data?.length ?? 0) > 0 && (
+        <>
         <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <h2 className="h2">Browse by category</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
@@ -125,9 +128,12 @@ export function ExplorePage() {
             })}
           </div>
         </section>
+        <hr style={divider} />
+        </>
       )}
 
       {session && (memberships.data?.length ?? 0) > 0 && (
+        <>
         <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <h2 className="h2">Your shops</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
@@ -170,6 +176,8 @@ export function ExplorePage() {
             ))}
           </div>
         </section>
+        <hr style={divider} />
+        </>
       )}
 
       <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -232,4 +240,11 @@ export function ExplorePage() {
     </div>
   );
 }
+
+const divider: React.CSSProperties = {
+  border: 'none',
+  height: 1,
+  background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.18), transparent)',
+  margin: 0,
+};
 
