@@ -123,10 +123,10 @@ export const radius = {
 
 /** Type ramp — { fontFamily, fontSize, lineHeight, fontWeight }. */
 export const type = {
-  display1: { fontFamily: fonts.display, fontSize: 56, lineHeight: 58, fontWeight: '700' as const, letterSpacing: -1.12 },
-  display2: { fontFamily: fonts.display, fontSize: 40, lineHeight: 43, fontWeight: '700' as const, letterSpacing: -0.72 },
-  h1: { fontFamily: fonts.display, fontSize: 32, lineHeight: 37, fontWeight: '600' as const, letterSpacing: -0.45 },
-  h2: { fontFamily: fonts.display, fontSize: 24, lineHeight: 29, fontWeight: '600' as const, letterSpacing: -0.24 },
+  display1: { fontFamily: fonts.body, fontSize: 56, lineHeight: 58, fontWeight: '700' as const, letterSpacing: -1.12 },
+  display2: { fontFamily: fonts.body, fontSize: 40, lineHeight: 43, fontWeight: '700' as const, letterSpacing: -0.72 },
+  h1: { fontFamily: fonts.body, fontSize: 32, lineHeight: 37, fontWeight: '600' as const, letterSpacing: -0.45 },
+  h2: { fontFamily: fonts.body, fontSize: 24, lineHeight: 29, fontWeight: '600' as const, letterSpacing: -0.24 },
   h3: { fontFamily: fonts.body, fontSize: 18, lineHeight: 24, fontWeight: '600' as const },
   bodyLg: { fontFamily: fonts.body, fontSize: 17, lineHeight: 26, fontWeight: '400' as const },
   body: { fontFamily: fonts.body, fontSize: 15, lineHeight: 23, fontWeight: '400' as const },
