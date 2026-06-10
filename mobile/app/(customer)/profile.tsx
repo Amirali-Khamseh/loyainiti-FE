@@ -7,7 +7,7 @@
  * providers later). When Google SSO lands, the same screen renders the
  * Google photo with no further code changes.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, TextInput, Pressable, Image, Alert } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -19,7 +19,7 @@ import { r2Url } from '../../src/lib/media';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { Card } from '../../src/components/Card';
-import { ConfirmDialog } from '../../src/components/Modal';
+import { ConfirmDialog, Modal } from '../../src/components/Modal';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
@@ -73,6 +73,22 @@ export default function CustomerProfileScreen() {
 
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+
+  const deleteMut = useMutation({
+    mutationFn: () => api('/api/me', { method: 'DELETE', body: { password: deletePassword } }),
+    onSuccess: async () => {
+      qc.clear();
+      await auth.signOut();
+      router.replace('/(auth)/sign-in');
+    },
+    onError: (e) => {
+      setDeleteError(e instanceof ApiError ? e.message : 'Could not delete account');
+    },
+  });
 
   const signOut = async () => {
     setSigningOut(true);
@@ -280,8 +296,8 @@ export default function CustomerProfileScreen() {
         <Typo variant="body" style={{ marginTop: 4, color: '#052698' }}>
           {me.data.email}
         </Typo>
-        <Typo variant="caption" color="#878EA0" style={{ marginTop: 4 }}>
-          Sign-in details and password are managed separately - use Forgot password from sign-in.
+        <Typo variant="num" color="#878EA0" style={{ marginTop: 4 }}>
+          user_id: {me.data.userId}
         </Typo>
       </Card>
 
@@ -294,6 +310,10 @@ export default function CustomerProfileScreen() {
         </View>
       </Button>
 
+      <Button variant="danger" onPress={() => { setDeletePassword(''); setDeleteError(''); setDeleteOpen(true); }}>
+        Delete account
+      </Button>
+
       <ConfirmDialog
         visible={signOutOpen}
         title="Sign out?"
@@ -304,6 +324,49 @@ export default function CustomerProfileScreen() {
         onConfirm={signOut}
         onCancel={() => setSignOutOpen(false)}
       />
+
+      <Modal
+        visible={deleteOpen}
+        onClose={deleteMut.isPending ? undefined : () => setDeleteOpen(false)}
+        dismissOnBackdrop={!deleteMut.isPending}
+        cardStyle={{ backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}
+      >
+        <Typo variant="label" color={tokens.colors.danger}>Danger zone</Typo>
+        <Typo variant="h3" color="#052698" style={{ marginTop: 2 }}>Delete account?</Typo>
+        <Typo variant="body" color="#1E3880">
+          This permanently deletes your account, loyalty history, and all associated data. This action cannot be undone.
+        </Typo>
+        <Input
+          label="Confirm your password"
+          value={deletePassword}
+          onChangeText={(t) => { setDeletePassword(t); setDeleteError(''); }}
+          secureTextEntry
+          autoCapitalize="none"
+          autoComplete="current-password"
+          error={deleteError || undefined}
+          style={{ backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' }}
+          labelStyle={{ color: '#878EA0' }}
+          containerStyle={{ marginTop: 4 }}
+        />
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: 4 }}>
+          <Button
+            variant="ghost"
+            onPress={() => setDeleteOpen(false)}
+            disabled={deleteMut.isPending}
+            textStyle={{ color: '#052698' }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onPress={() => { if (!deletePassword) { setDeleteError('Please enter your password'); return; } deleteMut.mutate(); }}
+            loading={deleteMut.isPending}
+            disabled={!deletePassword}
+          >
+            Delete my account
+          </Button>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
