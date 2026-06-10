@@ -8,6 +8,7 @@ import { SignUpBusinessPage } from './features/auth/SignUpBusinessPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { ExplorePage } from './features/explore/ExplorePage';
+import { CategoryPage } from './features/explore/CategoryPage';
 import { ShopPage } from './features/shop/ShopPage';
 import { MyQrPage } from './features/my-qr/MyQrPage';
 import { VisitsPage } from './features/visits/VisitsPage';
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { index: true, element: <ExplorePage /> },
+      { path: 'categories/:mainSlug', element: <CategoryPage /> },
       { path: 'b/:slug', element: <ShopPage /> },
       {
         path: 'my-qr',

@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Coffee, Star, StarHalf } from 'lucide-react';
-import { api, API_URL } from '../../lib/api';
+import { Coffee, Star } from 'lucide-react';
+import { api } from '../../lib/api';
 import { auth } from '../../lib/auth';
+import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
 
 type Category = { id: string; name: string; slug: string };
+
+type MainCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string | null;
+  sortOrder: number;
+  childCount: number;
+};
 
 type Business = {
   id: string;
@@ -44,19 +54,15 @@ function r2Url(key: string | null | undefined): string | null {
 
 export function ExplorePage() {
   const { data: session } = auth.useSession();
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  // Main categories only - filtering by a main slug returns every business in
-  // any of its sub-categories (BE expands the slug). Keeps the chip row short.
-  const categories = useQuery({
+  const mainCategories = useQuery({
     queryKey: ['categories-main'],
-    queryFn: () => api<Category[]>('/api/categories/main'),
+    queryFn: () => api<MainCategory[]>('/api/categories/main'),
   });
 
   const businesses = useQuery({
-    queryKey: ['businesses', activeCategory],
-    queryFn: () =>
-      api<Business[]>(`/api/businesses${activeCategory ? `?category=${activeCategory}` : ''}`),
+    queryKey: ['businesses'],
+    queryFn: () => api<Business[]>('/api/businesses'),
   });
 
   const memberships = useQuery({
@@ -78,28 +84,56 @@ export function ExplorePage() {
         </p>
       </header>
 
-      {/* Category filter chips */}
-      {(categories.data?.length ?? 0) > 0 && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setActiveCategory(null)}
-            style={chipStyle(activeCategory === null)}
-          >
-            All
-          </button>
-          {categories.data?.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setActiveCategory(c.slug === activeCategory ? null : c.slug)}
-              style={chipStyle(c.slug === activeCategory)}
-            >
-              {c.name}
-            </button>
-          ))}
-        </div>
+      <hr style={divider} />
+
+      {/* ── Browse by category ── */}
+      {(mainCategories.data?.length ?? 0) > 0 && (
+        <>
+        <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <h2 className="h2">Browse by category</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+            {mainCategories.data?.map((cat) => {
+              const Icon = resolveIcon(cat.icon);
+              return (
+                <Link
+                  key={cat.id}
+                  to={`/categories/${cat.slug}`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <Card
+                    style={{
+                      display: 'flex', flexDirection: 'column', gap: 12,
+                      cursor: 'pointer', transition: 'border-color 0.15s',
+                      background: '#FFFFFF', border: '1px solid #FFFFFF',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 44, height: 44, borderRadius: 4,
+                        background: 'var(--action)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >
+                      <Icon size={22} color="#FFFFFF" />
+                    </div>
+                    <div>
+                      <p className="body-sm" style={{ fontWeight: 600, color: '#060E2B' }}>{cat.name}</p>
+                      <p className="caption" style={{ color: '#878EA0', marginTop: 2 }}>
+                        {cat.childCount} {cat.childCount === 1 ? 'type' : 'types'}
+                      </p>
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+        <hr style={divider} />
+        </>
       )}
 
-      {session && (memberships.data?.length ?? 0) > 0 && !activeCategory && (
+      {session && (memberships.data?.length ?? 0) > 0 && (
+        <>
         <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <h2 className="h2">Your shops</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
@@ -142,12 +176,12 @@ export function ExplorePage() {
             ))}
           </div>
         </section>
+        <hr style={divider} />
+        </>
       )}
 
       <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <h2 className="h2">
-          {activeCategory ? `${categories.data?.find(c => c.slug === activeCategory)?.name ?? ''} shops` : 'All shops on the network'}
-        </h2>
+        <h2 className="h2">All shops on the network</h2>
         {businesses.isLoading && <p className="body">Loading…</p>}
         {businesses.error && (
           <p className="body" style={{ color: 'var(--danger)' }}>
@@ -171,8 +205,8 @@ export function ExplorePage() {
                     {b.categories.slice(0, 3).map((c) => (
                       <span key={c.id} className="caption" style={{
                         padding: '2px 8px', borderRadius: 4,
-                        background: 'var(--action-subtle-bg)', color: 'var(--action-subtle-fg)',
-                        border: '0.5px solid rgba(255,255,255,0.35)',
+                        background: '#FFFFFF', color: 'var(--action)',
+                        fontWeight: 500,
                       }}>
                         {c.name}
                       </span>
@@ -199,7 +233,7 @@ export function ExplorePage() {
         </div>
         {businesses.data && businesses.data.length === 0 && (
           <p className="body" style={{ color: 'var(--fg-3)' }}>
-            No published businesses{activeCategory ? ' in this category' : ''} yet.
+            No published businesses yet.
           </p>
         )}
       </section>
@@ -207,15 +241,10 @@ export function ExplorePage() {
   );
 }
 
-function chipStyle(active: boolean): React.CSSProperties {
-  return {
-    padding: '6px 14px',
-    borderRadius: 4,
-    border: `1px solid ${active ? 'var(--action)' : 'var(--border-default)'}`,
-    background: active ? 'var(--action-subtle-bg)' : 'var(--bg-card)',
-    color: active ? 'var(--action-subtle-fg)' : 'var(--fg-2)',
-    font: 'var(--t-body-sm)',
-    fontWeight: 500,
-    cursor: 'pointer',
-  };
-}
+const divider: React.CSSProperties = {
+  border: 'none',
+  height: 1,
+  background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.18), transparent)',
+  margin: 0,
+};
+
