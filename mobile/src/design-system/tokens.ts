@@ -111,14 +111,14 @@ export const spacing = {
   80: 80,
 } as const;
 
-/** Border radii. */
+/** Border radii — all capped at 4 to match the web sharp-corner brand. */
 export const radius = {
   sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
-  '2xl': 20,
-  pill: 999,
+  md: 4,
+  lg: 4,
+  xl: 4,
+  '2xl': 4,
+  pill: 4,
 } as const;
 
 /** Type ramp — { fontFamily, fontSize, lineHeight, fontWeight }. */
