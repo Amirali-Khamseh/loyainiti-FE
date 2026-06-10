@@ -4,14 +4,13 @@ import { useRouter } from 'expo-router';
 import { auth } from '../../src/lib/auth';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
+import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
-/**
- * Customer sign-up. Business sign-up lives in sign-up-business.tsx so the
- * two flows can have distinct copy and post-signup routing - matching the
- * split web pattern.
- */
+const formInput = { backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' };
+const formLabel = { color: '#878EA0' };
+
 export default function SignUp() {
   const router = useRouter();
   const [name, setName] = useState('');
@@ -33,18 +32,12 @@ export default function SignUp() {
 
   const submit = async () => {
     const v = validate();
-    if (v) {
-      setError(v);
-      return;
-    }
+    if (v) { setError(v); return; }
     setBusy(true);
     setError(null);
     try {
       const { error: err } = await auth.signUp.email({ email, password, name });
-      if (err) {
-        setError(err.message ?? 'Sign up failed');
-        return;
-      }
+      if (err) { setError(err.message ?? 'Sign up failed'); return; }
       router.replace('/(customer)/explore');
     } finally {
       setBusy(false);
@@ -53,72 +46,63 @@ export default function SignUp() {
 
   return (
     <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        backgroundColor: tokens.colors.bgCanvas,
-        padding: 24,
-        justifyContent: 'center',
-      }}
+      style={{ backgroundColor: tokens.colors.bgCanvas }}
+      contentContainerStyle={{ flexGrow: 1, padding: 24, justifyContent: 'center' }}
     >
       <Typo variant="label" color={tokens.colors.fg2}>Get started</Typo>
-      <Typo variant="display2" style={{ marginTop: 8 }}>
-        Create a customer account
-      </Typo>
+      <Typo variant="display2" style={{ marginTop: 8 }}>Create a customer account</Typo>
       <Typo variant="bodyLg" color={tokens.colors.fg2} style={{ marginTop: 8 }}>
         Collect stamps and unlock rewards at every shop in the network.
       </Typo>
 
-      <View style={{ height: 32 }} />
-      <Input label="Name" autoComplete="name" value={name} onChangeText={setName} />
-      <View style={{ height: 12 }} />
-      <Input
-        label="Email"
-        autoCapitalize="none"
-        autoComplete="email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <View style={{ height: 12 }} />
-      <Input
-        label="Password"
-        autoComplete="new-password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        hint="At least 8 characters, including a letter and a number"
-      />
-      <View style={{ height: 12 }} />
-      <Input
-        label="Confirm password"
-        autoComplete="new-password"
-        secureTextEntry
-        value={confirm}
-        onChangeText={setConfirm}
-      />
-
-      {error && (
-        <Text style={{ color: tokens.colors.danger, marginTop: 12, fontFamily: tokens.fonts.body }}>
-          {error}
-        </Text>
-      )}
-
       <View style={{ height: 24 }} />
-      <Button onPress={submit} loading={busy} size="lg">
-        Create account
-      </Button>
 
-      <View
-        style={{
-          marginTop: 32,
-          paddingTop: 24,
-          borderTopWidth: 1,
-          borderColor: tokens.colors.borderSubtle,
-        }}
-      >
+      <Card style={{ backgroundColor: '#ffffff', borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}>
+        <Input label="Name" autoComplete="name" value={name} onChangeText={setName} style={formInput} labelStyle={formLabel} />
+        <Input
+          label="Email"
+          autoCapitalize="none"
+          autoComplete="email"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+          style={formInput}
+          labelStyle={formLabel}
+        />
+        <Input
+          label="Password"
+          autoComplete="new-password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          hint="At least 8 characters, including a letter and a number"
+          style={formInput}
+          labelStyle={formLabel}
+        />
+        <Input
+          label="Confirm password"
+          autoComplete="new-password"
+          secureTextEntry
+          value={confirm}
+          onChangeText={setConfirm}
+          style={formInput}
+          labelStyle={formLabel}
+        />
+
+        {error && (
+          <Text style={{ color: tokens.colors.danger, fontFamily: tokens.fonts.body }}>
+            {error}
+          </Text>
+        )}
+
+        <Button onPress={submit} loading={busy} size="lg">Create account</Button>
+      </Card>
+
+      <View style={{ marginTop: 24, paddingTop: 20, borderTopWidth: 1, borderColor: tokens.colors.borderSubtle }}>
         <Pressable onPress={() => router.replace('/(auth)/sign-in')}>
           <Typo variant="bodySm" color={tokens.colors.fg2} style={{ textAlign: 'center' }}>
-            Already have one? <Text style={{ color: tokens.colors.action }}>Sign in</Text>
+            Already have an account?{' '}
+            <Text style={{ color: tokens.colors.action }}>Sign in</Text>
           </Typo>
         </Pressable>
       </View>

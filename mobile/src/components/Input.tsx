@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
+import { Text, TextInput, View, type TextInputProps, type TextStyle, type ViewStyle } from 'react-native';
 import { tokens } from '../design-system/tokens';
 
 type Props = TextInputProps & {
@@ -7,21 +7,22 @@ type Props = TextInputProps & {
   hint?: string;
   error?: string;
   containerStyle?: ViewStyle;
+  labelStyle?: TextStyle;
 };
 
-export function Input({ label, hint, error, containerStyle, style, ...rest }: Props) {
+export function Input({ label, hint, error, containerStyle, labelStyle, style, ...rest }: Props) {
   return (
     <View style={[{ gap: 6 }, containerStyle]}>
       {label && (
         <Text
-          style={{
+          style={[{
             fontFamily: tokens.fonts.body,
             fontSize: 11,
             fontWeight: '500',
             letterSpacing: 1.1,
             textTransform: 'uppercase',
             color: tokens.colors.fg2,
-          }}
+          }, labelStyle]}
         >
           {label}
         </Text>

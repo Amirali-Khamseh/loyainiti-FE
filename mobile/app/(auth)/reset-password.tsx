@@ -4,8 +4,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { auth } from '../../src/lib/auth';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
+import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
+
+const formInput = { backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' };
+const formLabel = { color: '#878EA0' };
 
 /**
  * Reset-password screen.
@@ -30,21 +34,14 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  // Invalid/expired token path
   if (errParam) {
     return (
       <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          backgroundColor: tokens.colors.bgCanvas,
-          padding: 24,
-          justifyContent: 'center',
-        }}
+        style={{ backgroundColor: tokens.colors.bgCanvas }}
+        contentContainerStyle={{ flexGrow: 1, padding: 24, justifyContent: 'center' }}
       >
         <Typo variant="label" color={tokens.colors.fg2}>Reset password</Typo>
-        <Typo variant="display2" style={{ marginTop: 8 }}>
-          Link expired
-        </Typo>
+        <Typo variant="display2" style={{ marginTop: 8 }}>Link expired</Typo>
         <Typo variant="bodyLg" color={tokens.colors.fg2} style={{ marginTop: 8 }}>
           Reset links are valid for an hour. Request a new one and try again.
         </Typo>
@@ -62,16 +59,11 @@ export default function ResetPassword() {
     );
   }
 
-  // No token at all (someone navigated here directly)
   if (!token) {
     return (
       <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          backgroundColor: tokens.colors.bgCanvas,
-          padding: 24,
-          justifyContent: 'center',
-        }}
+        style={{ backgroundColor: tokens.colors.bgCanvas }}
+        contentContainerStyle={{ flexGrow: 1, padding: 24, justifyContent: 'center' }}
       >
         <Typo variant="display2">Missing reset token</Typo>
         <Typo variant="bodyLg" color={tokens.colors.fg2} style={{ marginTop: 8 }}>
@@ -95,18 +87,12 @@ export default function ResetPassword() {
 
   const submit = async () => {
     const v = validate();
-    if (v) {
-      setError(v);
-      return;
-    }
+    if (v) { setError(v); return; }
     setBusy(true);
     setError(null);
     try {
       const { error: err } = await auth.resetPassword({ newPassword: password, token });
-      if (err) {
-        setError(err.message ?? 'Could not reset password');
-        return;
-      }
+      if (err) { setError(err.message ?? 'Could not reset password'); return; }
       router.replace('/(auth)/sign-in');
     } finally {
       setBusy(false);
@@ -115,49 +101,46 @@ export default function ResetPassword() {
 
   return (
     <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        backgroundColor: tokens.colors.bgCanvas,
-        padding: 24,
-        justifyContent: 'center',
-      }}
+      style={{ backgroundColor: tokens.colors.bgCanvas }}
+      contentContainerStyle={{ flexGrow: 1, padding: 24, justifyContent: 'center' }}
     >
       <Typo variant="label" color={tokens.colors.fg2}>Reset password</Typo>
-      <Typo variant="display2" style={{ marginTop: 8 }}>
-        Choose a new password
-      </Typo>
+      <Typo variant="display2" style={{ marginTop: 8 }}>Choose a new password</Typo>
       <Typo variant="bodyLg" color={tokens.colors.fg2} style={{ marginTop: 8 }}>
         You'll be signed in with this on the next screen.
       </Typo>
 
-      <View style={{ height: 32 }} />
-      <Input
-        label="New password"
-        autoComplete="new-password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        hint="At least 8 characters, including a letter and a number"
-      />
-      <View style={{ height: 12 }} />
-      <Input
-        label="Confirm new password"
-        autoComplete="new-password"
-        secureTextEntry
-        value={confirm}
-        onChangeText={setConfirm}
-      />
-
-      {error && (
-        <Text style={{ color: tokens.colors.danger, marginTop: 12, fontFamily: tokens.fonts.body }}>
-          {error}
-        </Text>
-      )}
-
       <View style={{ height: 24 }} />
-      <Button onPress={submit} loading={busy} size="lg">
-        Update password
-      </Button>
+
+      <Card style={{ backgroundColor: '#ffffff', borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}>
+        <Input
+          label="New password"
+          autoComplete="new-password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          hint="At least 8 characters, including a letter and a number"
+          style={formInput}
+          labelStyle={formLabel}
+        />
+        <Input
+          label="Confirm new password"
+          autoComplete="new-password"
+          secureTextEntry
+          value={confirm}
+          onChangeText={setConfirm}
+          style={formInput}
+          labelStyle={formLabel}
+        />
+
+        {error && (
+          <Text style={{ color: tokens.colors.danger, fontFamily: tokens.fonts.body }}>
+            {error}
+          </Text>
+        )}
+
+        <Button onPress={submit} loading={busy} size="lg">Update password</Button>
+      </Card>
     </ScrollView>
   );
 }
