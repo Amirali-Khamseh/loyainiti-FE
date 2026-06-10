@@ -101,20 +101,21 @@ export function ExplorePage() {
                     style={{
                       display: 'flex', flexDirection: 'column', gap: 12,
                       cursor: 'pointer', transition: 'border-color 0.15s',
+                      background: '#FFFFFF', border: '1px solid #FFFFFF',
                     }}
                   >
                     <div
                       style={{
                         width: 44, height: 44, borderRadius: 4,
-                        background: '#FFFFFF',
+                        background: 'var(--action)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     >
-                      <Icon size={22} color="var(--action)" />
+                      <Icon size={22} color="#FFFFFF" />
                     </div>
                     <div>
-                      <p className="body-sm" style={{ fontWeight: 600 }}>{cat.name}</p>
-                      <p className="caption" style={{ color: 'var(--fg-3)', marginTop: 2 }}>
+                      <p className="body-sm" style={{ fontWeight: 600, color: '#060E2B' }}>{cat.name}</p>
+                      <p className="caption" style={{ color: '#878EA0', marginTop: 2 }}>
                         {cat.childCount} {cat.childCount === 1 ? 'type' : 'types'}
                       </p>
                     </div>
