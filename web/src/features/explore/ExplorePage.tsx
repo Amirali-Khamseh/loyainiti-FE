@@ -4,9 +4,19 @@ import { useQuery } from '@tanstack/react-query';
 import { Coffee, Star, StarHalf } from 'lucide-react';
 import { api, API_URL } from '../../lib/api';
 import { auth } from '../../lib/auth';
+import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
 
 type Category = { id: string; name: string; slug: string };
+
+type MainCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string | null;
+  sortOrder: number;
+  childCount: number;
+};
 
 type Business = {
   id: string;
@@ -46,12 +56,13 @@ export function ExplorePage() {
   const { data: session } = auth.useSession();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  // Main categories only - filtering by a main slug returns every business in
-  // any of its sub-categories (BE expands the slug). Keeps the chip row short.
-  const categories = useQuery({
+  const mainCategories = useQuery({
     queryKey: ['categories-main'],
-    queryFn: () => api<Category[]>('/api/categories/main'),
+    queryFn: () => api<MainCategory[]>('/api/categories/main'),
   });
+
+  // Flat chips use the same data — aliases for clarity below.
+  const categories = mainCategories;
 
   const businesses = useQuery({
     queryKey: ['businesses', activeCategory],
@@ -78,7 +89,49 @@ export function ExplorePage() {
         </p>
       </header>
 
-      {/* Category filter chips */}
+      {/* ── Browse by category ── */}
+      {(mainCategories.data?.length ?? 0) > 0 && (
+        <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <h2 className="h2">Browse by category</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+            {mainCategories.data?.map((cat) => {
+              const Icon = resolveIcon(cat.icon);
+              return (
+                <Link
+                  key={cat.id}
+                  to={`/categories/${cat.slug}`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <Card
+                    style={{
+                      display: 'flex', flexDirection: 'column', gap: 12,
+                      cursor: 'pointer', transition: 'border-color 0.15s',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 44, height: 44, borderRadius: 4,
+                        background: 'var(--action-subtle-bg)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >
+                      <Icon size={22} color="var(--action)" />
+                    </div>
+                    <div>
+                      <p className="body-sm" style={{ fontWeight: 600 }}>{cat.name}</p>
+                      <p className="caption" style={{ color: 'var(--fg-3)', marginTop: 2 }}>
+                        {cat.childCount} {cat.childCount === 1 ? 'type' : 'types'}
+                      </p>
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ── Quick filter chips ── */}
       {(categories.data?.length ?? 0) > 0 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
