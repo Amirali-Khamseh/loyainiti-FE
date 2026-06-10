@@ -4,7 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts as useFraunces, Fraunces_400Regular, Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces';
-import { useFonts as useInter, InterTight_400Regular, InterTight_500Medium, InterTight_600SemiBold, InterTight_700Bold } from '@expo-google-fonts/inter-tight';
+import { useFonts as useRoboto, Roboto_400Regular, Roboto_500Medium, Roboto_700Bold } from '@expo-google-fonts/roboto';
 import { useFonts as useMono, JetBrainsMono_400Regular, JetBrainsMono_500Medium, JetBrainsMono_600SemiBold } from '@expo-google-fonts/jetbrains-mono';
 import { View, ActivityIndicator } from 'react-native';
 import { queryClient } from '../src/lib/queryClient';
@@ -12,10 +12,10 @@ import { tokens } from '../src/design-system/tokens';
 
 export default function RootLayout() {
   const [fraunces] = useFraunces({ Fraunces: Fraunces_400Regular, Fraunces_600SemiBold, Fraunces_700Bold });
-  const [inter] = useInter({ InterTight: InterTight_400Regular, InterTight_500Medium, InterTight_600SemiBold, InterTight_700Bold });
+  const [roboto] = useRoboto({ Roboto: Roboto_400Regular, Roboto_500Medium, Roboto_700Bold });
   const [mono] = useMono({ JetBrainsMono: JetBrainsMono_400Regular, JetBrainsMono_500Medium, JetBrainsMono_600SemiBold });
 
-  if (!fraunces || !inter || !mono) {
+  if (!fraunces || !roboto || !mono) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: tokens.colors.bgCanvas }}>
         <ActivityIndicator color={tokens.colors.action} />
@@ -26,12 +26,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <StatusBar style="dark" />
+        <StatusBar style="dark" backgroundColor="#FFFFFF" />
         <Stack
           screenOptions={{
-            headerStyle: { backgroundColor: tokens.colors.bgCanvas },
-            headerShadowVisible: false,
-            headerTitleStyle: { fontFamily: tokens.fonts.display, fontSize: 18, fontWeight: '600' },
+            headerStyle: { backgroundColor: '#FFFFFF' },
+            headerTintColor: '#052698',
+            headerShadowVisible: true,
+            headerTitleStyle: { fontFamily: tokens.fonts.display, fontSize: 18, fontWeight: '600', color: '#052698' },
             contentStyle: { backgroundColor: tokens.colors.bgCanvas },
           }}
         >

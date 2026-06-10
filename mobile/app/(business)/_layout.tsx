@@ -30,9 +30,10 @@ export default function BusinessLayout() {
         tabBarInactiveTintColor: tokens.colors.fg3,
         tabBarStyle: { backgroundColor: tokens.colors.bgCard, borderTopColor: tokens.colors.borderSubtle },
         tabBarLabelStyle: { fontFamily: tokens.fonts.body, fontSize: 11 },
-        headerStyle: { backgroundColor: tokens.colors.bgCanvas },
-        headerShadowVisible: false,
-        headerTitleStyle: { fontFamily: tokens.fonts.display, fontWeight: '600' },
+        headerStyle: { backgroundColor: '#FFFFFF' },
+        headerTintColor: '#052698',
+        headerShadowVisible: true,
+        headerTitleStyle: { fontFamily: tokens.fonts.display, fontWeight: '600', color: '#052698' },
       }}
     >
       <Tabs.Screen

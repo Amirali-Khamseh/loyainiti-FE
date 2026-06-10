@@ -92,7 +92,7 @@ export const colors = {
 
 export const fonts = {
   display: 'Fraunces',
-  body: 'InterTight',
+  body: 'Roboto',
   mono: 'JetBrainsMono',
 } as const;
 
