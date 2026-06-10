@@ -32,6 +32,21 @@ type Me = {
 
 const BIO_MAX = 150;
 
+/**
+ * CSS variable overrides scoped to the white cards on this page.
+ * Cascades into all child components (Input, textarea, buttons) automatically
+ * without touching the shared component code.
+ */
+const lightVars: React.CSSProperties = {
+  '--fg-1': '#052698',
+  '--fg-2': '#1E3880',
+  '--fg-3': '#878EA0',
+  '--bg-card': '#F0F4FA',
+  '--bg-muted': '#E8EEF8',
+  '--border-default': 'rgba(5,38,152,0.15)',
+  '--border-subtle': 'rgba(5,38,152,0.08)',
+} as React.CSSProperties;
+
 /** Pick the best photo URL given the new (R2) and legacy (provider) sources. */
 function avatarSrc(me: Me | undefined): string | null {
   if (!me) return null;
@@ -132,7 +147,15 @@ export function ProfilePage() {
         </p>
       </header>
 
-      <Card padding={32} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <Card
+        padding={32}
+        style={{
+          background: '#FFFFFF',
+          border: '1px solid rgba(5,38,152,0.1)',
+          boxShadow: '0 4px 24px rgba(5,38,152,0.06)',
+        }}
+      >
+        <div style={{ ...lightVars, display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* Photo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div
@@ -230,16 +253,26 @@ export function ProfilePage() {
             <Save size={16} /> Save changes
           </Button>
         </div>
+        </div>{/* end lightVars scope */}
       </Card>
 
-      <Card variant="muted" padding={20}>
-        <p className="label">Account</p>
-        <p style={{ font: 'var(--t-body)', marginTop: 4 }}>
-          {me.data.email}
-        </p>
-        <p className="caption" style={{ color: 'var(--fg-3)', marginTop: 4 }}>
-          Sign-in details and password are managed separately - use the link on the sign-in page.
-        </p>
+      <Card
+        padding={20}
+        style={{
+          background: '#FFFFFF',
+          border: '1px solid rgba(5,38,152,0.1)',
+          boxShadow: '0 4px 24px rgba(5,38,152,0.06)',
+        }}
+      >
+        <div style={lightVars}>
+          <p className="label" style={{ color: '#116BF8' }}>Account</p>
+          <p style={{ font: 'var(--t-body)', marginTop: 4, color: '#052698' }}>
+            {me.data.email}
+          </p>
+          <p className="caption" style={{ color: '#878EA0', marginTop: 4 }}>
+            Sign-in details and password are managed separately — use the link on the sign-in page.
+          </p>
+        </div>
       </Card>
     </div>
   );
