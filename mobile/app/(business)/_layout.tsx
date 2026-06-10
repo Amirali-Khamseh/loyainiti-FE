@@ -33,7 +33,7 @@ export default function BusinessLayout() {
         headerStyle: { backgroundColor: '#FFFFFF' },
         headerTintColor: '#052698',
         headerShadowVisible: true,
-        headerTitleStyle: { fontFamily: tokens.fonts.display, fontWeight: '600', color: '#052698' },
+        headerTitleStyle: { fontFamily: tokens.fonts.body, fontWeight: '600', color: '#052698' },
       }}
     >
       <Tabs.Screen

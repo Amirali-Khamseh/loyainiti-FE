@@ -32,7 +32,7 @@ export default function RootLayout() {
             headerStyle: { backgroundColor: '#FFFFFF' },
             headerTintColor: '#052698',
             headerShadowVisible: true,
-            headerTitleStyle: { fontFamily: tokens.fonts.display, fontSize: 18, fontWeight: '600', color: '#052698' },
+            headerTitleStyle: { fontFamily: tokens.fonts.body, fontSize: 18, fontWeight: '600', color: '#052698' },
             contentStyle: { backgroundColor: tokens.colors.bgCanvas },
           }}
         >
