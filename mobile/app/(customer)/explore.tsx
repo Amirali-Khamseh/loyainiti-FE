@@ -105,23 +105,23 @@ export default function Explore() {
                 }
                 style={{ width: '47%' }}
               >
-                <Card padding={16}>
+                <Card padding={16} style={{ backgroundColor: '#FFFFFF', borderColor: 'rgba(5,38,152,0.1)' }}>
                   <View
                     style={{
                       width: 44,
                       height: 44,
                       borderRadius: 4,
-                      backgroundColor: tokens.colors.actionSubtleBg,
+                      backgroundColor: tokens.colors.action,
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <Icon color={tokens.colors.action} size={22} />
+                    <Icon color="#FFFFFF" size={22} />
                   </View>
-                  <Typo variant="h3" style={{ marginTop: 12 }}>
+                  <Typo variant="h3" style={{ marginTop: 12, color: '#052698' }}>
                     {cat.name}
                   </Typo>
-                  <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 2 }}>
+                  <Typo variant="caption" color="#878EA0" style={{ marginTop: 2 }}>
                     {cat.childCount} {cat.childCount === 1 ? 'type' : 'types'}
                   </Typo>
                 </Card>

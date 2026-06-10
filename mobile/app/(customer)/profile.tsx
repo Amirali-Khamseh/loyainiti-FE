@@ -168,7 +168,7 @@ export default function CustomerProfileScreen() {
         </Typo>
       </View>
 
-      <Card style={{ gap: 20 }}>
+      <Card style={{ gap: 20, backgroundColor: '#FFFFFF', borderColor: 'rgba(5,38,152,0.1)' }}>
         {/* Photo */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
           <View
@@ -176,9 +176,9 @@ export default function CustomerProfileScreen() {
               width: 80,
               height: 80,
               borderRadius: 4,
-              backgroundColor: tokens.colors.bgMuted,
+              backgroundColor: '#E8EEF8',
               borderWidth: 1,
-              borderColor: tokens.colors.borderDefault,
+              borderColor: 'rgba(5,38,152,0.15)',
               overflow: 'hidden',
               alignItems: 'center',
               justifyContent: 'center',
@@ -187,7 +187,7 @@ export default function CustomerProfileScreen() {
             {previewSrc ? (
               <Image source={{ uri: previewSrc }} style={{ width: '100%', height: '100%' }} />
             ) : (
-              <UserCircle size={48} color={tokens.colors.fg3} />
+              <UserCircle size={48} color="#878EA0" />
             )}
           </View>
           <View style={{ flex: 1, gap: 6 }}>
@@ -203,31 +203,30 @@ export default function CustomerProfileScreen() {
               {avatarR2Key && (
                 <Button variant="ghost" size="sm" onPress={() => setAvatarR2Key(null)}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <Trash2 size={14} color={tokens.colors.fg2} />
-                    <Typo variant="bodySm" color={tokens.colors.fg2}>
-                      Remove
-                    </Typo>
+                    <Trash2 size={14} color="#052698" />
+                    <Typo variant="bodySm" color="#052698">Remove</Typo>
                   </View>
                 </Button>
               )}
             </View>
-            <Typo variant="caption" color={tokens.colors.fg3}>
-              JPG, PNG or WebP.
-            </Typo>
+            <Typo variant="caption" color="#878EA0">JPG, PNG or WebP.</Typo>
           </View>
         </View>
 
         {/* Display name */}
-        <Input
-          label="Display name"
-          value={displayName}
-          onChangeText={setDisplayName}
-          maxLength={120}
-        />
+        <View>
+          <Typo variant="label" color="#116BF8" style={{ marginBottom: 6 }}>Display name</Typo>
+          <Input
+            value={displayName}
+            onChangeText={setDisplayName}
+            maxLength={120}
+            style={{ backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' }}
+          />
+        </View>
 
         {/* Bio */}
         <View>
-          <Typo variant="label" color={tokens.colors.fg2} style={{ marginBottom: 6 }}>
+          <Typo variant="label" color="#116BF8" style={{ marginBottom: 6 }}>
             Short bio
           </Typo>
           <TextInput
@@ -236,32 +235,26 @@ export default function CustomerProfileScreen() {
             multiline
             numberOfLines={3}
             placeholder="Coffee lover, runner, generally insufferable on Mondays."
-            placeholderTextColor={tokens.colors.fg3}
+            placeholderTextColor="#878EA0"
             style={{
               padding: 12,
               borderRadius: 4,
               borderWidth: 1,
-              borderColor: tokens.colors.borderDefault,
-              backgroundColor: tokens.colors.bgCard,
-              color: tokens.colors.fg1,
+              borderColor: 'rgba(5,38,152,0.15)',
+              backgroundColor: '#F0F4FA',
+              color: '#052698',
               fontFamily: tokens.fonts.body,
               minHeight: 80,
               textAlignVertical: 'top',
             }}
           />
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 4,
-            }}
-          >
-            <Typo variant="caption" color={tokens.colors.fg3}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
+            <Typo variant="caption" color="#878EA0">
               Visible on your profile in shops you've visited.
             </Typo>
             <Typo
               variant="caption"
-              color={bio.length >= BIO_MAX ? tokens.colors.danger : tokens.colors.fg3}
+              color={bio.length >= BIO_MAX ? tokens.colors.danger : '#878EA0'}
             >
               {bio.length} / {BIO_MAX}
             </Typo>
@@ -282,12 +275,12 @@ export default function CustomerProfileScreen() {
         </Pressable>
       </Card>
 
-      <Card variant="muted">
-        <Typo variant="label" color={tokens.colors.fg2}>Account</Typo>
-        <Typo variant="body" style={{ marginTop: 4 }}>
+      <Card style={{ backgroundColor: '#FFFFFF', borderColor: 'rgba(5,38,152,0.1)' }}>
+        <Typo variant="label" color="#116BF8">Account</Typo>
+        <Typo variant="body" style={{ marginTop: 4, color: '#052698' }}>
           {me.data.email}
         </Typo>
-        <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 4 }}>
+        <Typo variant="caption" color="#878EA0" style={{ marginTop: 4 }}>
           Sign-in details and password are managed separately - use Forgot password from sign-in.
         </Typo>
       </Card>

@@ -35,14 +35,21 @@ export default function MyQr() {
         </Typo>
       </View>
 
-      <Card padding={24} style={{ alignItems: 'center', gap: 20 }}>
+      <Card
+        padding={24}
+        style={{
+          alignItems: 'center', gap: 20,
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(5,38,152,0.1)',
+        }}
+      >
         <View
           style={{
             padding: 16,
-            backgroundColor: '#fff',
-            borderRadius: tokens.radius.xl,
+            backgroundColor: '#FFFFFF',
+            borderRadius: 4,
             borderWidth: 1,
-            borderColor: tokens.colors.borderSubtle,
+            borderColor: 'rgba(5,38,152,0.1)',
           }}
         >
           {/* The BE renders a 512px PNG QR code at this endpoint, signed automatically by the
@@ -58,9 +65,9 @@ export default function MyQr() {
         </View>
 
         <View style={{ alignItems: 'center' }}>
-          <Typo variant="label" color={tokens.colors.fg2}>Code</Typo>
-          <Typo variant="numLg" style={{ marginTop: 4 }}>{me.data.qrCodeId}</Typo>
-          <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 4 }}>
+          <Typo variant="label" color="#116BF8">Code</Typo>
+          <Typo variant="numLg" style={{ marginTop: 4, color: '#052698' }}>{me.data.qrCodeId}</Typo>
+          <Typo variant="caption" color="#878EA0" style={{ marginTop: 4 }}>
             If a shop can't scan, read out the code above.
           </Typo>
         </View>
@@ -69,18 +76,18 @@ export default function MyQr() {
           style={{
             width: '100%',
             borderTopWidth: 1,
-            borderColor: tokens.colors.borderSubtle,
+            borderColor: 'rgba(5,38,152,0.1)',
             paddingTop: 16,
           }}
         >
-          <Typo variant="label" color={tokens.colors.fg2}>Account</Typo>
-          <Typo variant="body" style={{ marginTop: 4 }}>
+          <Typo variant="label" color="#116BF8">Account</Typo>
+          <Typo variant="body" style={{ marginTop: 4, color: '#052698' }}>
             {me.data.displayName}
           </Typo>
-          <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 2 }}>
+          <Typo variant="caption" color="#878EA0" style={{ marginTop: 2 }}>
             {me.data.email}
           </Typo>
-          <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 4, fontFamily: tokens.fonts.mono }}>
+          <Typo variant="caption" color="#878EA0" style={{ marginTop: 4, fontFamily: tokens.fonts.mono }}>
             user_id: {me.data.userId}
           </Typo>
         </View>

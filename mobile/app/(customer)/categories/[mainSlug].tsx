@@ -78,7 +78,7 @@ export default function CategoryDrillDown() {
               width: 48,
               height: 48,
               borderRadius: 4,
-              backgroundColor: tokens.colors.actionSubtleBg,
+              backgroundColor: '#FFFFFF',
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -146,10 +146,10 @@ export default function CategoryDrillDown() {
                             paddingVertical: 2,
                             paddingHorizontal: 8,
                             borderRadius: 4,
-                            backgroundColor: tokens.colors.actionSubtleBg,
+                            backgroundColor: '#FFFFFF',
                           }}
                         >
-                          <Typo variant="caption" color={tokens.colors.actionSubtleFg}>
+                          <Typo variant="caption" color={tokens.colors.action} style={{ fontWeight: '500' }}>
                             {c.name}
                           </Typo>
                         </View>

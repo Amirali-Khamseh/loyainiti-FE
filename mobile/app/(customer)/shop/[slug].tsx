@@ -174,10 +174,10 @@ export default function ShopDetail() {
                   paddingVertical: 3,
                   paddingHorizontal: 10,
                   borderRadius: 4,
-                  backgroundColor: tokens.colors.actionSubtleBg,
+                  backgroundColor: '#FFFFFF',
                 }}
               >
-                <Typo variant="caption" color={tokens.colors.actionSubtleFg}>
+                <Typo variant="caption" color={tokens.colors.action} style={{ fontWeight: '500' }}>
                   {c.name}
                 </Typo>
               </View>
