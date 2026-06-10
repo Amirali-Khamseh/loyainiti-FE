@@ -80,7 +80,7 @@ export function CategoryPage() {
         <div
           style={{
             width: 52, height: 52, borderRadius: 4, flexShrink: 0,
-            background: 'var(--action-subtle-bg)',
+            background: '#FFFFFF',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >

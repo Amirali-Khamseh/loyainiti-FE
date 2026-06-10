@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Coffee, Star, StarHalf } from 'lucide-react';
-import { api, API_URL } from '../../lib/api';
+import { Coffee, Star } from 'lucide-react';
+import { api } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
@@ -54,20 +54,15 @@ function r2Url(key: string | null | undefined): string | null {
 
 export function ExplorePage() {
   const { data: session } = auth.useSession();
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const mainCategories = useQuery({
     queryKey: ['categories-main'],
     queryFn: () => api<MainCategory[]>('/api/categories/main'),
   });
 
-  // Flat chips use the same data — aliases for clarity below.
-  const categories = mainCategories;
-
   const businesses = useQuery({
-    queryKey: ['businesses', activeCategory],
-    queryFn: () =>
-      api<Business[]>(`/api/businesses${activeCategory ? `?category=${activeCategory}` : ''}`),
+    queryKey: ['businesses'],
+    queryFn: () => api<Business[]>('/api/businesses'),
   });
 
   const memberships = useQuery({
@@ -111,7 +106,7 @@ export function ExplorePage() {
                     <div
                       style={{
                         width: 44, height: 44, borderRadius: 4,
-                        background: 'var(--action-subtle-bg)',
+                        background: '#FFFFFF',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
                     >
@@ -131,28 +126,7 @@ export function ExplorePage() {
         </section>
       )}
 
-      {/* ── Quick filter chips ── */}
-      {(categories.data?.length ?? 0) > 0 && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setActiveCategory(null)}
-            style={chipStyle(activeCategory === null)}
-          >
-            All
-          </button>
-          {categories.data?.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setActiveCategory(c.slug === activeCategory ? null : c.slug)}
-              style={chipStyle(c.slug === activeCategory)}
-            >
-              {c.name}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {session && (memberships.data?.length ?? 0) > 0 && !activeCategory && (
+      {session && (memberships.data?.length ?? 0) > 0 && (
         <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <h2 className="h2">Your shops</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
@@ -198,9 +172,7 @@ export function ExplorePage() {
       )}
 
       <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <h2 className="h2">
-          {activeCategory ? `${categories.data?.find(c => c.slug === activeCategory)?.name ?? ''} shops` : 'All shops on the network'}
-        </h2>
+        <h2 className="h2">All shops on the network</h2>
         {businesses.isLoading && <p className="body">Loading…</p>}
         {businesses.error && (
           <p className="body" style={{ color: 'var(--danger)' }}>
@@ -252,7 +224,7 @@ export function ExplorePage() {
         </div>
         {businesses.data && businesses.data.length === 0 && (
           <p className="body" style={{ color: 'var(--fg-3)' }}>
-            No published businesses{activeCategory ? ' in this category' : ''} yet.
+            No published businesses yet.
           </p>
         )}
       </section>
@@ -260,15 +232,3 @@ export function ExplorePage() {
   );
 }
 
-function chipStyle(active: boolean): React.CSSProperties {
-  return {
-    padding: '6px 14px',
-    borderRadius: 4,
-    border: `1px solid ${active ? 'var(--action)' : 'var(--border-default)'}`,
-    background: active ? 'var(--action-subtle-bg)' : 'var(--bg-card)',
-    color: active ? 'var(--action-subtle-fg)' : 'var(--fg-2)',
-    font: 'var(--t-body-sm)',
-    fontWeight: 500,
-    cursor: 'pointer',
-  };
-}
