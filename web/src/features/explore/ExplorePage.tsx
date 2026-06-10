@@ -197,8 +197,8 @@ export function ExplorePage() {
                     {b.categories.slice(0, 3).map((c) => (
                       <span key={c.id} className="caption" style={{
                         padding: '2px 8px', borderRadius: 4,
-                        background: 'var(--action-subtle-bg)', color: 'var(--action-subtle-fg)',
-                        border: '0.5px solid rgba(255,255,255,0.35)',
+                        background: '#FFFFFF', color: 'var(--action)',
+                        fontWeight: 500,
                       }}>
                         {c.name}
                       </span>
