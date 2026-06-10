@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View, type TextStyle, type ViewStyle } from 'react-native';
 import { tokens } from '../design-system/tokens';
 
 type Variant = 'primary' | 'subtle' | 'ghost' | 'danger';
@@ -14,6 +14,7 @@ type Props = {
   loading?: boolean;
   leftSlot?: React.ReactNode;
   style?: ViewStyle;
+  textStyle?: TextStyle;
 };
 
 export function Button({
@@ -25,6 +26,7 @@ export function Button({
   loading,
   leftSlot,
   style,
+  textStyle,
 }: Props) {
   const isDisabled = disabled || loading;
 
@@ -47,7 +49,7 @@ export function Button({
         ) : (
           leftSlot
         )}
-        <Text style={[textStyles[variant], sizeText[size]]}>{children}</Text>
+        <Text style={[textStyles[variant], sizeText[size], textStyle]}>{children}</Text>
       </View>
     </Pressable>
   );

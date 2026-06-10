@@ -17,6 +17,7 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Card } from '../../components/Card';
 import { useToast } from '../../components/Toast';
+import { DeleteAccountDialog } from './DeleteAccountDialog';
 
 type Me = {
   userId: string;
@@ -76,6 +77,7 @@ export function ProfilePage() {
   const [bio, setBio] = useState('');
   const [avatarR2Key, setAvatarR2Key] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Hydrate form when the query resolves.
@@ -269,11 +271,34 @@ export function ProfilePage() {
           <p style={{ font: 'var(--t-body)', marginTop: 4, color: '#052698' }}>
             {me.data.email}
           </p>
-          <p className="caption" style={{ color: '#878EA0', marginTop: 4 }}>
-            Sign-in details and password are managed separately — use the link on the sign-in page.
+          <p style={{ font: 'var(--t-num)', marginTop: 4, color: '#878EA0' }}>
+            user_id: {me.data.userId}
           </p>
         </div>
       </Card>
+
+      <Card
+        padding={20}
+        style={{
+          background: '#FFFFFF',
+          border: '1px solid rgba(220,38,38,0.2)',
+          boxShadow: '0 4px 24px rgba(5,38,152,0.06)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <p className="label" style={{ color: 'var(--danger)' }}>Danger zone</p>
+            <p className="caption" style={{ color: '#878EA0', marginTop: 4 }}>
+              Permanently deletes your account and all associated data.
+            </p>
+          </div>
+          <Button variant="danger" size="sm" onClick={() => setDeleteOpen(true)}>
+            Delete account
+          </Button>
+        </div>
+      </Card>
+
+      <DeleteAccountDialog open={deleteOpen} onClose={() => setDeleteOpen(false)} />
     </div>
   );
 }
