@@ -199,42 +199,54 @@ export function ExplorePage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {businesses.data?.map((b) => (
             <Link key={b.id} to={`/b/${b.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
-              <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Card style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
                 {r2Url(b.coverR2Key) && (
                   <img
                     src={r2Url(b.coverR2Key)!}
                     alt=""
-                    style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 4, marginBottom: 12 }}
+                    style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }}
                   />
                 )}
-                <h3 className="h3">{b.name}</h3>
-                {b.categories.length > 0 && (
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
-                    {b.categories.slice(0, 3).map((c) => (
-                      <span key={c.id} className="caption" style={{
-                        padding: '2px 8px', borderRadius: 4,
-                        background: '#FFFFFF', color: 'var(--action)',
-                        fontWeight: 500,
-                      }}>
-                        {c.name}
+                <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {r2Url(b.logoR2Key) && (
+                      <img
+                        src={r2Url(b.logoR2Key)!}
+                        alt=""
+                        style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
+                      />
+                    )}
+                    <h3 className="h3">{b.name}</h3>
+                  </div>
+                  {b.categories.length > 0 && (
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+                      {b.categories.slice(0, 3).map((c) => (
+                        <span key={c.id} className="caption" style={{
+                          padding: '2px 8px', borderRadius: 4,
+                          background: 'transparent', color: 'var(--action)',
+                          border: '1px solid rgba(5,38,152,0.2)',
+                          fontWeight: 500,
+                        }}>
+                          {c.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)', flex: 1 }}>
+                    {b.description ?? 'A new shop in the network.'}
+                  </p>
+                  {(b.ratingCount ?? 0) > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                      <Star size={13} fill="var(--cyan-500)" color="var(--cyan-500)" />
+                      <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, color: 'var(--action)' }}>
+                        {Number(b.ratingAvg).toFixed(1)}
                       </span>
-                    ))}
-                  </div>
-                )}
-                <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)', flex: 1 }}>
-                  {b.description ?? 'A new shop in the network.'}
-                </p>
-                {(b.ratingCount ?? 0) > 0 && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-                    <Star size={13} fill="var(--cyan-500)" color="var(--cyan-500)" />
-                    <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, color: '#ffffff' }}>
-                      {Number(b.ratingAvg).toFixed(1)}
-                    </span>
-                    <span className="caption" style={{ color: 'var(--fg-3)' }}>
-                      ({b.ratingCount})
-                    </span>
-                  </div>
-                )}
+                      <span className="caption" style={{ color: 'var(--fg-3)' }}>
+                        ({b.ratingCount})
+                      </span>
+                    </div>
+                  )}
+                </div>
               </Card>
             </Link>
           ))}
