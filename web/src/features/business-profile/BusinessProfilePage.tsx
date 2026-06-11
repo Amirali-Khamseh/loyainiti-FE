@@ -253,6 +253,13 @@ function EditBusiness({ businessId }: { businessId: string }) {
   const toast = useToast();
   const qc = useQueryClient();
 
+  const myBiz = useQuery({
+    queryKey: ['my-businesses'],
+    queryFn: () => api<{ id: string; staffRole: string }[]>('/api/me/businesses'),
+    staleTime: Infinity,
+  });
+  const isOwner = (myBiz.data ?? []).some((b) => b.id === businessId && b.staffRole === 'owner');
+
   const detail = useQuery({
     queryKey: ['business-detail', businessId],
     queryFn: () => api<BusinessDetail>(`/api/businesses/${businessId}`),
@@ -339,26 +346,28 @@ function EditBusiness({ businessId }: { businessId: string }) {
         <Input label="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
       </Card>
 
-      <Card padding={32} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <h3 className="h3">Images</h3>
-        <p className="body-sm" style={{ color: 'var(--fg-3)', marginTop: -8 }}>
-          Upload your logo and cover photo, then click Save changes below.
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <UploadField
-            label="Logo"
-            hint="Square — shown next to your name in cards"
-            currentKey={logoR2Key}
-            onPick={async (file) => setLogoR2Key(await presignAndUpload('business_logo', businessId, file))}
-          />
-          <UploadField
-            label="Cover image"
-            hint="Wide banner — shown at the top of your shop card"
-            currentKey={coverR2Key}
-            onPick={async (file) => setCoverR2Key(await presignAndUpload('business_cover', businessId, file))}
-          />
-        </div>
-      </Card>
+      {isOwner && (
+        <Card padding={32} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <h3 className="h3">Images</h3>
+          <p className="body-sm" style={{ color: 'var(--fg-3)', marginTop: -8 }}>
+            Upload your logo and cover photo, then click Save changes below.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <UploadField
+              label="Logo"
+              hint="Square — shown next to your name in cards"
+              currentKey={logoR2Key}
+              onPick={async (file) => setLogoR2Key(await presignAndUpload('business_logo', businessId, file))}
+            />
+            <UploadField
+              label="Cover image"
+              hint="Wide banner — shown at the top of your shop card"
+              currentKey={coverR2Key}
+              onPick={async (file) => setCoverR2Key(await presignAndUpload('business_cover', businessId, file))}
+            />
+          </div>
+        </Card>
+      )}
 
       <Card padding={32} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <h3 className="h3">Categories</h3>
