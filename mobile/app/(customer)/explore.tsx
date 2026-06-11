@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Coffee, ChevronRight } from 'lucide-react-native';
 import { api } from '../../src/lib/api';
 import { auth } from '../../src/lib/auth';
+import { r2Url } from '../../src/lib/media';
 import { resolveIcon } from '../../src/lib/icon';
 import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
@@ -31,7 +32,7 @@ type Business = {
 };
 type Membership = {
   membershipId: string;
-  business: { id: string; slug: string; name: string };
+  business: { id: string; slug: string; name: string; logoR2Key?: string | null; coverR2Key?: string | null };
   totalVisits: number;
   visitsSinceLastRedemption: number;
   program: null | {
@@ -144,7 +145,14 @@ export default function Explore() {
               >
                 <Card>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                    <Coffee color={tokens.colors.action} size={20} />
+                    {r2Url(m.business.logoR2Key) ? (
+                      <Image
+                        source={{ uri: r2Url(m.business.logoR2Key)! }}
+                        style={{ width: 36, height: 36, borderRadius: 6 }}
+                      />
+                    ) : (
+                      <Coffee color={tokens.colors.action} size={20} />
+                    )}
                     <Typo variant="h3">{m.business.name}</Typo>
                   </View>
                   <Typo variant="bodySm" color={tokens.colors.fg2} style={{ marginTop: 6 }}>
@@ -203,22 +211,31 @@ export default function Explore() {
               Couldn't load shops: {(businesses.error as Error).message}
             </Typo>
           )}
-          {businesses.data?.map((b: Business) => (
-            <Pressable
-              key={b.id}
-              onPress={() => router.push(`/(customer)/shop/${b.slug}` as const)}
-            >
-              <Card>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typo variant="h3">{b.name}</Typo>
-                  <ChevronRight color={tokens.colors.fg3} size={18} />
-                </View>
-                <Typo variant="bodySm" color={tokens.colors.fg2} style={{ marginTop: 6 }}>
-                  {b.description ?? 'A new shop in the network.'}
-                </Typo>
-              </Card>
-            </Pressable>
-          ))}
+          {businesses.data?.map((b: Business) => {
+            const coverUrl = r2Url(b.coverR2Key);
+            return (
+              <Pressable
+                key={b.id}
+                onPress={() => router.push(`/(customer)/shop/${b.slug}` as const)}
+              >
+                <Card>
+                  {coverUrl && (
+                    <Image
+                      source={{ uri: coverUrl }}
+                      style={{ width: '100%', height: 120, borderRadius: 4, marginBottom: 12 }}
+                    />
+                  )}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typo variant="h3">{b.name}</Typo>
+                    <ChevronRight color={tokens.colors.fg3} size={18} />
+                  </View>
+                  <Typo variant="bodySm" color={tokens.colors.fg2} style={{ marginTop: 6 }}>
+                    {b.description ?? 'A new shop in the network.'}
+                  </Typo>
+                </Card>
+              </Pressable>
+            );
+          })}
           {businesses.data?.length === 0 && (
             <Typo variant="body" color={tokens.colors.fg3}>
               No published shops yet.
