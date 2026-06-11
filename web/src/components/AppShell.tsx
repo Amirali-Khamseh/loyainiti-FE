@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { auth, type Role } from '../lib/auth';
 import { api } from '../lib/api';
+import { getActiveBusinessId, setActiveBusinessId } from '../lib/activeBusiness';
 import logoUrl from '../design-system/assets/logo.svg';
 import logoDarkUrl from '../design-system/assets/logo-dark.svg';
 
@@ -65,6 +66,19 @@ export function AppShell() {
     enabled: isStaff,
   });
   const bizRoles = (myBiz.data ?? []).map((b) => b.staffRole);
+
+  // Auto-set activeBusinessId from the API result so business owners who
+  // never went through the onboarding wizard (e.g. seeded accounts) can
+  // still access /admin/business without "not a staff member" errors.
+  useEffect(() => {
+    if (!myBiz.data?.length) return;
+    const current = getActiveBusinessId();
+    const ids = myBiz.data.map((b) => b.id);
+    if (!current || !ids.includes(current)) {
+      setActiveBusinessId(myBiz.data[0]!.id);
+    }
+  }, [myBiz.data]);
+
   const canSeeStats = bizRoles.includes('owner') || bizRoles.includes('manager');
   const isOwner = bizRoles.includes('owner');
 
@@ -82,7 +96,22 @@ export function AppShell() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{
+      minHeight: '100vh', display: 'flex', flexDirection: 'column',
+      // Light-theme CSS-var overrides — matches AuthLayout so every page
+      // renders against white cards with readable navy text.
+      '--fg-1': '#052698',
+      '--fg-2': '#1E3880',
+      '--fg-3': '#878EA0',
+      '--bg-canvas': '#F0F4FA',
+      '--bg-card': '#FFFFFF',
+      '--bg-muted': '#E8EEF8',
+      '--bg-sunken': '#DDE5F5',
+      '--border-subtle': 'rgba(5,38,152,0.08)',
+      '--border-default': 'rgba(5,38,152,0.15)',
+      '--shadow-1': '0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(5,38,152,0.06)',
+      '--shadow-2': '0 4px 16px rgba(0,0,0,0.10), 0 0 0 1px rgba(5,38,152,0.08)',
+    } as React.CSSProperties}>
       <header style={headerStyle}>
         <div
           className="container"
@@ -139,7 +168,7 @@ export function AppShell() {
         </div>
       </header>
 
-      <main className="container" style={{ flex: 1, paddingBlock: 32 }}>
+      <main className="container" style={{ flex: 1, paddingBlock: 32, background: 'var(--bg-canvas)' }}>
         <Outlet />
       </main>
 
