@@ -32,7 +32,7 @@ type Business = {
 
 type Membership = {
   membershipId: string;
-  business: { id: string; slug: string; name: string };
+  business: { id: string; slug: string; name: string; logoR2Key?: string | null };
   joinedAt: string;
   totalVisits: number;
   visitsSinceLastRedemption: number;
@@ -141,7 +141,15 @@ export function ExplorePage() {
               <Link key={m.membershipId} to={`/b/${m.business.slug}`} style={{ textDecoration: 'none' }}>
                 <Card>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <Coffee size={20} color="var(--action)" />
+                    {r2Url(m.business.logoR2Key) ? (
+                      <img
+                        src={r2Url(m.business.logoR2Key)!}
+                        alt=""
+                        style={{ width: 36, height: 36, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
+                      />
+                    ) : (
+                      <Coffee size={20} color="var(--action)" />
+                    )}
                     <h3 className="h3">{m.business.name}</h3>
                   </div>
                   <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)' }}>
