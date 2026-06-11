@@ -218,20 +218,30 @@ export default function Explore() {
                 key={b.id}
                 onPress={() => router.push(`/(customer)/shop/${b.slug}` as const)}
               >
-                <Card>
+                <Card padding={0} style={{ overflow: 'hidden' }}>
                   {coverUrl && (
                     <Image
                       source={{ uri: coverUrl }}
-                      style={{ width: '100%', height: 120, borderRadius: 4, marginBottom: 12 }}
+                      style={{ width: '100%', height: 120 }}
                     />
                   )}
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typo variant="h3">{b.name}</Typo>
-                    <ChevronRight color={tokens.colors.fg3} size={18} />
+                  <View style={{ padding: 20 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                        {r2Url(b.logoR2Key) ? (
+                          <Image
+                            source={{ uri: r2Url(b.logoR2Key)! }}
+                            style={{ width: 32, height: 32, borderRadius: 6 }}
+                          />
+                        ) : null}
+                        <Typo variant="h3" style={{ flex: 1 }}>{b.name}</Typo>
+                      </View>
+                      <ChevronRight color={tokens.colors.fg3} size={18} />
+                    </View>
+                    <Typo variant="bodySm" color={tokens.colors.fg2} style={{ marginTop: 6 }}>
+                      {b.description ?? 'A new shop in the network.'}
+                    </Typo>
                   </View>
-                  <Typo variant="bodySm" color={tokens.colors.fg2} style={{ marginTop: 6 }}>
-                    {b.description ?? 'A new shop in the network.'}
-                  </Typo>
                 </Card>
               </Pressable>
             );
