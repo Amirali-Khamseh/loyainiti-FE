@@ -337,15 +337,23 @@ function EditBusiness({ businessId }: { businessId: string }) {
         <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
         <Input label="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
         <Input label="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+      </Card>
 
+      <Card padding={32} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <h3 className="h3">Images</h3>
+        <p className="body-sm" style={{ color: 'var(--fg-3)', marginTop: -8 }}>
+          Upload your logo and cover photo, then click Save changes below.
+        </p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <UploadField
             label="Logo"
+            hint="Square — shown next to your name in cards"
             currentKey={logoR2Key}
             onPick={async (file) => setLogoR2Key(await presignAndUpload('business_logo', businessId, file))}
           />
           <UploadField
             label="Cover image"
+            hint="Wide banner — shown at the top of your shop card"
             currentKey={coverR2Key}
             onPick={async (file) => setCoverR2Key(await presignAndUpload('business_cover', businessId, file))}
           />
@@ -617,53 +625,76 @@ function SupportIdCard({ id }: { id: string }) {
 
 function UploadField({
   label,
+  hint,
   currentKey,
   onPick,
 }: {
   label: string;
+  hint?: string;
   currentKey: string | null;
   onPick: (file: File) => void | Promise<void>;
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const url = r2Url(currentKey);
+
   return (
-    <div>
-      <p className="label" style={{ marginBottom: 6 }}>
-        {label}
-      </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <p className="label">{label}</p>
+      {hint && <p className="caption" style={{ color: 'var(--fg-3)', marginTop: -2 }}>{hint}</p>}
       <div
         style={{
-          border: '1px dashed var(--border-default)',
+          border: '1px solid var(--border-default)',
           borderRadius: 4,
-          padding: 16,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
+          overflow: 'hidden',
+          background: 'var(--bg-muted)',
         }}
       >
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          hidden
-          onChange={async (e) => {
-            const f = e.target.files?.[0];
-            if (!f) return;
-            setBusy(true);
-            try {
-              await onPick(f);
-            } finally {
-              setBusy(false);
-            }
-            e.target.value = '';
-          }}
-        />
-        <Button variant="ghost" size="sm" onClick={() => inputRef.current?.click()} loading={busy}>
-          <Upload size={14} /> Choose
-        </Button>
-        <span className="caption" style={{ color: 'var(--fg-3)', wordBreak: 'break-all' }}>
-          {currentKey ?? 'No image'}
-        </span>
+        {url ? (
+          <img
+            src={url}
+            alt=""
+            style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+          />
+        ) : (
+          <div
+            style={{
+              height: 140,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              color: 'var(--fg-3)',
+            }}
+          >
+            <Upload size={24} strokeWidth={1.5} />
+            <span className="caption">No image yet</span>
+          </div>
+        )}
+        <div style={{ padding: '10px 12px', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={async (e) => {
+              const f = e.target.files?.[0];
+              if (!f) return;
+              setBusy(true);
+              try { await onPick(f); } finally { setBusy(false); }
+              e.target.value = '';
+            }}
+          />
+          <Button variant="ghost" size="sm" onClick={() => inputRef.current?.click()} loading={busy}>
+            <Upload size={14} /> {url ? 'Replace' : 'Upload'}
+          </Button>
+          {currentKey && (
+            <span className="caption" style={{ color: 'var(--fg-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {currentKey.split('/').pop()}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
