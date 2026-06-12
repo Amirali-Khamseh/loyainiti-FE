@@ -77,7 +77,7 @@ export function SignUpBusinessPage() {
           })}
           error={formState.errors.email?.message}
         />
-        <Input label="Password" type="password" autoComplete="new-password"
+        <Input label="Password" type="password" autoComplete="new-password" showPasswordToggle
           hint="At least 8 characters, including a letter and a number"
           {...register('password', {
             required: 'Password is required',
@@ -87,7 +87,7 @@ export function SignUpBusinessPage() {
           })}
           error={formState.errors.password?.message}
         />
-        <Input label="Confirm password" type="password" autoComplete="new-password"
+        <Input label="Confirm password" type="password" autoComplete="new-password" showPasswordToggle
           {...register('confirmPassword', {
             required: 'Please confirm your password',
             validate: (v) => v === getValues('password') || 'Passwords do not match',

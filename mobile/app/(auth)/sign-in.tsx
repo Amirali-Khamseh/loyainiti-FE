@@ -51,6 +51,7 @@ export default function SignIn() {
           label="Password"
           autoComplete="current-password"
           secureTextEntry
+          showPasswordToggle
           value={password}
           onChangeText={setPassword}
         />

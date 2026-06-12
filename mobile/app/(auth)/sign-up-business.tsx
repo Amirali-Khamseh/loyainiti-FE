@@ -75,6 +75,7 @@ export default function SignUpBusiness() {
           label="Password"
           autoComplete="new-password"
           secureTextEntry
+          showPasswordToggle
           value={password}
           onChangeText={setPassword}
           hint="At least 8 characters, including a letter and a number"
@@ -83,6 +84,7 @@ export default function SignUpBusiness() {
           label="Confirm password"
           autoComplete="new-password"
           secureTextEntry
+          showPasswordToggle
           value={confirm}
           onChangeText={setConfirm}
         />

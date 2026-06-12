@@ -68,6 +68,7 @@ export default function SignUp() {
           label="Password"
           autoComplete="new-password"
           secureTextEntry
+          showPasswordToggle
           value={password}
           onChangeText={setPassword}
           hint="At least 8 characters, including a letter and a number"
@@ -76,6 +77,7 @@ export default function SignUp() {
           label="Confirm password"
           autoComplete="new-password"
           secureTextEntry
+          showPasswordToggle
           value={confirm}
           onChangeText={setConfirm}
         />

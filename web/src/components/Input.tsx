@@ -1,10 +1,12 @@
-import React, { forwardRef, useId } from 'react';
+import React, { forwardRef, useId, useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   hint?: string;
   error?: string;
   leftSlot?: React.ReactNode;
+  showPasswordToggle?: boolean;
 };
 
 const wrapperStyle: React.CSSProperties = {
@@ -34,10 +36,13 @@ const fieldStyle: React.CSSProperties = {
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { label, hint, error, leftSlot, style, ...rest },
+  { label, hint, error, leftSlot, style, showPasswordToggle, type, ...rest },
   ref,
 ) {
   const id = useId();
+  const [shown, setShown] = useState(false);
+  const isPassword = type === 'password' && showPasswordToggle;
+
   return (
     <div style={wrapperStyle}>
       {label && (
@@ -56,15 +61,36 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           {...rest}
           ref={ref}
           id={id}
+          type={isPassword && shown ? 'text' : type}
           style={{
             border: 'none',
             outline: 'none',
             background: 'transparent',
             flex: 1,
             color: 'inherit',
+            font: 'inherit',
             ...style,
           }}
         />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShown((s) => !s)}
+            aria-label={shown ? 'Hide password' : 'Show password'}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              color: 'var(--fg-3)',
+              flexShrink: 0,
+            }}
+          >
+            {shown ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        )}
       </div>
       {(hint || error) && (
         <p style={{ font: 'var(--t-caption)', color: error ? 'var(--danger)' : 'var(--fg-3)', margin: 0 }}>
