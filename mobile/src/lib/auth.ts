@@ -3,8 +3,27 @@ import { createAuthClient } from 'better-auth/react';
 import { expoClient } from '@better-auth/expo/client';
 import * as SecureStore from 'expo-secure-store';
 
-const baseURL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
 const isWeb = Platform.OS === 'web';
+
+/**
+ * API base URL.
+ *
+ * Web: derive it from the page's own host so the BE is always *same-site*
+ * with the browser tab. This matters because web auth is cookie-based and
+ * the session cookie is SameSite=Lax — if the API lived on a different host
+ * (e.g. a LAN IP while the page is on localhost) the browser would treat the
+ * cookie as cross-site and silently drop it, so get-session would return
+ * null and every signed-in screen would bounce back to sign-in. The BE runs
+ * on port 3000 regardless of which port Metro serves the web bundle from.
+ *
+ * Native: there is no page host and auth is bearer-token based (no cookie),
+ * so we use EXPO_PUBLIC_API_URL — set this to your machine's LAN IP so a
+ * physical phone on the same Wi-Fi can reach the BE.
+ */
+const baseURL =
+  isWeb && typeof window !== 'undefined'
+    ? `${window.location.protocol}//${window.location.hostname}:3000`
+    : (process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000');
 
 /**
  * Better Auth client.
