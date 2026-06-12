@@ -22,6 +22,7 @@ export default function SignIn() {
     try {
       const { error: err } = await auth.signIn.email({ email, password });
       if (err) { setError(err.message ?? 'Sign in failed'); return; }
+      await auth.getSession();
       router.replace('/');
     } finally {
       setBusy(false);
