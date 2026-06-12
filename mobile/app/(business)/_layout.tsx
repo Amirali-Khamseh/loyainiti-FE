@@ -1,9 +1,17 @@
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
 import { LayoutDashboard, ScanLine, UtensilsCrossed, Store } from 'lucide-react-native';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Image, View } from 'react-native';
 import { auth, type Role } from '../../src/lib/auth';
 import { tokens } from '../../src/design-system/tokens';
+
+const Logo = () => (
+  <Image
+    source={require('../../src/design-system/assets/Logo_final.png')}
+    style={{ height: 32, width: 140, backgroundColor: 'transparent' }}
+    resizeMode="contain"
+  />
+);
 
 export default function BusinessLayout() {
   const { data: session, isPending } = auth.useSession();
@@ -30,10 +38,12 @@ export default function BusinessLayout() {
         tabBarInactiveTintColor: tokens.colors.fg3,
         tabBarStyle: { backgroundColor: tokens.colors.bgCard, borderTopColor: tokens.colors.borderSubtle },
         tabBarLabelStyle: { fontFamily: tokens.fonts.body, fontSize: 11 },
-        headerStyle: { backgroundColor: '#FFFFFF' },
-        headerTintColor: '#052698',
-        headerShadowVisible: true,
-        headerTitleStyle: { fontFamily: tokens.fonts.body, fontWeight: '600', color: '#052698' },
+        headerStyle: { backgroundColor: tokens.colors.bgCard },
+        headerTintColor: tokens.colors.fg1,
+        headerShadowVisible: false,
+        headerTitleStyle: { fontFamily: tokens.fonts.body, fontWeight: '600', color: tokens.colors.fg1 },
+        headerTitle: () => <Logo />,
+        sceneStyle: { backgroundColor: tokens.colors.bgCanvas },
       }}
     >
       <Tabs.Screen

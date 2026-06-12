@@ -184,17 +184,17 @@ export default function CustomerProfileScreen() {
         </Typo>
       </View>
 
-      <Card style={{ gap: 20, backgroundColor: '#FFFFFF', borderColor: 'rgba(5,38,152,0.1)' }}>
+      <Card style={{ gap: 20 }}>
         {/* Photo */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
           <View
             style={{
               width: 80,
               height: 80,
-              borderRadius: 4,
-              backgroundColor: '#E8EEF8',
+              borderRadius: tokens.radius.md,
+              backgroundColor: tokens.colors.bgMuted,
               borderWidth: 1,
-              borderColor: 'rgba(5,38,152,0.15)',
+              borderColor: tokens.colors.borderSubtle,
               overflow: 'hidden',
               alignItems: 'center',
               justifyContent: 'center',
@@ -203,7 +203,7 @@ export default function CustomerProfileScreen() {
             {previewSrc ? (
               <Image source={{ uri: previewSrc }} style={{ width: '100%', height: '100%' }} />
             ) : (
-              <UserCircle size={48} color="#878EA0" />
+              <UserCircle size={48} color={tokens.colors.fg3} />
             )}
           </View>
           <View style={{ flex: 1, gap: 6 }}>
@@ -219,30 +219,29 @@ export default function CustomerProfileScreen() {
               {avatarR2Key && (
                 <Button variant="ghost" size="sm" onPress={() => setAvatarR2Key(null)}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <Trash2 size={14} color="#052698" />
-                    <Typo variant="bodySm" color="#052698">Remove</Typo>
+                    <Trash2 size={14} color={tokens.colors.danger} />
+                    <Typo variant="bodySm" color={tokens.colors.danger}>Remove</Typo>
                   </View>
                 </Button>
               )}
             </View>
-            <Typo variant="caption" color="#878EA0">JPG, PNG or WebP.</Typo>
+            <Typo variant="caption" color={tokens.colors.fg3}>JPG, PNG or WebP.</Typo>
           </View>
         </View>
 
         {/* Display name */}
         <View>
-          <Typo variant="label" color="#116BF8" style={{ marginBottom: 6 }}>Display name</Typo>
+          <Typo variant="label" color={tokens.colors.fg3} style={{ marginBottom: 6 }}>Display name</Typo>
           <Input
             value={displayName}
             onChangeText={setDisplayName}
             maxLength={120}
-            style={{ backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' }}
           />
         </View>
 
         {/* Bio */}
         <View>
-          <Typo variant="label" color="#116BF8" style={{ marginBottom: 6 }}>
+          <Typo variant="label" color={tokens.colors.fg3} style={{ marginBottom: 6 }}>
             Short bio
           </Typo>
           <TextInput
@@ -251,26 +250,26 @@ export default function CustomerProfileScreen() {
             multiline
             numberOfLines={3}
             placeholder="Coffee lover, runner, generally insufferable on Mondays."
-            placeholderTextColor="#878EA0"
+            placeholderTextColor={tokens.colors.fg3}
             style={{
               padding: 12,
-              borderRadius: 4,
+              borderRadius: tokens.radius.lg,
               borderWidth: 1,
-              borderColor: 'rgba(5,38,152,0.15)',
-              backgroundColor: '#F0F4FA',
-              color: '#052698',
+              borderColor: tokens.colors.borderDefault,
+              backgroundColor: tokens.colors.bgCard,
+              color: tokens.colors.fg1,
               fontFamily: tokens.fonts.body,
               minHeight: 80,
               textAlignVertical: 'top',
             }}
           />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
-            <Typo variant="caption" color="#878EA0">
+            <Typo variant="caption" color={tokens.colors.fg3}>
               Visible on your profile in shops you've visited.
             </Typo>
             <Typo
               variant="caption"
-              color={bio.length >= BIO_MAX ? tokens.colors.danger : '#878EA0'}
+              color={bio.length >= BIO_MAX ? tokens.colors.danger : tokens.colors.fg3}
             >
               {bio.length} / {BIO_MAX}
             </Typo>
@@ -291,12 +290,12 @@ export default function CustomerProfileScreen() {
         </Pressable>
       </Card>
 
-      <Card style={{ backgroundColor: '#FFFFFF', borderColor: 'rgba(5,38,152,0.1)' }}>
-        <Typo variant="label" color="#116BF8">Account</Typo>
-        <Typo variant="body" style={{ marginTop: 4, color: '#052698' }}>
+      <Card>
+        <Typo variant="label" color={tokens.colors.fg3}>Account</Typo>
+        <Typo variant="body" style={{ marginTop: 4 }}>
           {me.data.email}
         </Typo>
-        <Typo variant="num" color="#878EA0" style={{ marginTop: 4 }}>
+        <Typo variant="num" color={tokens.colors.fg3} style={{ marginTop: 4 }}>
           user_id: {me.data.userId}
         </Typo>
       </Card>
@@ -329,11 +328,11 @@ export default function CustomerProfileScreen() {
         visible={deleteOpen}
         onClose={deleteMut.isPending ? undefined : () => setDeleteOpen(false)}
         dismissOnBackdrop={!deleteMut.isPending}
-        cardStyle={{ backgroundColor: '#ffffff', borderWidth: 1, borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}
+        cardStyle={{ gap: 12 }}
       >
         <Typo variant="label" color={tokens.colors.danger}>Danger zone</Typo>
-        <Typo variant="h3" color="#052698" style={{ marginTop: 2 }}>Delete account?</Typo>
-        <Typo variant="body" color="#1E3880">
+        <Typo variant="h3" style={{ marginTop: 2 }}>Delete account?</Typo>
+        <Typo variant="body" color={tokens.colors.fg2}>
           This permanently deletes your account, loyalty history, and all associated data. This action cannot be undone.
         </Typo>
         <Input
@@ -344,8 +343,6 @@ export default function CustomerProfileScreen() {
           autoCapitalize="none"
           autoComplete="current-password"
           error={deleteError || undefined}
-          style={{ backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' }}
-          labelStyle={{ color: '#878EA0' }}
           containerStyle={{ marginTop: 4 }}
         />
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: 4 }}>
@@ -353,7 +350,6 @@ export default function CustomerProfileScreen() {
             variant="ghost"
             onPress={() => setDeleteOpen(false)}
             disabled={deleteMut.isPending}
-            textStyle={{ color: '#052698' }}
           >
             Cancel
           </Button>

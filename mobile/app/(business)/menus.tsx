@@ -3,7 +3,7 @@ import { ScrollView, View, Pressable, Alert } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2 } from 'lucide-react-native';
 import { api } from '../../src/lib/api';
-import { getActiveBusinessId } from '../../src/lib/activeBusiness';
+import { resolveActiveBusinessId } from '../../src/lib/activeBusiness';
 import { Card } from '../../src/components/Card';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
@@ -34,23 +34,33 @@ type LoyaltyProgram = {
 export default function MenusScreen() {
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
+  const [resolving, setResolving] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const id = await getActiveBusinessId();
-      setBusinessId(id);
-      if (id) {
-        const list = await api<Array<{ id: string; slug: string }>>('/api/businesses');
-        setSlug(list.find((b) => b.id === id)?.slug ?? null);
+      try {
+        const id = await resolveActiveBusinessId();
+        setBusinessId(id);
+        if (id) {
+          const biz = await api<{ id: string; slug: string }>(`/api/businesses/${id}`);
+          setSlug(biz.slug);
+        }
+      } finally {
+        setResolving(false);
       }
     })();
   }, []);
 
+  if (resolving) return null;
+
   if (!businessId || !slug) {
     return (
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <ScrollView style={{ backgroundColor: tokens.colors.bgCanvas }} contentContainerStyle={{ padding: 20 }}>
         <Card>
-          <Typo variant="h2">Pick a business first</Typo>
+          <Typo variant="h2">No business found</Typo>
+          <Typo variant="body" color={tokens.colors.fg2} style={{ marginTop: 8 }}>
+            Go to the Business tab to create or link your business.
+          </Typo>
         </Card>
       </ScrollView>
     );

@@ -23,7 +23,7 @@ import { Check, Upload, Trash2, LogOut } from 'lucide-react-native';
 import { api, ApiError } from '../../src/lib/api';
 import { auth } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
-import { getActiveBusinessId, setActiveBusinessId } from '../../src/lib/activeBusiness';
+import { resolveActiveBusinessId, setActiveBusinessId } from '../../src/lib/activeBusiness';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { Card } from '../../src/components/Card';
@@ -116,7 +116,7 @@ export default function ProfileScreen() {
   const [resolving, setResolving] = useState(true);
 
   useEffect(() => {
-    getActiveBusinessId().then((id) => {
+    resolveActiveBusinessId().then((id) => {
       setBusinessId(id);
       setResolving(false);
     });
@@ -555,7 +555,7 @@ function CategoryPicker({
               gap: 6,
               paddingVertical: 8,
               paddingHorizontal: 14,
-              borderRadius: 4,
+              borderRadius: tokens.radius.pill,
               borderWidth: 1,
               borderColor: on ? tokens.colors.action : tokens.colors.borderDefault,
               backgroundColor: on ? tokens.colors.actionSubtleBg : tokens.colors.bgCard,
@@ -691,7 +691,7 @@ function PhotoManager({
             <View
               key={p.id}
               style={{
-                width: 100, height: 100, borderRadius: 4,
+                width: 100, height: 100, borderRadius: tokens.radius.md,
                 borderWidth: 1, borderColor: tokens.colors.borderSubtle,
                 backgroundColor: tokens.colors.bgMuted, overflow: 'hidden',
               }}
@@ -770,7 +770,7 @@ function SingleImageField({
           borderWidth: 1,
           borderStyle: 'dashed',
           borderColor: tokens.colors.borderDefault,
-          borderRadius: 4,
+          borderRadius: tokens.radius.md,
           padding: 12,
           alignItems: 'center',
           gap: 8,
@@ -779,7 +779,7 @@ function SingleImageField({
         }}
       >
         {url ? (
-          <Image source={{ uri: url }} style={{ width: 64, height: 64, borderRadius: 4 }} />
+          <Image source={{ uri: url }} style={{ width: 64, height: 64, borderRadius: tokens.radius.md }} />
         ) : (
           <Typo variant="caption" color={tokens.colors.fg3}>
             No image
@@ -816,7 +816,7 @@ const timeStyle = {
   backgroundColor: tokens.colors.bgCard,
   borderWidth: 1,
   borderColor: tokens.colors.borderDefault,
-  borderRadius: 4,
+  borderRadius: tokens.radius.lg,
   paddingHorizontal: 10,
   paddingVertical: 6,
   fontFamily: tokens.fonts.body,

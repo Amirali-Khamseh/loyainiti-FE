@@ -21,7 +21,7 @@ export function LoyaltyStamp({ required, earned, rewardLabel }: Props) {
             style={{
               width: 40,
               height: 40,
-              borderRadius: 4,
+              borderRadius: 20,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: filled ? tokens.colors.cyan500 : 'transparent',

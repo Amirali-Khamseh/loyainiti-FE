@@ -8,9 +8,6 @@ import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
-const formInput = { backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' };
-const formLabel = { color: '#878EA0' };
-
 /**
  * Reset-password screen.
  *
@@ -112,7 +109,7 @@ export default function ResetPassword() {
 
       <View style={{ height: 24 }} />
 
-      <Card style={{ backgroundColor: '#ffffff', borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}>
+      <Card style={{ gap: 12 }}>
         <Input
           label="New password"
           autoComplete="new-password"
@@ -120,8 +117,6 @@ export default function ResetPassword() {
           value={password}
           onChangeText={setPassword}
           hint="At least 8 characters, including a letter and a number"
-          style={formInput}
-          labelStyle={formLabel}
         />
         <Input
           label="Confirm new password"
@@ -129,8 +124,6 @@ export default function ResetPassword() {
           secureTextEntry
           value={confirm}
           onChangeText={setConfirm}
-          style={formInput}
-          labelStyle={formLabel}
         />
 
         {error && (
