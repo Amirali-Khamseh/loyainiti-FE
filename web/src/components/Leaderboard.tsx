@@ -26,7 +26,7 @@ export function Leaderboard({ title, rows }: { title: string; rows: Row[] }) {
                 alignItems: 'center',
                 gap: 12,
                 padding: '8px 12px',
-                borderRadius: 4,
+                borderRadius: 10,
                 background: idx === 0 ? 'var(--cyan-50)' : 'transparent',
               }}
             >

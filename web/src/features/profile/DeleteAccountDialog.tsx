@@ -11,16 +11,16 @@ type Props = {
   onClose: () => void;
 };
 
-// Light-theme overrides so that Button and Input CSS-var consumers
-// render correctly against the white dialog background.
-const lightVars: React.CSSProperties = {
-  '--fg-1': '#052698',
-  '--fg-2': '#1E3880',
-  '--fg-3': '#878EA0',
-  '--bg-card': '#F0F4FA',
-  '--bg-muted': '#E8EEF8',
-  '--border-default': 'rgba(5,38,152,0.15)',
-  '--border-subtle': 'rgba(5,38,152,0.08)',
+// Dark surface vars so that Button and Input CSS-var consumers render
+// correctly against the near-black Cobalt dialog background.
+const cardVars: React.CSSProperties = {
+  '--fg-1': '#FFFFFF',
+  '--fg-2': '#e4e4e7',
+  '--fg-3': '#a1a1aa',
+  '--bg-card': '#18181b',
+  '--bg-muted': '#121214',
+  '--border-default': '#3f3f46',
+  '--border-subtle': '#27272a',
 } as React.CSSProperties;
 
 const overlayStyle: React.CSSProperties = {
@@ -74,7 +74,7 @@ export function DeleteAccountDialog({ open, onClose }: Props) {
   return (
     <div style={overlayStyle} onClick={(e) => { if (e.target === e.currentTarget && !deleteMut.isPending) onClose(); }}>
       <div
-        style={{ ...lightVars, background: '#fff', borderRadius: 8, padding: 28, width: '100%', maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 16, boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}
+        style={{ ...cardVars, background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 16, padding: 28, width: '100%', maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 16, boxShadow: '0 8px 40px rgba(0,0,0,0.55)' }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-title"
@@ -83,11 +83,11 @@ export function DeleteAccountDialog({ open, onClose }: Props) {
           <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1.1, textTransform: 'uppercase', color: 'var(--danger)', marginBottom: 6 }}>
             Danger zone
           </p>
-          <h2 id="delete-title" style={{ font: 'var(--t-h3)', color: '#052698', margin: 0 }}>
+          <h2 id="delete-title" style={{ font: 'var(--t-h3)', color: '#FFFFFF', margin: 0 }}>
             Delete account?
           </h2>
         </div>
-        <p style={{ font: 'var(--t-body)', color: '#1E3880', margin: 0 }}>
+        <p style={{ font: 'var(--t-body)', color: '#e4e4e7', margin: 0 }}>
           This permanently deletes your account, loyalty history, and all associated data.
           This action <strong>cannot be undone</strong>.
         </p>

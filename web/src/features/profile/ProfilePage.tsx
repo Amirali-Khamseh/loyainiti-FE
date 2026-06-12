@@ -39,13 +39,13 @@ const BIO_MAX = 150;
  * without touching the shared component code.
  */
 const lightVars: React.CSSProperties = {
-  '--fg-1': '#052698',
-  '--fg-2': '#1E3880',
-  '--fg-3': '#878EA0',
-  '--bg-card': '#F0F4FA',
-  '--bg-muted': '#E8EEF8',
-  '--border-default': 'rgba(5,38,152,0.15)',
-  '--border-subtle': 'rgba(5,38,152,0.08)',
+  '--fg-1': '#FFFFFF',
+  '--fg-2': '#e4e4e7',
+  '--fg-3': '#a1a1aa',
+  '--bg-card': '#18181b',
+  '--bg-muted': '#121214',
+  '--border-default': '#3f3f46',
+  '--border-subtle': '#27272a',
 } as React.CSSProperties;
 
 /** Pick the best photo URL given the new (R2) and legacy (provider) sources. */
@@ -152,9 +152,9 @@ export function ProfilePage() {
       <Card
         padding={32}
         style={{
-          background: '#FFFFFF',
-          border: '1px solid rgba(5,38,152,0.1)',
-          boxShadow: '0 4px 24px rgba(5,38,152,0.06)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-2)',
         }}
       >
         <div style={{ ...lightVars, display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -224,7 +224,7 @@ export function ProfilePage() {
             rows={3}
             placeholder="Coffee lover, runner, generally insufferable on Mondays."
             style={{
-              width: '100%', padding: '10px 14px', borderRadius: 4,
+              width: '100%', padding: '10px 14px', borderRadius: 10,
               border: '1px solid var(--border-default)', font: 'var(--t-body)',
               background: 'var(--bg-card)', color: 'var(--fg-1)', resize: 'vertical',
               boxSizing: 'border-box', outline: 'none',
@@ -261,17 +261,17 @@ export function ProfilePage() {
       <Card
         padding={20}
         style={{
-          background: '#FFFFFF',
-          border: '1px solid rgba(5,38,152,0.1)',
-          boxShadow: '0 4px 24px rgba(5,38,152,0.06)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-2)',
         }}
       >
         <div style={lightVars}>
-          <p className="label" style={{ color: '#116BF8' }}>Account</p>
-          <p style={{ font: 'var(--t-body)', marginTop: 4, color: '#052698' }}>
+          <p className="label" style={{ color: '#38bdf8' }}>Account</p>
+          <p style={{ font: 'var(--t-body)', marginTop: 4, color: '#FFFFFF' }}>
             {me.data.email}
           </p>
-          <p style={{ font: 'var(--t-num)', marginTop: 4, color: '#878EA0' }}>
+          <p style={{ font: 'var(--t-num)', marginTop: 4, color: '#a1a1aa' }}>
             user_id: {me.data.userId}
           </p>
         </div>
@@ -280,15 +280,15 @@ export function ProfilePage() {
       <Card
         padding={20}
         style={{
-          background: '#FFFFFF',
-          border: '1px solid rgba(220,38,38,0.2)',
-          boxShadow: '0 4px 24px rgba(5,38,152,0.06)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--danger-border)',
+          boxShadow: 'var(--shadow-2)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <div>
             <p className="label" style={{ color: 'var(--danger)' }}>Danger zone</p>
-            <p className="caption" style={{ color: '#878EA0', marginTop: 4 }}>
+            <p className="caption" style={{ color: '#a1a1aa', marginTop: 4 }}>
               Permanently deletes your account and all associated data.
             </p>
           </div>

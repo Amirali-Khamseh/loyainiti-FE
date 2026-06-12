@@ -80,12 +80,12 @@ export function CategoryPage() {
       <header style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         <div
           style={{
-            width: 52, height: 52, borderRadius: 4, flexShrink: 0,
-            background: '#FFFFFF',
+            width: 52, height: 52, borderRadius: 10, flexShrink: 0,
+            background: 'var(--action)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-          <Icon size={26} color="var(--action)" />
+          <Icon size={26} color="#FFFFFF" />
         </div>
         <div>
           <span className="label" style={{ color: 'var(--fg-3)' }}>Category</span>
@@ -160,9 +160,9 @@ export function CategoryPage() {
                           key={c.id}
                           className="caption"
                           style={{
-                            padding: '2px 8px', borderRadius: 4,
+                            padding: '2px 8px', borderRadius: 10,
                             background: 'transparent', color: 'var(--action)',
-                            border: '1px solid rgba(5,38,152,0.2)',
+                            border: '1px solid rgba(14,165,233,0.35)',
                             fontWeight: 500,
                           }}
                         >
@@ -204,7 +204,7 @@ export function CategoryPage() {
 function chipStyle(active: boolean): React.CSSProperties {
   return {
     padding: '6px 14px',
-    borderRadius: 4,
+    borderRadius: 10,
     border: `1px solid ${active ? 'var(--action)' : 'var(--border-default)'}`,
     background: active ? 'var(--action-subtle-bg)' : 'var(--bg-card)',
     color: active ? 'var(--action-subtle-fg)' : 'var(--fg-2)',

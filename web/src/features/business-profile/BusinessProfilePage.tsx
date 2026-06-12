@@ -220,7 +220,7 @@ function Stepper({ step }: { step: number }) {
           <div
             style={{
               height: 4,
-              borderRadius: 2,
+              borderRadius: 6,
               background: i <= step ? 'var(--action)' : 'var(--border-default)',
             }}
           />
@@ -430,7 +430,7 @@ function CategoryPicker({ selected, onChange }: { selected: string[]; onChange: 
               alignItems: 'center',
               gap: 6,
               padding: '8px 14px',
-              borderRadius: 4,
+              borderRadius: 10,
               cursor: 'pointer',
               font: 'var(--t-body-sm)',
               fontWeight: 500,
@@ -541,7 +541,7 @@ function PhotoManager({
               style={{
                 position: 'relative',
                 aspectRatio: '1',
-                borderRadius: 4,
+                borderRadius: 10,
                 overflow: 'hidden',
                 border: '1px solid var(--border-subtle)',
                 background: 'var(--bg-muted)',
@@ -562,7 +562,7 @@ function PhotoManager({
                   right: 6,
                   display: 'inline-flex',
                   padding: 6,
-                  borderRadius: 4,
+                  borderRadius: 10,
                   border: 'none',
                   background: 'rgba(0,0,0,0.6)',
                   color: '#fff',
@@ -654,7 +654,7 @@ function UploadField({
       <div
         style={{
           border: '1px solid var(--border-default)',
-          borderRadius: 4,
+          borderRadius: 10,
           overflow: 'hidden',
           background: 'var(--bg-muted)',
         }}
@@ -712,7 +712,7 @@ function UploadField({
 const timeStyle: React.CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid var(--border-default)',
-  borderRadius: 4,
+  borderRadius: 10,
   padding: '8px 12px',
   font: 'var(--t-body)',
   color: 'var(--fg-1)',

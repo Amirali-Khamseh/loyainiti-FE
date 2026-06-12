@@ -72,7 +72,7 @@ export function VisitsPage() {
                     style={{
                       height: 8,
                       background: 'var(--slate-200)',
-                      borderRadius: 4,
+                      borderRadius: 10,
                       overflow: 'hidden',
                     }}
                   >

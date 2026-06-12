@@ -62,7 +62,7 @@ export function ConsoleUsersPage() {
         onChange={(e) => setSearch(e.target.value)}
         style={{
           width: '100%', maxWidth: 400, padding: '10px 14px',
-          borderRadius: 4, border: '1px solid var(--border-default)',
+          borderRadius: 10, border: '1px solid var(--border-default)',
           font: 'var(--t-body)', background: 'var(--bg-card)', color: 'var(--fg-1)',
         }}
       />

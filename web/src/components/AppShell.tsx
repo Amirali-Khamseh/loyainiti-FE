@@ -8,8 +8,7 @@ import {
 import { auth, type Role } from '../lib/auth';
 import { api } from '../lib/api';
 import { getActiveBusinessId, setActiveBusinessId } from '../lib/activeBusiness';
-import logoUrl from '../design-system/assets/logo.svg';
-import logoDarkUrl from '../design-system/assets/logo-dark.svg';
+import logoUrl from '../design-system/assets/Logo_final.png';
 
 type MyBusiness = { id: string; staffRole: 'owner' | 'manager' | 'staff' };
 
@@ -17,10 +16,10 @@ const headerStyle: React.CSSProperties = {
   position: 'sticky',
   top: 0,
   zIndex: 10,
-  background: '#FFFFFF',
+  background: 'rgba(9, 9, 11, 0.72)',
   backdropFilter: 'blur(12px)',
-  borderBottom: '1px solid rgba(5, 38, 152, 0.12)',
-  boxShadow: '0 1px 8px rgba(5, 38, 152, 0.08)',
+  borderBottom: '1px solid var(--border-subtle)',
+  boxShadow: 'none',
 };
 
 const navLinkBase: React.CSSProperties = {
@@ -28,18 +27,18 @@ const navLinkBase: React.CSSProperties = {
   alignItems: 'center',
   gap: 6,
   padding: '8px 12px',
-  borderRadius: 4,
+  borderRadius: 10,
   textDecoration: 'none',
   font: 'var(--t-body-sm)',
   fontWeight: 500,
-  color: '#052698',
+  color: '#FFFFFF',
 };
 
 function getNavLinkStyle({ isActive }: { isActive: boolean }): React.CSSProperties {
   return {
     ...navLinkBase,
-    color: isActive ? 'var(--action)' : '#052698',
-    background: isActive ? 'rgba(17, 107, 248, 0.08)' : 'transparent',
+    color: isActive ? 'var(--action)' : '#FFFFFF',
+    background: isActive ? 'rgba(14, 165, 233, 0.12)' : 'transparent',
   };
 }
 
@@ -98,19 +97,8 @@ export function AppShell() {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      // Light-theme CSS-var overrides — matches AuthLayout so every page
-      // renders against white cards with readable navy text.
-      '--fg-1': '#052698',
-      '--fg-2': '#1E3880',
-      '--fg-3': '#878EA0',
-      '--bg-canvas': '#F0F4FA',
-      '--bg-card': '#FFFFFF',
-      '--bg-muted': '#E8EEF8',
-      '--bg-sunken': '#DDE5F5',
-      '--border-subtle': 'rgba(5,38,152,0.08)',
-      '--border-default': 'rgba(5,38,152,0.15)',
-      '--shadow-1': '0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(5,38,152,0.06)',
-      '--shadow-2': '0 4px 16px rgba(0,0,0,0.10), 0 0 0 1px rgba(5,38,152,0.08)',
+      // Inherits the dark Cobalt tokens from tokens.css :root — every page
+      // renders against near-black cards with white text and cyan accents.
     } as React.CSSProperties}>
       <header style={headerStyle}>
         <div
@@ -118,7 +106,7 @@ export function AppShell() {
           style={{ display: 'flex', alignItems: 'center', gap: 24, paddingTop: 12, paddingBottom: 12 }}
         >
           <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-            <img src={logoDarkUrl} alt="Loyainiti" style={{ height: 28 }} />
+            <img src={logoUrl} alt="loyainiti" style={{ height: 28 }} />
           </Link>
 
           {session && (
@@ -136,16 +124,16 @@ export function AppShell() {
               <span className="spinner" />
             ) : session ? (
               <>
-                <span className="caption" style={{ color: '#878EA0' }}>
+                <span className="caption" style={{ color: '#a1a1aa' }}>
                   {session.user.email}
                 </span>
                 <button
                   onClick={async () => { await auth.signOut(); navigate('/sign-in'); }}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
-                    background: 'transparent', border: '1px solid rgba(5, 38, 152, 0.25)',
-                    borderRadius: 4, padding: '6px 12px', font: 'var(--t-body-sm)',
-                    color: '#052698', cursor: 'pointer',
+                    background: 'transparent', border: '1px solid var(--border-default)',
+                    borderRadius: 10, padding: '6px 12px', font: 'var(--t-body-sm)',
+                    color: '#FFFFFF', cursor: 'pointer',
                   }}
                 >
                   <LogOut size={14} /> Sign out
