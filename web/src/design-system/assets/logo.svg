@@ -7,7 +7,7 @@
     M 109 28
     C 95 12, 36 12, 36 28 C 36 44, 95 44, 109 28
     C 123 12, 182 12, 182 28 C 182 44, 123 44, 109 28 Z"></path>
-  <path fill="none" stroke="#116BF8" stroke-width="2.2" d="
+  <path fill="none" stroke="#0ea5e9" stroke-width="2.2" d="
     M 109 28 C 76 -6, -18 -10, -18 28 C -18 66, 76 62, 109 28
     C 142 -6, 236 -10, 236 28 C 236 66, 142 62, 109 28 Z"></path>
   <text x="2" y="40" font-family="Fraunces,'Source Serif 4',Georgia,serif" font-weight="700" font-size="42" letter-spacing="-0.02em" fill="#FFFFFF">loyainiti</text>

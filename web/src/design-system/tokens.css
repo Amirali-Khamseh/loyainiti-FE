@@ -1,107 +1,107 @@
 /* =========================================================================
-   Loyainiti - Core Color + Type Tokens
+   Loyainiti - Core Color + Type Tokens  (Cobalt theme)
    ------------------------------------------------------------------------
-   Dark-first brand: pure black canvas, deep navy hero blocks, electric
-   blue action, cyan accent. White text on dark. Matryx-inspired.
+   Inspired by joincobalt.com: pure-black / zinc canvas, sky-blue action,
+   cyan glow accent, white text on near-black. Inter type, rounded corners.
    ========================================================================= */
 
 /* ----- Fonts -------------------------------------------------------------
-   Roboto across the whole app (display, body and numerals). Self-hosted via
-   @fontsource/roboto (imported in main.tsx); the @import below is a CDN
-   fallback so styles still render if the bundled fonts fail to load.
-   Weights used: 400 / 500 / 700.
+   Inter across the whole app (display + body), JetBrains Mono for numerals.
+   Self-hosted via @fontsource (imported in main.tsx). The @import below is a
+   CDN fallback so styles still render if the bundled fonts fail to load.
    --------------------------------------------------------------------- */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* ===== Brand core ===== */
-  --navy-900: #000D2E;
-  --navy-800: #030918;
-  --navy-700: #052698;        /* deep brand navy — hero blocks, bg-inverse */
-  --navy-600: #0832B8;
+  /* "navy-*" names kept for back-compat; values are now deep sky/zinc darks. */
+  --navy-900: #000000;        /* pure black — deepest */
+  --navy-800: #09090b;        /* zinc-950 */
+  --navy-700: #0c4a6e;        /* deep sky — branded hero blocks, bg-inverse */
+  --navy-600: #075985;        /* sky-800 */
 
-  --blue-700: #0443C7;        /* action pressed */
-  --blue-600: #116BF8;        /* primary action */
-  --blue-500: #3D83F9;        /* hover on dark */
-  --blue-200: #B3CCFD;
-  --blue-50:  #EBF2FF;
+  --blue-700: #0284c7;        /* sky-600 — action pressed */
+  --blue-600: #0ea5e9;        /* sky-500 — primary action */
+  --blue-500: #38bdf8;        /* sky-400 — hover on dark */
+  --blue-200: #bae6fd;        /* sky-200 */
+  --blue-50:  #f0f9ff;        /* sky-50 */
 
-  --cyan-700:  #1292BE;
-  --cyan-500:  #21BCEE;       /* accent */
-  --cyan-200:  #A8E2F7;
-  --cyan-50:   #E5F7FD;
+  --cyan-700:  #0891b2;       /* cyan-600 */
+  --cyan-500:  #22d3ee;       /* cyan-400 — glow accent */
+  --cyan-200:  #a5f3fc;       /* cyan-200 */
+  --cyan-50:   #ecfeff;       /* cyan-50 */
 
-  --sage-700:  #4F9B5A;        /* positive / success — brightened for dark bg */
-  --sage-500:  #6DBF79;
-  --sage-200:  #B4E6BA;
-  --sage-50:   #0D2B10;
+  --sage-700:  #34d399;        /* emerald-400 — positive / success on dark */
+  --sage-500:  #6ee7b7;
+  --sage-200:  #a7f3d0;
+  --sage-50:   #052e2b;
 
-  --rose-600:  #E84C5C;        /* destructive — brightened for dark bg */
-  --rose-200:  #F5A8B0;
-  --rose-50:   #2B0A0E;
+  --rose-600:  #fb7185;        /* rose-400 — destructive on dark */
+  --rose-200:  #fecdd3;
+  --rose-50:   #2a0a12;
 
-  /* ===== Slate / neutrals ===== */
-  --slate-50:  #F5F8FA;
-  --slate-100: #EBF0F5;
-  --slate-200: #DCE3EB;        /* secondary text on dark, light surfaces */
-  --slate-300: #BEC8D4;
-  --slate-400: #A0ACBC;
-  --slate-500: #878EA0;        /* tertiary text, borders */
-  --slate-600: #5A6070;
-  --slate-700: #3B3F4E;
-  --slate-900: #000000;        /* canvas */
+  /* ===== Zinc / neutrals ("slate-*" names kept) ===== */
+  --slate-50:  #fafafa;        /* zinc-50 */
+  --slate-100: #f4f4f5;        /* zinc-100 */
+  --slate-200: #e4e4e7;        /* zinc-200 — secondary text on dark */
+  --slate-300: #d4d4d8;        /* zinc-300 */
+  --slate-400: #a1a1aa;        /* zinc-400 — tertiary text */
+  --slate-500: #71717a;        /* zinc-500 — captions, borders */
+  --slate-600: #52525b;        /* zinc-600 */
+  --slate-700: #3f3f46;        /* zinc-700 */
+  --slate-900: #09090b;        /* zinc-950 */
 
   /* ===== Semantic foreground ===== */
-  --fg-1: #FFFFFF;                     /* primary text — white on black */
-  --fg-2: var(--slate-200);            /* secondary text */
-  --fg-3: var(--slate-500);            /* tertiary, captions, placeholders */
+  --fg-1: #FFFFFF;                     /* primary text — white on near-black */
+  --fg-2: var(--slate-200);            /* secondary text — zinc-200 */
+  --fg-3: var(--slate-400);            /* tertiary, captions, placeholders */
   --fg-on-dark: #FFFFFF;
   --fg-on-accent: #FFFFFF;
 
   /* ===== Semantic background (dark hierarchy) ===== */
-  --bg-canvas:  #060E2B;               /* dark navy — main app canvas */
-  --bg-card:    #0D1D5C;               /* lighter navy — cards, header */
-  --bg-muted:   #091540;               /* subtle section between sunken/canvas */
-  --bg-sunken:  #040B1E;               /* deepest — recessed / inset areas */
-  --bg-inverse: var(--navy-700);       /* #052698 — branded navy hero blocks */
+  --bg-canvas:  #09090b;               /* zinc-950 — main app canvas */
+  --bg-card:    #18181b;               /* zinc-900 — cards, header */
+  --bg-muted:   #121214;               /* between canvas and card */
+  --bg-sunken:  #000000;               /* pure black — recessed / inset areas */
+  --bg-inverse: var(--navy-700);       /* #0c4a6e — deep-sky branded blocks */
 
   /* ===== Semantic border ===== */
-  --border-subtle:  #152555;           /* visible on navy canvas */
-  --border-default: #1E3880;
-  --border-strong:  var(--slate-500);
+  --border-subtle:  #27272a;           /* zinc-800 — visible on near-black */
+  --border-default: #3f3f46;           /* zinc-700 */
+  --border-strong:  var(--slate-500);  /* zinc-500 */
 
   /* ===== Action ===== */
-  --action: var(--blue-600);
-  --action-hover: var(--blue-500);     /* lighter on hover (dark bg) */
-  --action-press: var(--blue-700);
+  --action: var(--blue-600);           /* sky-500 — pops on black */
+  --action-hover: var(--blue-500);     /* sky-400 — lighter on hover (dark bg) */
+  --action-press: var(--blue-700);     /* sky-600 */
   --action-fg:   #ffffff;
-  --action-subtle-bg: #0A1F55;
-  --action-subtle-fg: var(--cyan-500);
+  --action-subtle-bg: #082f49;         /* sky-950 tint */
+  --action-subtle-fg: var(--cyan-500); /* cyan-400 */
 
   /* ===== Status ===== */
   --success: var(--sage-700);
   --success-bg: var(--sage-50);
-  --success-border: #1A5C22;
+  --success-border: #14532d;
 
-  --warning: #F5A623;
-  --warning-bg: #2B1A00;
-  --warning-border: #6B4200;
+  --warning: #fbbf24;                  /* amber-400 */
+  --warning-bg: #271a04;
+  --warning-border: #6b4200;
 
   --danger: var(--rose-600);
   --danger-bg: var(--rose-50);
-  --danger-border: #6B1520;
+  --danger-border: #7f1d2e;
 
   /* ===== Type families ===== */
-  /* All three roles resolve to Roboto. */
-  --font-display: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-body:    'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono:    'Roboto', ui-monospace, 'SF Mono', monospace;
+  /* Inter for display + body, JetBrains Mono for numerals. */
+  --font-display: 'Inter', 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body:    'Inter', 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
 
   /* ===== Type scale (px, line-height, weight) ===== */
-  --t-display-1: 700 56px/1.04 var(--font-display);
-  --t-display-2: 700 40px/1.08 var(--font-display);
-  --t-h1:        600 32px/1.14 var(--font-display);
-  --t-h2:        600 24px/1.22 var(--font-display);
+  --t-display-1: 800 56px/1.04 var(--font-display);
+  --t-display-2: 800 40px/1.08 var(--font-display);
+  --t-h1:        700 32px/1.14 var(--font-display);
+  --t-h2:        700 24px/1.22 var(--font-display);
   --t-h3:        600 18px/1.30 var(--font-body);
   --t-body-lg:   400 17px/1.50 var(--font-body);
   --t-body:      400 15px/1.55 var(--font-body);
@@ -126,18 +126,18 @@
   --s-16: 64px;
   --s-20: 80px;
 
-  /* ===== Radii ===== */
-  --r-1: 4px;
-  --r-2: 4px;
-  --r-3: 4px;
-  --r-4: 4px;
-  --r-5: 4px;
-  --r-pill: 4px;
+  /* ===== Radii — rounded, Cobalt-style ===== */
+  --r-1: 6px;
+  --r-2: 8px;
+  --r-3: 10px;
+  --r-4: 12px;
+  --r-5: 16px;
+  --r-pill: 9999px;
 
-  /* ===== Shadows — blue glow on dark ===== */
-  --shadow-1: 0 1px 3px rgba(17, 107, 248, 0.08), 0 0 0 1px rgba(17, 107, 248, 0.06);
-  --shadow-2: 0 4px 16px rgba(17, 107, 248, 0.14), 0 0 0 1px rgba(17, 107, 248, 0.08);
-  --shadow-3: 0 8px 40px rgba(17, 107, 248, 0.22), 0 0 0 1px rgba(17, 107, 248, 0.12);
+  /* ===== Shadows — cyan glow on near-black ===== */
+  --shadow-1: 0 1px 3px rgba(34, 211, 238, 0.08), 0 0 0 1px rgba(34, 211, 238, 0.06);
+  --shadow-2: 0 4px 16px rgba(34, 211, 238, 0.14), 0 0 0 1px rgba(34, 211, 238, 0.08);
+  --shadow-3: 0 8px 40px rgba(34, 211, 238, 0.22), 0 0 0 1px rgba(34, 211, 238, 0.12);
   --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
   /* ===== Motion ===== */

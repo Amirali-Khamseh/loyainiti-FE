@@ -154,7 +154,7 @@ export function ShopPage() {
         <img
           src={r2Url(b.coverR2Key)!}
           alt=""
-          style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 4 }}
+          style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 10 }}
         />
       )}
 
@@ -164,7 +164,7 @@ export function ShopPage() {
             <img
               src={r2Url(b.logoR2Key)!}
               alt=""
-              style={{ width: 56, height: 56, borderRadius: 4, objectFit: 'cover', border: '1px solid var(--border-subtle)' }}
+              style={{ width: 56, height: 56, borderRadius: 10, objectFit: 'cover', border: '1px solid var(--border-subtle)' }}
             />
           )}
           <div>
@@ -176,7 +176,7 @@ export function ShopPage() {
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
             {b.categories.map((c) => (
               <span key={c.id} className="caption" style={{
-                padding: '3px 10px', borderRadius: 4,
+                padding: '3px 10px', borderRadius: 10,
                 background: 'var(--action-subtle-bg)', color: 'var(--action-subtle-fg)',
               }}>
                 {c.name}
@@ -203,7 +203,7 @@ export function ShopPage() {
                 key={p.id}
                 src={url}
                 alt={p.caption ?? ''}
-                style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border-subtle)' }}
+                style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border-subtle)' }}
               />
             ) : null;
           })}
@@ -353,7 +353,7 @@ function MenuTreeView({ tree, loading }: { tree: MenuTree | undefined; loading: 
                   display: 'flex',
                   gap: 16,
                   padding: 16,
-                  borderRadius: 4,
+                  borderRadius: 10,
                   border: '1px solid var(--border-subtle)',
                   background: 'var(--bg-card)',
                   opacity: it.isAvailable ? 1 : 0.5,
@@ -481,7 +481,7 @@ function ReviewsTab({
             placeholder="Share your experience…"
             rows={3}
             style={{
-              width: '100%', padding: '10px 14px', borderRadius: 4,
+              width: '100%', padding: '10px 14px', borderRadius: 10,
               border: '1px solid var(--border-default)', font: 'var(--t-body)',
               background: 'var(--bg-card)', color: 'var(--fg-1)', resize: 'vertical',
               boxSizing: 'border-box',
@@ -533,7 +533,7 @@ function ReviewsTab({
                   onChange={(e) => setEditComment(e.target.value)}
                   rows={3}
                   style={{
-                    width: '100%', padding: '10px 14px', borderRadius: 4,
+                    width: '100%', padding: '10px 14px', borderRadius: 10,
                     border: '1px solid var(--border-default)', font: 'var(--t-body)',
                     background: 'var(--bg-card)', color: 'var(--fg-1)', resize: 'vertical',
                     boxSizing: 'border-box',

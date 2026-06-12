@@ -16,7 +16,7 @@ const baseStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   gap: 8,
-  borderRadius: 4,
+  borderRadius: 10,
   font: 'var(--t-body)',
   fontWeight: 600,
   border: '1px solid transparent',

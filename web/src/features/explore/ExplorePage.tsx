@@ -104,12 +104,12 @@ export function ExplorePage() {
                     style={{
                       display: 'flex', flexDirection: 'column', gap: 12,
                       cursor: 'pointer', transition: 'border-color 0.15s',
-                      background: '#FFFFFF', border: '1px solid #FFFFFF',
+                      background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
                     }}
                   >
                     <div
                       style={{
-                        width: 44, height: 44, borderRadius: 4,
+                        width: 44, height: 44, borderRadius: 10,
                         background: 'var(--action)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
@@ -117,8 +117,8 @@ export function ExplorePage() {
                       <Icon size={22} color="#FFFFFF" />
                     </div>
                     <div>
-                      <p className="body-sm" style={{ fontWeight: 600, color: '#060E2B' }}>{cat.name}</p>
-                      <p className="caption" style={{ color: '#878EA0', marginTop: 2 }}>
+                      <p className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>{cat.name}</p>
+                      <p className="caption" style={{ color: '#a1a1aa', marginTop: 2 }}>
                         {cat.childCount} {cat.childCount === 1 ? 'type' : 'types'}
                       </p>
                     </div>
@@ -157,7 +157,7 @@ export function ExplorePage() {
                   </p>
                   {m.program ? (
                     <div style={{ marginTop: 12 }}>
-                      <div style={{ height: 8, background: 'var(--slate-200)', borderRadius: 4, overflow: 'hidden' }}>
+                      <div style={{ height: 8, background: 'var(--slate-200)', borderRadius: 10, overflow: 'hidden' }}>
                         <div
                           style={{
                             width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program.requiredVisits) * 100)}%`,
@@ -188,7 +188,7 @@ export function ExplorePage() {
         </>
       )}
 
-      <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <section id="all-shops" style={{ display: 'flex', flexDirection: 'column', gap: 16, scrollMarginTop: 80 }}>
         <h2 className="h2">All shops on the network</h2>
         {businesses.isLoading && <p className="body">Loading…</p>}
         {businesses.error && (
@@ -222,9 +222,9 @@ export function ExplorePage() {
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
                       {b.categories.slice(0, 3).map((c) => (
                         <span key={c.id} className="caption" style={{
-                          padding: '2px 8px', borderRadius: 4,
+                          padding: '2px 8px', borderRadius: 10,
                           background: 'transparent', color: 'var(--action)',
-                          border: '1px solid rgba(5,38,152,0.2)',
+                          border: '1px solid rgba(14,165,233,0.35)',
                           fontWeight: 500,
                         }}>
                           {c.name}
@@ -267,4 +267,3 @@ const divider: React.CSSProperties = {
   background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.18), transparent)',
   margin: 0,
 };
-

@@ -38,45 +38,45 @@ export function MyQrPage() {
         padding={32}
         style={{
           display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center',
-          background: '#FFFFFF',
-          border: '1px solid rgba(5,38,152,0.1)',
-          boxShadow: '0 4px 24px rgba(5,38,152,0.06)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-2)',
         }}
       >
         <div
           style={{
             padding: 20,
-            background: '#fff',
-            borderRadius: 4,
-            border: '1px solid rgba(5,38,152,0.1)',
-            boxShadow: '0 2px 12px rgba(5,38,152,0.08)',
+            background: '#ffffff',
+            borderRadius: 16,
+            border: '1px solid #e4e4e7',
+            boxShadow: '0 0 32px rgba(34,211,238,0.18)',
           }}
         >
           <QRCodeCanvas
             value={payload}
             size={280}
-            bgColor="#FFFFFF"
-            fgColor="#052698"
+            bgColor="#ffffff"
+            fgColor="#0b0b0c"
             level="M"
             includeMargin={false}
           />
         </div>
 
         <div style={{ textAlign: 'center' }}>
-          <p className="label" style={{ color: '#116BF8' }}>Code</p>
-          <p className="num-lg" style={{ marginTop: 4, color: '#052698' }}>{me.data.qrCodeId}</p>
-          <p className="caption" style={{ marginTop: 4, color: '#878EA0' }}>
+          <p className="label" style={{ color: '#38bdf8' }}>Code</p>
+          <p className="num-lg" style={{ marginTop: 4, color: '#FFFFFF' }}>{me.data.qrCodeId}</p>
+          <p className="caption" style={{ marginTop: 4, color: '#a1a1aa' }}>
             If a shop can't scan, dictate the code above.
           </p>
         </div>
 
-        <div style={{ width: '100%', borderTop: '1px solid rgba(5,38,152,0.1)', paddingTop: 16 }}>
-          <p className="label" style={{ color: '#116BF8' }}>Account</p>
-          <p style={{ font: 'var(--t-body)', marginTop: 4, color: '#052698' }}>
+        <div style={{ width: '100%', borderTop: '1px solid var(--border-subtle)', paddingTop: 16 }}>
+          <p className="label" style={{ color: '#38bdf8' }}>Account</p>
+          <p style={{ font: 'var(--t-body)', marginTop: 4, color: '#FFFFFF' }}>
             {me.data.displayName}{' '}
-            <span style={{ color: '#878EA0' }}>({me.data.email})</span>
+            <span style={{ color: '#a1a1aa' }}>({me.data.email})</span>
           </p>
-          <p className="mono" style={{ font: 'var(--t-num)', marginTop: 4, color: '#878EA0' }}>
+          <p className="mono" style={{ font: 'var(--t-num)', marginTop: 4, color: '#a1a1aa' }}>
             user_id: {me.data.userId}
           </p>
         </div>
