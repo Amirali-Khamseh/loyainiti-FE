@@ -25,7 +25,8 @@
       "package": "com.loyainiti.app"
     },
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "favicon": "./src/design-system/assets/Logo_final.png"
     },
     "plugins": [
       "expo-router",
