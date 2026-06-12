@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { User, Store } from 'lucide-react-native';
-import { auth } from '../../src/lib/auth';
+import { auth, type Role } from '../../src/lib/auth';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { Card } from '../../src/components/Card';
@@ -20,10 +20,13 @@ export default function SignIn() {
     setBusy(true);
     setError(null);
     try {
-      const { error: err } = await auth.signIn.email({ email, password });
+      const { data, error: err } = await auth.signIn.email({ email, password });
       if (err) { setError(err.message ?? 'Sign in failed'); return; }
-      await auth.getSession();
-      router.replace('/');
+      const role = (data?.user as { role?: Role } | null)?.role;
+      const isStaff = role === 'business_owner' || role === 'staff' || role === 'admin';
+      router.replace(isStaff ? '/(business)/dashboard' : '/(customer)/explore');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong');
     } finally {
       setBusy(false);
     }
