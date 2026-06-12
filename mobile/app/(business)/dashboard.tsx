@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../src/lib/api';
-import { getActiveBusinessId } from '../../src/lib/activeBusiness';
+import { resolveActiveBusinessId } from '../../src/lib/activeBusiness';
 import { Card } from '../../src/components/Card';
 import { KpiCard } from '../../src/components/KpiCard';
 import { Typo } from '../../src/components/Heading';
@@ -31,8 +31,13 @@ function defaultRange() {
 
 export default function Dashboard() {
   const [businessId, setBusinessId] = useState<string | null>(null);
+  const [resolving, setResolving] = useState(true);
+
   useEffect(() => {
-    getActiveBusinessId().then(setBusinessId);
+    resolveActiveBusinessId().then((id) => {
+      setBusinessId(id);
+      setResolving(false);
+    });
   }, []);
 
   const range = defaultRange();
@@ -54,13 +59,15 @@ export default function Dashboard() {
     enabled: !!businessId,
   });
 
+  if (resolving) return null;
+
   if (!businessId) {
     return (
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <ScrollView style={{ backgroundColor: tokens.colors.bgCanvas }} contentContainerStyle={{ padding: 20 }}>
         <Card>
-          <Typo variant="h2">Pick a business first</Typo>
+          <Typo variant="h2">No business found</Typo>
           <Typo variant="body" color={tokens.colors.fg2} style={{ marginTop: 8 }}>
-            Open the Profile tab to create one.
+            Go to the Business tab to create your business.
           </Typo>
         </Card>
       </ScrollView>

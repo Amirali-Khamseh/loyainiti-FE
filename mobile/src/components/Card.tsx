@@ -14,7 +14,7 @@ export function Card({ children, variant = 'default', padding = 20, style }: Pro
     <View
       style={[
         {
-          borderRadius: tokens.radius.xl,
+          borderRadius: tokens.radius.lg,
           padding,
           backgroundColor:
             variant === 'inverse'

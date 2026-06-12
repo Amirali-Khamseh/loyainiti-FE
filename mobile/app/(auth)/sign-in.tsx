@@ -9,9 +9,6 @@ import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
-const formInput = { backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' };
-const formLabel = { color: '#878EA0' };
-
 export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -41,7 +38,7 @@ export default function SignIn() {
 
       <View style={{ height: 24 }} />
 
-      <Card style={{ backgroundColor: '#ffffff', borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}>
+      <Card style={{ gap: 12 }}>
         <Input
           label="Email"
           autoCapitalize="none"
@@ -49,8 +46,6 @@ export default function SignIn() {
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
-          style={formInput}
-          labelStyle={formLabel}
         />
         <Input
           label="Password"
@@ -58,8 +53,6 @@ export default function SignIn() {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          style={formInput}
-          labelStyle={formLabel}
         />
 
         {error && (
@@ -71,7 +64,7 @@ export default function SignIn() {
         <Button onPress={submit} loading={busy} size="lg">Sign in</Button>
 
         <Pressable onPress={() => router.push('/(auth)/forgot-password')}>
-          <Typo variant="bodySm" color="#116BF8" style={{ textAlign: 'center' }}>
+          <Typo variant="bodySm" color={tokens.colors.action} style={{ textAlign: 'center' }}>
             Forgot your password?
           </Typo>
         </Pressable>
@@ -93,13 +86,13 @@ export default function SignIn() {
             onPress={() => router.push('/(auth)/sign-up')}
             style={{
               flex: 1, padding: 14, borderRadius: tokens.radius.lg,
-              borderWidth: 1, borderColor: 'rgba(5,38,152,0.15)',
-              backgroundColor: '#ffffff', alignItems: 'center',
+              borderWidth: 1, borderColor: tokens.colors.borderDefault,
+              backgroundColor: tokens.colors.bgCard, alignItems: 'center',
             }}
           >
             <User color={tokens.colors.action} size={20} />
-            <Typo variant="bodySm" color="#052698" style={{ fontWeight: '600', marginTop: 6 }}>Customer</Typo>
-            <Typo variant="caption" color="#878EA0" style={{ marginTop: 2, textAlign: 'center' }}>
+            <Typo variant="bodySm" style={{ fontWeight: '600', marginTop: 6 }}>Customer</Typo>
+            <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 2, textAlign: 'center' }}>
               Collect loyalty rewards
             </Typo>
           </Pressable>
@@ -107,13 +100,13 @@ export default function SignIn() {
             onPress={() => router.push('/(auth)/sign-up-business')}
             style={{
               flex: 1, padding: 14, borderRadius: tokens.radius.lg,
-              borderWidth: 1, borderColor: 'rgba(5,38,152,0.15)',
-              backgroundColor: '#ffffff', alignItems: 'center',
+              borderWidth: 1, borderColor: tokens.colors.borderDefault,
+              backgroundColor: tokens.colors.bgCard, alignItems: 'center',
             }}
           >
             <Store color={tokens.colors.action} size={20} />
-            <Typo variant="bodySm" color="#052698" style={{ fontWeight: '600', marginTop: 6 }}>Business</Typo>
-            <Typo variant="caption" color="#878EA0" style={{ marginTop: 2, textAlign: 'center' }}>
+            <Typo variant="bodySm" style={{ fontWeight: '600', marginTop: 6 }}>Business</Typo>
+            <Typo variant="caption" color={tokens.colors.fg3} style={{ marginTop: 2, textAlign: 'center' }}>
               Run a loyalty programme
             </Typo>
           </Pressable>

@@ -8,9 +8,6 @@ import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
-const formInput = { backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' };
-const formLabel = { color: '#878EA0' };
-
 /**
  * Business sign-up - creates the account then routes straight to the
  * business profile onboarding screen. We await auth.getSession() after
@@ -64,8 +61,8 @@ export default function SignUpBusiness() {
 
       <View style={{ height: 24 }} />
 
-      <Card style={{ backgroundColor: '#ffffff', borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}>
-        <Input label="Your name" autoComplete="name" value={name} onChangeText={setName} style={formInput} labelStyle={formLabel} />
+      <Card style={{ gap: 12 }}>
+        <Input label="Your name" autoComplete="name" value={name} onChangeText={setName} />
         <Input
           label="Work email"
           autoCapitalize="none"
@@ -73,8 +70,6 @@ export default function SignUpBusiness() {
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
-          style={formInput}
-          labelStyle={formLabel}
         />
         <Input
           label="Password"
@@ -83,8 +78,6 @@ export default function SignUpBusiness() {
           value={password}
           onChangeText={setPassword}
           hint="At least 8 characters, including a letter and a number"
-          style={formInput}
-          labelStyle={formLabel}
         />
         <Input
           label="Confirm password"
@@ -92,8 +85,6 @@ export default function SignUpBusiness() {
           secureTextEntry
           value={confirm}
           onChangeText={setConfirm}
-          style={formInput}
-          labelStyle={formLabel}
         />
 
         {error && (

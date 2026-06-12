@@ -3,7 +3,7 @@ import { View, ScrollView, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Gift } from 'lucide-react-native';
 import { api, ApiError } from '../../src/lib/api';
-import { getActiveBusinessId } from '../../src/lib/activeBusiness';
+import { resolveActiveBusinessId } from '../../src/lib/activeBusiness';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { Card } from '../../src/components/Card';
@@ -27,6 +27,7 @@ function normalize(raw: string): string {
 
 export default function Scan() {
   const [businessId, setBusinessId] = useState<string | null>(null);
+  const [resolving, setResolving] = useState(true);
   const [permission, requestPermission] = useCameraPermissions();
   const [manualCode, setManualCode] = useState('');
   const [scanning, setScanning] = useState(true);
@@ -35,7 +36,10 @@ export default function Scan() {
   const lastScannedAt = useRef(0);
 
   useEffect(() => {
-    getActiveBusinessId().then(setBusinessId);
+    resolveActiveBusinessId().then((id) => {
+      setBusinessId(id);
+      setResolving(false);
+    });
   }, []);
 
   const recordVisit = async (qrCodeId: string) => {
@@ -67,13 +71,15 @@ export default function Scan() {
     }
   };
 
+  if (resolving) return null;
+
   if (!businessId) {
     return (
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <ScrollView style={{ backgroundColor: tokens.colors.bgCanvas }} contentContainerStyle={{ padding: 20 }}>
         <Card>
-          <Typo variant="h2">Pick a business first</Typo>
+          <Typo variant="h2">No business found</Typo>
           <Typo variant="body" color={tokens.colors.fg2} style={{ marginTop: 8 }}>
-            Open the Profile tab.
+            Go to the Business tab to create your business.
           </Typo>
         </Card>
       </ScrollView>
@@ -86,7 +92,7 @@ export default function Scan() {
 
   if (!permission.granted) {
     return (
-      <ScrollView contentContainerStyle={{ padding: 20, gap: 12 }}>
+      <ScrollView style={{ backgroundColor: tokens.colors.bgCanvas }} contentContainerStyle={{ padding: 20, gap: 12 }}>
         <Card>
           <Typo variant="h2">Camera permission</Typo>
           <Typo variant="body" color={tokens.colors.fg2} style={{ marginTop: 8, marginBottom: 16 }}>

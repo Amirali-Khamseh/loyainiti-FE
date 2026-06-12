@@ -1,14 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Loyainiti">
-  <!-- dark canvas bg with rounded corners -->
-  <rect width="32" height="32" rx="6" fill="#060E2B"/>
-  <!-- infinity mark: same bezier paths as the logo, scaled to fit 29×9 px centred in the 32×32 tile -->
-  <g transform="translate(3.5 12.8) scale(0.115)">
-    <path fill-rule="evenodd" fill="#116BF8" d="
-      M 109 28
-      C 76 -6, -18 -10, -18 28 C -18 66, 76 62, 109 28
-      C 142 -6, 236 -10, 236 28 C 236 66, 142 62, 109 28 Z
-      M 109 28
-      C 95 12, 36 12, 36 28 C 36 44, 95 44, 109 28
-      C 123 12, 182 12, 182 28 C 182 44, 123 44, 109 28 Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44" role="img" aria-label="Loyainiti mark">
+  <defs>
+    <linearGradient id="markFoil" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#EAC57C"/>
+      <stop offset="50%" stop-color="#D4A24A"/>
+      <stop offset="100%" stop-color="#B88A38"/>
+    </linearGradient>
+  </defs>
+  <rect width="44" height="44" rx="10" fill="#1F1611"/>
+  <g transform="translate(22 22.5)">
+    <path fill-rule="evenodd" fill="url(#markFoil)" d="
+      M 0 0 C -6 -8, -16 -9, -16 0 C -16 9, -6 8, 0 0
+      C 6 -8, 16 -9, 16 0 C 16 9, 6 8, 0 0 Z
+      M 0 0 C -3.5 -4, -9 -4.5, -9 0 C -9 4.5, -3.5 4, 0 0
+      C 3.5 -4, 9 -4.5, 9 0 C 9 4.5, 3.5 4, 0 0 Z"/>
+    <path fill="none" stroke="#8A6726" stroke-width="1.1" d="
+      M 0 0 C -6 -8, -16 -9, -16 0 C -16 9, -6 8, 0 0
+      C 6 -8, 16 -9, 16 0 C 16 9, 6 8, 0 0 Z"/>
   </g>
 </svg>

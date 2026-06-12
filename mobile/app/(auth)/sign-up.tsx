@@ -8,9 +8,6 @@ import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
-const formInput = { backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' };
-const formLabel = { color: '#878EA0' };
-
 export default function SignUp() {
   const router = useRouter();
   const [name, setName] = useState('');
@@ -57,8 +54,8 @@ export default function SignUp() {
 
       <View style={{ height: 24 }} />
 
-      <Card style={{ backgroundColor: '#ffffff', borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}>
-        <Input label="Name" autoComplete="name" value={name} onChangeText={setName} style={formInput} labelStyle={formLabel} />
+      <Card style={{ gap: 12 }}>
+        <Input label="Name" autoComplete="name" value={name} onChangeText={setName} />
         <Input
           label="Email"
           autoCapitalize="none"
@@ -66,8 +63,6 @@ export default function SignUp() {
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
-          style={formInput}
-          labelStyle={formLabel}
         />
         <Input
           label="Password"
@@ -76,8 +71,6 @@ export default function SignUp() {
           value={password}
           onChangeText={setPassword}
           hint="At least 8 characters, including a letter and a number"
-          style={formInput}
-          labelStyle={formLabel}
         />
         <Input
           label="Confirm password"
@@ -85,8 +78,6 @@ export default function SignUp() {
           secureTextEntry
           value={confirm}
           onChangeText={setConfirm}
-          style={formInput}
-          labelStyle={formLabel}
         />
 
         {error && (

@@ -77,8 +77,8 @@ export default function CategoryDrillDown() {
             style={{
               width: 48,
               height: 48,
-              borderRadius: 4,
-              backgroundColor: '#FFFFFF',
+              borderRadius: tokens.radius.md,
+              backgroundColor: tokens.colors.actionSubtleBg,
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -128,7 +128,7 @@ export default function CategoryDrillDown() {
                   {coverUrl && (
                     <Image
                       source={{ uri: coverUrl }}
-                      style={{ width: '100%', height: 120, borderRadius: 4, marginBottom: 12 }}
+                      style={{ width: '100%', height: 120, borderRadius: tokens.radius.md, marginBottom: 12 }}
                     />
                   )}
                   <View
@@ -145,8 +145,8 @@ export default function CategoryDrillDown() {
                           style={{
                             paddingVertical: 2,
                             paddingHorizontal: 8,
-                            borderRadius: 4,
-                            backgroundColor: '#FFFFFF',
+                            borderRadius: tokens.radius.pill,
+                            backgroundColor: tokens.colors.actionSubtleBg,
                           }}
                         >
                           <Typo variant="caption" color={tokens.colors.action} style={{ fontWeight: '500' }}>
@@ -200,7 +200,7 @@ function Chip({
       style={{
         paddingVertical: 6,
         paddingHorizontal: 14,
-        borderRadius: 4,
+        borderRadius: tokens.radius.pill,
         borderWidth: 1,
         borderColor: active ? tokens.colors.action : tokens.colors.borderDefault,
         backgroundColor: active ? tokens.colors.actionSubtleBg : tokens.colors.bgCard,

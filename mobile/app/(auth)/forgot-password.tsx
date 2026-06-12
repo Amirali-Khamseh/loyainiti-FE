@@ -47,15 +47,13 @@ export default function ForgotPassword() {
       <View style={{ height: 24 }} />
 
       {!sent && (
-        <Card style={{ backgroundColor: '#ffffff', borderColor: 'rgba(5,38,152,0.1)', gap: 12 }}>
+        <Card style={{ gap: 12 }}>
           <Input
             label="Email"
             autoCapitalize="none"
             keyboardType="email-address"
             value={email}
             onChangeText={setEmail}
-            style={{ backgroundColor: '#F0F4FA', color: '#052698', borderColor: 'rgba(5,38,152,0.15)' }}
-            labelStyle={{ color: '#878EA0' }}
           />
           {error && (
             <Typo variant="bodySm" color={tokens.colors.danger}>{error}</Typo>
