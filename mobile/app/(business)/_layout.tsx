@@ -8,7 +8,7 @@ import { tokens } from '../../src/design-system/tokens';
 const Logo = () => (
   <Image
     source={require('../../src/design-system/assets/Logo_final.png')}
-    style={{ height: 32, width: 140, backgroundColor: 'transparent' }}
+    style={{ height: 38, width: 165, backgroundColor: 'transparent' }}
     resizeMode="contain"
   />
 );
@@ -38,7 +38,7 @@ export default function BusinessLayout() {
         tabBarInactiveTintColor: tokens.colors.fg3,
         tabBarStyle: { backgroundColor: tokens.colors.bgCard, borderTopColor: tokens.colors.borderSubtle },
         tabBarLabelStyle: { fontFamily: tokens.fonts.body, fontSize: 11 },
-        headerStyle: { backgroundColor: tokens.colors.bgCard },
+        headerStyle: { backgroundColor: tokens.colors.bgSunken },
         headerTintColor: tokens.colors.fg1,
         headerShadowVisible: false,
         headerTitleStyle: { fontFamily: tokens.fonts.body, fontWeight: '600', color: tokens.colors.fg1 },

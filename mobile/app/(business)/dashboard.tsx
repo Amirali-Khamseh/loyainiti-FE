@@ -109,14 +109,24 @@ export default function Dashboard() {
                 backgroundColor: i === 0 ? tokens.colors.cyan50 : 'transparent',
               }}
             >
-              <Typo variant="num" color={tokens.colors.fg3} style={{ width: 24, textAlign: 'right' }}>
+              <Typo
+                variant="num"
+                color={i === 0 ? tokens.colors.slate600 : tokens.colors.fg3}
+                style={{ width: 24, textAlign: 'right' }}
+              >
                 {i + 1}
               </Typo>
               <View style={{ flex: 1 }}>
-                <Typo variant="body">{c.displayName}</Typo>
-                <Typo variant="caption" color={tokens.colors.fg3}>{c.email}</Typo>
+                <Typo variant="body" color={i === 0 ? tokens.colors.navy800 : tokens.colors.fg1}>
+                  {c.displayName}
+                </Typo>
+                <Typo variant="caption" color={i === 0 ? tokens.colors.slate600 : tokens.colors.fg3}>
+                  {c.email}
+                </Typo>
               </View>
-              <Typo variant="numLg">{c.visits}</Typo>
+              <Typo variant="numLg" color={i === 0 ? tokens.colors.navy800 : tokens.colors.fg1}>
+                {c.visits}
+              </Typo>
             </View>
           ))}
         </View>

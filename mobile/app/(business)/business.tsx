@@ -14,12 +14,12 @@
  *    GET /api/businesses/:id which returns the full detail incl.
  *    categories, hours and photos.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, View, Pressable, Image, TextInput, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
-import { Check, Upload, Trash2, LogOut } from 'lucide-react-native';
+import { Check, Upload, Trash2, LogOut, ChevronDown } from 'lucide-react-native';
 import { api, ApiError } from '../../src/lib/api';
 import { auth } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
@@ -36,7 +36,7 @@ import { tokens } from '../../src/design-system/tokens';
 type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 type DayHours = { open: string; close: string; closed: boolean };
 type OpeningHours = Record<DayKey, DayHours>;
-type Category = { id: string; name: string; slug: string };
+type Category = { id: string; name: string; slug: string; parentId: string | null };
 type Photo = { id: string; r2Key: string; caption: string | null; sortOrder: number };
 
 type BusinessDetail = {
@@ -521,10 +521,60 @@ function CategoryPicker({
   selected: string[];
   onChange: (v: string[]) => void;
 }) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
   const cats = useQuery({
     queryKey: ['categories'],
     queryFn: () => api<Category[]>('/api/categories'),
   });
+
+  const mains = useMemo(
+    () => (cats.data ?? []).filter((c: Category) => c.parentId === null),
+    [cats.data],
+  );
+
+  const childrenByMain = useMemo(() => {
+    const map = new Map<string, Category[]>();
+    for (const c of cats.data ?? []) {
+      if (c.parentId) {
+        const arr = map.get(c.parentId) ?? [];
+        arr.push(c);
+        map.set(c.parentId, arr);
+      }
+    }
+    return map;
+  }, [cats.data]);
+
+  // Auto-expand parents that already have selected subcategories (edit mode)
+  useEffect(() => {
+    if (!cats.data?.length) return;
+    const toExpand = new Set<string>();
+    for (const [mid, children] of childrenByMain.entries()) {
+      if (children.some((c: Category) => selected.includes(c.id))) {
+        toExpand.add(mid);
+      }
+    }
+    if (toExpand.size > 0) setExpanded(toExpand);
+  }, [cats.data]);
+
+  const selectedSet = new Set(selected);
+
+  const toggleExpand = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSub = (id: string) => {
+    const next = new Set(selectedSet);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    onChange([...next]);
+  };
+
   if (cats.isLoading) return <Typo variant="body">Loading categories…</Typo>;
   if (cats.error)
     return (
@@ -533,43 +583,113 @@ function CategoryPicker({
       </Typo>
     );
 
-  const selectedSet = new Set(selected);
-  const toggle = (id: string) => {
-    const next = new Set(selectedSet);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    onChange([...next]);
-  };
-
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-      {(cats.data ?? []).map((c: Category) => {
-        const on = selectedSet.has(c.id);
+    <View style={{ gap: 6 }}>
+      {mains.map((m: Category) => {
+        const children = childrenByMain.get(m.id) ?? [];
+        const isOpen = expanded.has(m.id);
+        const selectedCount = children.filter((c: Category) => selectedSet.has(c.id)).length;
+        const hasSelection = selectedCount > 0;
+
         return (
-          <Pressable
-            key={c.id}
-            onPress={() => toggle(c.id)}
+          <View
+            key={m.id}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              paddingVertical: 8,
-              paddingHorizontal: 14,
-              borderRadius: tokens.radius.pill,
+              borderRadius: tokens.radius.md,
               borderWidth: 1,
-              borderColor: on ? tokens.colors.action : tokens.colors.borderDefault,
-              backgroundColor: on ? tokens.colors.actionSubtleBg : tokens.colors.bgCard,
+              borderColor: hasSelection ? tokens.colors.action : tokens.colors.borderDefault,
+              overflow: 'hidden',
             }}
           >
-            {on && <Check size={14} color={tokens.colors.action} />}
-            <Typo
-              variant="bodySm"
-              color={on ? tokens.colors.actionSubtleFg : tokens.colors.fg2}
-              style={{ fontWeight: '500' }}
+            {/* Accordion header */}
+            <Pressable
+              onPress={() => toggleExpand(m.id)}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: 12,
+                backgroundColor: tokens.colors.bgCard,
+              }}
             >
-              {c.name}
-            </Typo>
-          </Pressable>
+              <Typo
+                variant="body"
+                color={hasSelection ? tokens.colors.fg1 : tokens.colors.fg2}
+                style={{ flex: 1, fontWeight: hasSelection ? '600' : '400' }}
+              >
+                {m.name}
+              </Typo>
+              {hasSelection && (
+                <View
+                  style={{
+                    backgroundColor: tokens.colors.actionSubtleBg,
+                    borderRadius: tokens.radius.pill,
+                    paddingHorizontal: 8,
+                    paddingVertical: 2,
+                    marginRight: 8,
+                  }}
+                >
+                  <Typo variant="caption" color={tokens.colors.actionSubtleFg}>
+                    {selectedCount}
+                  </Typo>
+                </View>
+              )}
+              <ChevronDown
+                size={16}
+                color={tokens.colors.fg3}
+                style={{ transform: [{ rotate: isOpen ? '180deg' : '0deg' }] }}
+              />
+            </Pressable>
+
+            {/* Expanded subcategory checkboxes */}
+            {isOpen && (
+              <View style={{ backgroundColor: tokens.colors.bgCanvas, paddingHorizontal: 12, paddingBottom: 4 }}>
+                {children.length === 0 ? (
+                  <Typo variant="caption" color={tokens.colors.fg3} style={{ paddingVertical: 10 }}>
+                    No sub-categories
+                  </Typo>
+                ) : (
+                  children.map((c: Category, ci: number) => {
+                    const on = selectedSet.has(c.id);
+                    return (
+                      <Pressable
+                        key={c.id}
+                        onPress={() => toggleSub(c.id)}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 10,
+                          paddingVertical: 11,
+                          borderBottomWidth: ci < children.length - 1 ? 1 : 0,
+                          borderBottomColor: tokens.colors.borderSubtle,
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 4,
+                            borderWidth: 2,
+                            borderColor: on ? tokens.colors.action : tokens.colors.borderDefault,
+                            backgroundColor: on ? tokens.colors.action : 'transparent',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {on && <Check size={12} color="#fff" />}
+                        </View>
+                        <Typo
+                          variant="body"
+                          color={on ? tokens.colors.actionSubtleFg : tokens.colors.fg2}
+                        >
+                          {c.name}
+                        </Typo>
+                      </Pressable>
+                    );
+                  })
+                )}
+              </View>
+            )}
+          </View>
         );
       })}
     </View>
