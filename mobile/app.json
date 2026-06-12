@@ -37,7 +37,8 @@
           "cameraPermission": "Allow Loyainiti to use the camera to scan customer QR codes."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
