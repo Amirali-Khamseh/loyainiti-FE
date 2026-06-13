@@ -6,8 +6,8 @@ import { api } from '../../lib/api';
 import { getActiveBusinessId } from '../../lib/activeBusiness';
 import { Card } from '../../components/Card';
 import { KpiCard } from '../../components/KpiCard';
-import { Leaderboard } from '../../components/Leaderboard';
 import { DateRangePicker, defaultDateRange } from '../../components/DateRangePicker';
+import { TopCustomers } from './TopCustomers';
 
 type Summary = {
   range: { from: string; to: string };
@@ -144,14 +144,11 @@ export function StatsPage() {
         </Card>
       </section>
 
-      <Leaderboard
-        title="Top customers"
-        rows={(top.data ?? []).map((r) => ({
-          id: r.customerId,
-          name: r.displayName,
-          detail: r.email,
-          value: r.visits,
-        }))}
+      <TopCustomers
+        businessId={businessId}
+        range={range}
+        customers={top.data ?? []}
+        isLoading={top.isLoading}
       />
     </div>
   );
