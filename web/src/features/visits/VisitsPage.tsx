@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { Gift, History } from 'lucide-react';
 import { api } from '../../lib/api';
 import { Card } from '../../components/Card';
@@ -12,6 +12,15 @@ type Visit = {
   businessName: string;
   scannedAt: string;
 };
+
+type VisitsPageData = {
+  total: number;
+  limit: number;
+  offset: number;
+  items: Visit[];
+};
+
+const PAGE_SIZE = 10;
 
 type Membership = {
   membershipId: string;
@@ -29,11 +38,22 @@ function fmtDate(iso: string): string {
 }
 
 export function VisitsPage() {
-  const visits = useQuery({ queryKey: ['my-visits'], queryFn: () => api<Visit[]>('/api/me/visits') });
+  const [page, setPage] = useState(0);
+  const visits = useQuery({
+    queryKey: ['my-visits', page],
+    queryFn: () =>
+      api<VisitsPageData>('/api/me/visits', {
+        query: { limit: PAGE_SIZE, offset: page * PAGE_SIZE },
+      }),
+    placeholderData: keepPreviousData,
+  });
   const memberships = useQuery({
     queryKey: ['my-memberships'],
     queryFn: () => api<Membership[]>('/api/me/memberships'),
   });
+
+  const total = visits.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -100,39 +120,85 @@ export function VisitsPage() {
           Recent visits
         </h2>
         {visits.isLoading && <p className="body">Loading…</p>}
-        {visits.data && visits.data.length === 0 && (
+        {visits.data && total === 0 && (
           <p className="body" style={{ color: 'var(--fg-3)' }}>No visits yet.</p>
         )}
-        <Card padding={0}>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {visits.data?.map((v) => (
-              <li
-                key={v.visitId}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '14px 20px',
-                  borderBottom: '1px solid var(--border-subtle)',
-                }}
-              >
-                <div>
-                  <Link
-                    to={`/b/${v.businessSlug}`}
-                    style={{ font: 'var(--t-body)', fontWeight: 600, color: 'var(--fg-1)', textDecoration: 'none' }}
-                  >
-                    {v.businessName}
-                  </Link>
-                  <p className="caption" style={{ color: 'var(--fg-3)' }}>
-                    {fmtDate(v.scannedAt)}
-                  </p>
-                </div>
-                <span className="brand-stamp" />
-              </li>
-            ))}
-          </ul>
-        </Card>
+        {total > 0 && (
+          <Card padding={0}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {visits.data?.items.map((v) => (
+                <li
+                  key={v.visitId}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '14px 20px',
+                    borderBottom: '1px solid var(--border-subtle)',
+                  }}
+                >
+                  <div>
+                    <Link
+                      to={`/b/${v.businessSlug}`}
+                      style={{ font: 'var(--t-body)', fontWeight: 600, color: 'var(--fg-1)', textDecoration: 'none' }}
+                    >
+                      {v.businessName}
+                    </Link>
+                    <p className="caption" style={{ color: 'var(--fg-3)' }}>
+                      {fmtDate(v.scannedAt)}
+                    </p>
+                  </div>
+                  <span className="brand-stamp" />
+                </li>
+              ))}
+            </ul>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '12px 20px',
+                borderTop: '1px solid var(--border-subtle)',
+              }}
+            >
+              <span className="caption" style={{ color: 'var(--fg-3)' }}>
+                {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
+              </span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  type="button"
+                  disabled={page === 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  style={pagerBtn(page === 0)}
+                >
+                  Prev
+                </button>
+                <button
+                  type="button"
+                  disabled={page >= totalPages - 1}
+                  onClick={() => setPage((p) => p + 1)}
+                  style={pagerBtn(page >= totalPages - 1)}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </Card>
+        )}
       </section>
     </div>
   );
+}
+
+function pagerBtn(disabled: boolean): React.CSSProperties {
+  return {
+    font: 'var(--t-body-sm)',
+    padding: '6px 12px',
+    borderRadius: 8,
+    border: '1px solid var(--border-default)',
+    background: 'var(--bg-card)',
+    color: disabled ? 'var(--fg-3)' : 'var(--fg-1)',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.5 : 1,
+  };
 }
