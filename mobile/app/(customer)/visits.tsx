@@ -1,6 +1,6 @@
-import React from 'react';
-import { ScrollView, View } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { ScrollView, View, Pressable, type ViewStyle } from 'react-native';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { api } from '../../src/lib/api';
 import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
@@ -13,6 +13,15 @@ type Visit = {
   scannedAt: string;
 };
 
+type VisitsPageData = {
+  total: number;
+  limit: number;
+  offset: number;
+  items: Visit[];
+};
+
+const PAGE_SIZE = 10;
+
 type Membership = {
   membershipId: string;
   business: { id: string; name: string };
@@ -22,11 +31,23 @@ type Membership = {
 };
 
 export default function Visits() {
-  const visits = useQuery({ queryKey: ['my-visits'], queryFn: () => api<Visit[]>('/api/me/visits') });
+  const [page, setPage] = useState(0);
+  const visits = useQuery({
+    queryKey: ['my-visits', page],
+    queryFn: () =>
+      api<VisitsPageData>('/api/me/visits', {
+        query: { limit: PAGE_SIZE, offset: page * PAGE_SIZE },
+      }),
+    placeholderData: keepPreviousData,
+  });
   const memberships = useQuery({
     queryKey: ['my-memberships'],
     queryFn: () => api<Membership[]>('/api/me/memberships'),
   });
+
+  const total = visits.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const items = visits.data?.items ?? [];
 
   return (
     <ScrollView
@@ -82,17 +103,17 @@ export default function Visits() {
       <View>
         <Typo variant="h2" style={{ marginBottom: 12 }}>Recent visits</Typo>
         <Card padding={0}>
-          {visits.data?.length === 0 && (
+          {total === 0 && (
             <View style={{ padding: 16 }}>
               <Typo variant="body" color={tokens.colors.fg3}>No visits yet.</Typo>
             </View>
           )}
-          {visits.data?.map((v: Visit, i: number) => (
+          {items.map((v: Visit, i: number) => (
             <View
               key={v.visitId}
               style={{
                 padding: 16,
-                borderBottomWidth: i === (visits.data?.length ?? 0) - 1 ? 0 : 1,
+                borderBottomWidth: i === items.length - 1 ? 0 : 1,
                 borderColor: tokens.colors.borderSubtle,
               }}
             >
@@ -102,8 +123,59 @@ export default function Visits() {
               </Typo>
             </View>
           ))}
+          {total > 0 && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 16,
+                borderTopWidth: 1,
+                borderColor: tokens.colors.borderSubtle,
+              }}
+            >
+              <Typo variant="caption" color={tokens.colors.fg3}>
+                {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
+              </Typo>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                <Pressable
+                  disabled={page === 0}
+                  onPress={() => setPage((p) => Math.max(0, p - 1))}
+                  style={pagerStyle(page === 0)}
+                >
+                  <Typo variant="bodySm" color={page === 0 ? tokens.colors.fg3 : tokens.colors.fg1}>
+                    Prev
+                  </Typo>
+                </Pressable>
+                <Pressable
+                  disabled={page >= totalPages - 1}
+                  onPress={() => setPage((p) => p + 1)}
+                  style={pagerStyle(page >= totalPages - 1)}
+                >
+                  <Typo
+                    variant="bodySm"
+                    color={page >= totalPages - 1 ? tokens.colors.fg3 : tokens.colors.fg1}
+                  >
+                    Next
+                  </Typo>
+                </Pressable>
+              </View>
+            </View>
+          )}
         </Card>
       </View>
     </ScrollView>
   );
+}
+
+function pagerStyle(disabled: boolean): ViewStyle {
+  return {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: tokens.radius.md,
+    borderWidth: 1,
+    borderColor: tokens.colors.borderDefault,
+    backgroundColor: tokens.colors.bgCard,
+    opacity: disabled ? 0.5 : 1,
+  };
 }
