@@ -59,7 +59,7 @@
   --fg-on-accent: #FFFFFF;
 
   /* ===== Semantic background (dark hierarchy) ===== */
-  --bg-canvas:  #2D3142;               /* slate — main app canvas */
+  --bg-canvas:  #212129;               /* dark slate — main app canvas */
   --bg-card:    #18181b;               /* zinc-900 — cards, header */
   --bg-muted:   #121214;               /* between canvas and card */
   --bg-sunken:  #000000;               /* pure black — recessed / inset areas */
