@@ -52,18 +52,17 @@
   --slate-900: #09090b;        /* zinc-950 */
 
   /* ===== Semantic foreground ===== */
-  --fg-heading: #ADACB5;               /* headings / titles */
-  --fg-1: #DAD5DB;                     /* primary (normal) text */
+  --fg-1: #FFFFFF;                     /* primary text — white on near-black */
   --fg-2: var(--slate-200);            /* secondary text — zinc-200 */
   --fg-3: var(--slate-400);            /* tertiary, captions, placeholders */
   --fg-on-dark: #FFFFFF;
   --fg-on-accent: #FFFFFF;
 
-  /* ===== Semantic background (slate hierarchy) ===== */
-  --bg-canvas:  #2D3142;               /* main app canvas */
-  --bg-card:    #535A79;               /* cards, forms, inputs, header */
-  --bg-muted:   #3C4257;               /* between canvas and card */
-  --bg-sunken:  #252836;               /* recessed / inset areas */
+  /* ===== Semantic background (dark hierarchy) ===== */
+  --bg-canvas:  #0A0A0A;               /* jet black — main app canvas */
+  --bg-card:    #18181b;               /* zinc-900 — cards, header */
+  --bg-muted:   #121214;               /* between canvas and card */
+  --bg-sunken:  #000000;               /* pure black — recessed / inset areas */
   --bg-inverse: var(--navy-700);       /* #0c4a6e — deep-sky branded blocks */
 
   /* ===== Semantic border ===== */
@@ -152,11 +151,11 @@
 /* =========================================================================
    Semantic element styles
    ========================================================================= */
-.display-1 { font: var(--t-display-1); letter-spacing: -0.02em; color: var(--fg-heading); }
-.display-2 { font: var(--t-display-2); letter-spacing: -0.018em; color: var(--fg-heading); }
-h1, .h1   { font: var(--t-h1); letter-spacing: -0.014em; color: var(--fg-heading); margin: 0; }
-h2, .h2   { font: var(--t-h2); letter-spacing: -0.01em;  color: var(--fg-heading); margin: 0; }
-h3, .h3   { font: var(--t-h3); color: var(--fg-heading); margin: 0; }
+.display-1 { font: var(--t-display-1); letter-spacing: -0.02em; color: var(--fg-1); }
+.display-2 { font: var(--t-display-2); letter-spacing: -0.018em; color: var(--fg-1); }
+h1, .h1   { font: var(--t-h1); letter-spacing: -0.014em; color: var(--fg-1); margin: 0; }
+h2, .h2   { font: var(--t-h2); letter-spacing: -0.01em;  color: var(--fg-1); margin: 0; }
+h3, .h3   { font: var(--t-h3); color: var(--fg-1); margin: 0; }
 p, .body  { font: var(--t-body); color: var(--fg-1); margin: 0; text-wrap: pretty; }
 .body-lg  { font: var(--t-body-lg); color: var(--fg-1); }
 .body-sm  { font: var(--t-body-sm); color: var(--fg-2); }
