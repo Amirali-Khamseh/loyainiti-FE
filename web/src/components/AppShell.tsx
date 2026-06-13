@@ -16,7 +16,7 @@ const headerStyle: React.CSSProperties = {
   position: 'sticky',
   top: 0,
   zIndex: 10,
-  background: 'rgba(9, 9, 11, 0.72)',
+  background: 'rgba(33, 33, 41, 0.72)',
   backdropFilter: 'blur(12px)',
   borderBottom: '1px solid var(--border-subtle)',
   boxShadow: 'none',

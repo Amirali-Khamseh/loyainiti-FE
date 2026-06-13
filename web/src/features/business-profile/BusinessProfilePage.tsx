@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Save, Upload, Trash2, Check } from 'lucide-react';
+import { Save, Upload, Trash2, Check, ChevronDown } from 'lucide-react';
 import { api, ApiError } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { r2Url } from '../../lib/media';
@@ -355,13 +355,13 @@ function EditBusiness({ businessId }: { businessId: string }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <UploadField
               label="Logo"
-              hint="Square — shown next to your name in cards"
+              hint="Square - shown next to your name in cards"
               currentKey={logoR2Key}
               onPick={async (file) => setLogoR2Key(await presignAndUpload('business_logo', businessId, file))}
             />
             <UploadField
               label="Cover image"
-              hint="Wide banner — shown at the top of your shop card"
+              hint="Wide banner - shown at the top of your shop card"
               currentKey={coverR2Key}
               onPick={async (file) => setCoverR2Key(await presignAndUpload('business_cover', businessId, file))}
             />
@@ -403,13 +403,64 @@ function EditBusiness({ businessId }: { businessId: string }) {
 
 /* ===================== Shared sections ===================== */
 
+type PickerCategory = { id: string; name: string; slug: string; parentId: string | null };
+
+/**
+ * Hierarchical category picker matching the mobile app: each main (parent)
+ * category is an accordion row; expanding it reveals its sub-categories as
+ * checkboxes. Selection is on sub-categories only. Parents with selected
+ * children auto-expand in edit mode and show a count badge.
+ */
 function CategoryPicker({ selected, onChange }: { selected: string[]; onChange: (v: string[]) => void }) {
-  const cats = useQuery({ queryKey: ['categories'], queryFn: () => api<Category[]>('/api/categories') });
+  const cats = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => api<PickerCategory[]>('/api/categories'),
+  });
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const mains = useMemo(() => (cats.data ?? []).filter((c) => c.parentId === null), [cats.data]);
+  const childrenByMain = useMemo(() => {
+    const map = new Map<string, PickerCategory[]>();
+    for (const c of cats.data ?? []) {
+      if (c.parentId) {
+        const arr = map.get(c.parentId) ?? [];
+        arr.push(c);
+        map.set(c.parentId, arr);
+      }
+    }
+    return map;
+  }, [cats.data]);
+
   const selectedSet = useMemo(() => new Set(selected), [selected]);
 
-  if (cats.isLoading) return <p className="body">Loading categories…</p>;
+  // Auto-expand parents that already have selected sub-categories (edit mode).
+  useEffect(() => {
+    if (!cats.data?.length) return;
+    const toExpand = new Set<string>();
+    for (const [mid, children] of childrenByMain.entries()) {
+      if (children.some((c) => selected.includes(c.id))) toExpand.add(mid);
+    }
+    if (toExpand.size > 0) setExpanded((prev) => new Set([...prev, ...toExpand]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cats.data]);
 
-  const toggle = (id: string) => {
+  if (cats.isLoading) return <p className="body">Loading categories…</p>;
+  if (cats.error)
+    return (
+      <p className="body" style={{ color: 'var(--danger)' }}>
+        Couldn't load categories: {(cats.error as Error).message}
+      </p>
+    );
+
+  const toggleExpand = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const toggleSub = (id: string) => {
     const next = new Set(selectedSet);
     if (next.has(id)) next.delete(id);
     else next.add(id);
@@ -417,31 +468,131 @@ function CategoryPicker({ selected, onChange }: { selected: string[]; onChange: 
   };
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-      {(cats.data ?? []).map((c) => {
-        const on = selectedSet.has(c.id);
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {mains.map((m) => {
+        const children = childrenByMain.get(m.id) ?? [];
+        const isOpen = expanded.has(m.id);
+        const selectedCount = children.filter((c) => selectedSet.has(c.id)).length;
+        const hasSelection = selectedCount > 0;
+
         return (
-          <button
-            key={c.id}
-            type="button"
-            onClick={() => toggle(c.id)}
+          <div
+            key={m.id}
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 14px',
               borderRadius: 10,
-              cursor: 'pointer',
-              font: 'var(--t-body-sm)',
-              fontWeight: 500,
-              border: `1px solid ${on ? 'var(--action)' : 'var(--border-default)'}`,
-              background: on ? 'var(--action-subtle-bg)' : 'var(--bg-card)',
-              color: on ? 'var(--action-subtle-fg)' : 'var(--fg-2)',
+              border: `1px solid ${hasSelection ? 'var(--action)' : 'var(--border-default)'}`,
+              overflow: 'hidden',
             }}
           >
-            {on && <Check size={14} />}
-            {c.name}
-          </button>
+            {/* Accordion header */}
+            <button
+              type="button"
+              onClick={() => toggleExpand(m.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                width: '100%',
+                gap: 8,
+                padding: 12,
+                background: 'var(--bg-card)',
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'left',
+              }}
+            >
+              <span
+                style={{
+                  flex: 1,
+                  font: 'var(--t-body)',
+                  fontWeight: hasSelection ? 600 : 400,
+                  color: hasSelection ? 'var(--fg-1)' : 'var(--fg-2)',
+                }}
+              >
+                {m.name}
+              </span>
+              {hasSelection && (
+                <span
+                  style={{
+                    background: 'var(--action-subtle-bg)',
+                    color: 'var(--action-subtle-fg)',
+                    borderRadius: 'var(--r-pill)',
+                    padding: '2px 8px',
+                    font: 'var(--t-caption)',
+                  }}
+                >
+                  {selectedCount}
+                </span>
+              )}
+              <ChevronDown
+                size={16}
+                color="var(--fg-3)"
+                style={{
+                  flexShrink: 0,
+                  transition: 'transform var(--dur-1) var(--ease-out)',
+                  transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                }}
+              />
+            </button>
+
+            {/* Expanded sub-category checkboxes */}
+            {isOpen && (
+              <div style={{ background: 'var(--bg-canvas)', padding: '0 12px 4px' }}>
+                {children.length === 0 ? (
+                  <p className="caption" style={{ color: 'var(--fg-3)', padding: '10px 0' }}>
+                    No sub-categories
+                  </p>
+                ) : (
+                  children.map((c, ci) => {
+                    const on = selectedSet.has(c.id);
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => toggleSub(c.id)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                          width: '100%',
+                          padding: '11px 0',
+                          background: 'transparent',
+                          border: 'none',
+                          borderBottom:
+                            ci < children.length - 1 ? '1px solid var(--border-subtle)' : 'none',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 4,
+                            flexShrink: 0,
+                            border: `2px solid ${on ? 'var(--action)' : 'var(--border-default)'}`,
+                            background: on ? 'var(--action)' : 'transparent',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {on && <Check size={12} color="#fff" />}
+                        </span>
+                        <span
+                          style={{
+                            font: 'var(--t-body)',
+                            color: on ? 'var(--action-subtle-fg)' : 'var(--fg-2)',
+                          }}
+                        >
+                          {c.name}
+                        </span>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            )}
+          </div>
         );
       })}
     </div>

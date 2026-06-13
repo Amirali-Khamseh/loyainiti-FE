@@ -58,7 +58,7 @@ export const colors = {
   fgOnAccent: '#FFFFFF',
 
   // Semantic background (dark hierarchy)
-  bgCanvas: '#09090b', // zinc-950
+  bgCanvas: '#212129', // dark slate — main app background
   bgCard: '#18181b',   // zinc-900
   bgMuted: '#121214',
   bgSunken: '#000000', // pure black

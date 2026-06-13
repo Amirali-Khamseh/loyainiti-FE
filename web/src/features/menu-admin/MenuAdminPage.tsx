@@ -35,13 +35,21 @@ type LoyaltyProgram = {
   isActive: boolean;
 };
 
-/** Both menus live under the same business - fetched by slug. We need the slug. */
+/**
+ * Both menus live under the same business - fetched by slug. We need the slug.
+ *
+ * Resolve it from the owner-accessible detail endpoint, NOT the public
+ * /api/businesses list: that list only returns *published* businesses, so a
+ * draft business would never be found and the page would hang on "Loading…"
+ * forever (the request 200s, it just returns null). The detail endpoint works
+ * for the owner regardless of publish state.
+ */
 function useBusinessSlug(businessId: string | null) {
   return useQuery({
     queryKey: ['business-slug', businessId],
     queryFn: async () => {
-      const all = await api<Array<{ id: string; slug: string }>>('/api/businesses');
-      return all.find((b) => b.id === businessId)?.slug ?? null;
+      const b = await api<{ slug: string }>(`/api/businesses/${businessId}`);
+      return b.slug;
     },
     enabled: !!businessId,
   });
@@ -71,14 +79,21 @@ export function MenuAdminPage() {
         </h1>
       </header>
 
-      {slug.data ? (
+      {slug.isLoading && <p className="body">Loading…</p>}
+      {slug.error && (
+        <Card>
+          <h2 className="h2">Couldn't load this business</h2>
+          <p className="body" style={{ color: 'var(--fg-2)', marginTop: 8 }}>
+            {(slug.error as Error).message}
+          </p>
+        </Card>
+      )}
+      {slug.data && (
         <>
           <MenuEditor businessId={businessId} slug={slug.data} kind="public" title="Public menu" />
           <MenuEditor businessId={businessId} slug={slug.data} kind="member" title="Member menu" />
           <LoyaltyEditor businessId={businessId} />
         </>
-      ) : (
-        <p className="body">Loading…</p>
       )}
     </div>
   );

@@ -24,10 +24,10 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <StatusBar style="light" backgroundColor={tokens.colors.bgCard} />
+        <StatusBar style="light" backgroundColor={tokens.colors.bgCanvas} />
         <Stack
           screenOptions={{
-            headerStyle: { backgroundColor: tokens.colors.bgCard },
+            headerStyle: { backgroundColor: tokens.colors.bgCanvas },
             headerTintColor: tokens.colors.fg1,
             headerShadowVisible: false,
             headerTitleStyle: { fontFamily: tokens.fonts.body, fontSize: 18, fontWeight: '600', color: tokens.colors.fg1 },
