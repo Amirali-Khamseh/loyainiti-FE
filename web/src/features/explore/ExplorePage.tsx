@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { Coffee, Star } from 'lucide-react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { Coffee, Search, Star } from 'lucide-react';
 import { api } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { resolveIcon } from '../../lib/icon';
@@ -55,14 +55,23 @@ function r2Url(key: string | null | undefined): string | null {
 export function ExplorePage() {
   const { data: session } = auth.useSession();
 
+  const [searchInput, setSearchInput] = useState('');
+  const [searchName, setSearchName] = useState('');
+
+  useEffect(() => {
+    const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
   const mainCategories = useQuery({
     queryKey: ['categories-main'],
     queryFn: () => api<MainCategory[]>('/api/categories/main'),
   });
 
   const businesses = useQuery({
-    queryKey: ['businesses'],
-    queryFn: () => api<Business[]>('/api/businesses'),
+    queryKey: ['businesses', searchName],
+    queryFn: () => api<Business[]>('/api/businesses', { query: { name: searchName || undefined } }),
+    placeholderData: keepPreviousData,
   });
 
   const memberships = useQuery({
@@ -189,7 +198,19 @@ export function ExplorePage() {
       )}
 
       <section id="all-shops" style={{ display: 'flex', flexDirection: 'column', gap: 16, scrollMarginTop: 80 }}>
-        <h2 className="h2">All shops on the network</h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <h2 className="h2">All shops on the network</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '8px 12px', minWidth: 220 }}>
+            <Search size={15} color="var(--fg-3)" style={{ flexShrink: 0 }} />
+            <input
+              type="search"
+              placeholder="Search shops…"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              style={{ border: 'none', outline: 'none', background: 'transparent', font: 'var(--t-body)', color: 'var(--fg-1)', flex: 1, minWidth: 0 }}
+            />
+          </div>
+        </div>
         {businesses.isLoading && <p className="body">Loading…</p>}
         {businesses.error && (
           <p className="body" style={{ color: 'var(--danger)' }}>
@@ -253,7 +274,7 @@ export function ExplorePage() {
         </div>
         {businesses.data && businesses.data.length === 0 && (
           <p className="body" style={{ color: 'var(--fg-3)' }}>
-            No published businesses yet.
+            {searchName ? `No shops matching "${searchName}".` : 'No published businesses yet.'}
           </p>
         )}
       </section>
