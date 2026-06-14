@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Pressable, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Coffee, ChevronRight } from 'lucide-react-native';
 import { api } from '../../src/lib/api';
@@ -8,6 +8,7 @@ import { auth } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
 import { resolveIcon } from '../../src/lib/icon';
 import { Card } from '../../src/components/Card';
+import { Input } from '../../src/components/Input';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
@@ -46,13 +47,22 @@ export default function Explore() {
   const router = useRouter();
   const { data: session } = auth.useSession();
 
+  const [searchInput, setSearchInput] = useState('');
+  const [searchName, setSearchName] = useState('');
+
+  useEffect(() => {
+    const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
   const mainCategories = useQuery({
     queryKey: ['categories-main'],
     queryFn: () => api<MainCategory[]>('/api/categories/main'),
   });
   const businesses = useQuery({
-    queryKey: ['businesses'],
-    queryFn: () => api<Business[]>('/api/businesses'),
+    queryKey: ['businesses', searchName],
+    queryFn: () => api<Business[]>('/api/businesses', { query: { name: searchName || undefined } }),
+    placeholderData: keepPreviousData,
   });
   const memberships = useQuery({
     queryKey: ['my-memberships'],
@@ -198,8 +208,14 @@ export default function Explore() {
       {/* All shops */}
       <View>
         <Typo variant="h2" style={{ marginBottom: 12 }}>
-          All shops
+          All shops on the network
         </Typo>
+        <Input
+          placeholder="Search shops…"
+          value={searchInput}
+          onChangeText={setSearchInput}
+          containerStyle={{ marginBottom: 12 }}
+        />
         <View style={{ gap: 12 }}>
           {businesses.isLoading && (
             <Typo variant="body" color={tokens.colors.fg3}>
@@ -248,7 +264,7 @@ export default function Explore() {
           })}
           {businesses.data?.length === 0 && (
             <Typo variant="body" color={tokens.colors.fg3}>
-              No published shops yet.
+              {searchName ? `No shops matching "${searchName}".` : 'No published shops yet.'}
             </Typo>
           )}
         </View>
