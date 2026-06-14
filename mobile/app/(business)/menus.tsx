@@ -29,6 +29,7 @@ type LoyaltyProgram = {
   requiredVisits: number;
   rewardDescription: string;
   isActive: boolean;
+  expiresAt: string | null;
 };
 
 export default function MenusScreen() {
@@ -262,12 +263,14 @@ function LoyaltyEditor({ businessId }: { businessId: string }) {
   const [name, setName] = useState('');
   const [required, setRequired] = useState('10');
   const [reward, setReward] = useState('');
+  const [deadline, setDeadline] = useState(''); // YYYY-MM-DD; empty = no deadline
 
   useEffect(() => {
     if (active) {
       setName(active.name);
       setRequired(String(active.requiredVisits));
       setReward(active.rewardDescription);
+      setDeadline(active.expiresAt ? active.expiresAt.slice(0, 10) : '');
     }
   }, [active]);
 
@@ -277,6 +280,8 @@ function LoyaltyEditor({ businessId }: { businessId: string }) {
         name: name || 'Coffee Card',
         requiredVisits: Number(required) || 10,
         rewardDescription: reward || 'Your 11th coffee is on us',
+        // Send end-of-day so the deadline includes the chosen date; null clears it.
+        expiresAt: deadline ? `${deadline}T23:59:59` : null,
         isActive: true,
       };
       return active
@@ -301,6 +306,13 @@ function LoyaltyEditor({ businessId }: { businessId: string }) {
           keyboardType="number-pad"
         />
         <Input label="Reward" value={reward} onChangeText={setReward} placeholder="Your 11th coffee is on us" />
+        <Input
+          label="Deadline (optional)"
+          value={deadline}
+          onChangeText={setDeadline}
+          placeholder="YYYY-MM-DD"
+          autoCapitalize="none"
+        />
       </View>
       <View style={{ marginTop: 16 }}>
         <Button onPress={() => save.mutate()} loading={save.isPending}>

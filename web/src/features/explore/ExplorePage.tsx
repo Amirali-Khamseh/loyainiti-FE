@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { Coffee, Search, Star } from 'lucide-react';
+import { Clock, Coffee, Search, Star } from 'lucide-react';
 import { api } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { resolveIcon } from '../../lib/icon';
@@ -42,8 +42,19 @@ type Membership = {
     requiredVisits: number;
     rewardDescription: string;
     rewardEligible: boolean;
+    expiresAt: string | null;
   };
 };
+
+const SHOPS_PER_PAGE = 5;
+
+function fmtDeadline(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
 
 function r2Url(key: string | null | undefined): string | null {
   if (!key) return null;
@@ -57,6 +68,7 @@ export function ExplorePage() {
 
   const [searchInput, setSearchInput] = useState('');
   const [searchName, setSearchName] = useState('');
+  const [shopsPage, setShopsPage] = useState(0);
 
   useEffect(() => {
     const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
@@ -141,12 +153,18 @@ export function ExplorePage() {
         </>
       )}
 
-      {session && (memberships.data?.length ?? 0) > 0 && (
+      {session && (memberships.data?.length ?? 0) > 0 && (() => {
+        const myShops = memberships.data ?? [];
+        const totalPages = Math.max(1, Math.ceil(myShops.length / SHOPS_PER_PAGE));
+        const page = Math.min(shopsPage, totalPages - 1);
+        const start = page * SHOPS_PER_PAGE;
+        const visible = myShops.slice(start, start + SHOPS_PER_PAGE);
+        return (
         <>
         <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <h2 className="h2">Your shops</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-            {memberships.data?.map((m) => (
+            {visible.map((m) => (
               <Link key={m.membershipId} to={`/b/${m.business.slug}`} style={{ textDecoration: 'none' }}>
                 <Card>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -184,6 +202,12 @@ export function ExplorePage() {
                         )}{' '}
                         - {m.program.rewardDescription}
                       </p>
+                      {m.program.expiresAt && (
+                        <p className="caption" style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--fg-3)' }}>
+                          <Clock size={12} style={{ flexShrink: 0 }} />
+                          Reward ends {fmtDeadline(m.program.expiresAt)}
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <p className="caption" style={{ marginTop: 12 }}>No active reward programme.</p>
@@ -192,10 +216,26 @@ export function ExplorePage() {
               </Link>
             ))}
           </div>
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span className="caption" style={{ color: 'var(--fg-3)' }}>
+                {start + 1}–{Math.min(start + SHOPS_PER_PAGE, myShops.length)} of {myShops.length}
+              </span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button type="button" disabled={page === 0} onClick={() => setShopsPage((p) => Math.max(0, p - 1))} style={pagerBtn(page === 0)}>
+                  Prev
+                </button>
+                <button type="button" disabled={page >= totalPages - 1} onClick={() => setShopsPage((p) => p + 1)} style={pagerBtn(page >= totalPages - 1)}>
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </section>
         <hr style={divider} />
         </>
-      )}
+        );
+      })()}
 
       <section id="all-shops" style={{ display: 'flex', flexDirection: 'column', gap: 16, scrollMarginTop: 80 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
@@ -288,3 +328,16 @@ const divider: React.CSSProperties = {
   background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.18), transparent)',
   margin: 0,
 };
+
+function pagerBtn(disabled: boolean): React.CSSProperties {
+  return {
+    font: 'var(--t-body-sm)',
+    padding: '6px 12px',
+    borderRadius: 8,
+    border: '1px solid var(--border-default)',
+    background: 'var(--bg-card)',
+    color: disabled ? 'var(--fg-3)' : 'var(--fg-1)',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.5 : 1,
+  };
+}

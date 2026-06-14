@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { Gift, History } from 'lucide-react';
+import { Clock, Gift, History, Star } from 'lucide-react';
 import { api } from '../../lib/api';
 import { Card } from '../../components/Card';
 
@@ -30,15 +30,28 @@ type Membership = {
   program: null | {
     requiredVisits: number;
     rewardDescription: string;
+    rewardEligible: boolean;
+    expiresAt: string | null;
   };
 };
+
+const REWARDS_PER_PAGE = 5;
 
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleString();
 }
 
+function fmtDeadline(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
 export function VisitsPage() {
   const [page, setPage] = useState(0);
+  const [rewardsPage, setRewardsPage] = useState(0);
   const visits = useQuery({
     queryKey: ['my-visits', page],
     queryFn: () =>
@@ -78,40 +91,74 @@ export function VisitsPage() {
             You haven't joined any shop yet. <Link to="/">Explore the network</Link>.
           </p>
         )}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-          {memberships.data
-            ?.filter((m) => m.program)
-            .map((m) => (
-              <Card key={m.membershipId}>
-                <h3 className="h3">{m.business.name}</h3>
-                <p className="caption" style={{ marginTop: 4, color: 'var(--fg-3)' }}>
-                  {m.totalVisits} visits all-time
-                </p>
-                <div style={{ marginTop: 12 }}>
-                  <div
-                    style={{
-                      height: 8,
-                      background: 'var(--slate-200)',
-                      borderRadius: 10,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program!.requiredVisits) * 100)}%`,
-                        height: '100%',
-                        background: 'var(--cyan-500)',
-                      }}
-                    />
+        {(() => {
+          const rewards = (memberships.data ?? []).filter((m) => m.program);
+          const totalRewardPages = Math.max(1, Math.ceil(rewards.length / REWARDS_PER_PAGE));
+          const rp = Math.min(rewardsPage, totalRewardPages - 1);
+          const rStart = rp * REWARDS_PER_PAGE;
+          const visibleRewards = rewards.slice(rStart, rStart + REWARDS_PER_PAGE);
+          return (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                {visibleRewards.map((m) => (
+                  <Card key={m.membershipId}>
+                    <h3 className="h3">{m.business.name}</h3>
+                    <p className="caption" style={{ marginTop: 4, color: 'var(--fg-3)' }}>
+                      {m.totalVisits} visits all-time
+                    </p>
+                    <div style={{ marginTop: 12 }}>
+                      <div
+                        style={{
+                          height: 8,
+                          background: 'var(--slate-200)',
+                          borderRadius: 10,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program!.requiredVisits) * 100)}%`,
+                            height: '100%',
+                            background: m.program!.rewardEligible ? 'var(--success)' : 'var(--cyan-500)',
+                          }}
+                        />
+                      </div>
+                      <p className="caption" style={{ marginTop: 6 }}>
+                        {m.program!.rewardEligible ? (
+                          <><Star size={12} style={{ verticalAlign: 'middle' }} /> Reward ready</>
+                        ) : (
+                          `${m.visitsSinceLastRedemption} / ${m.program!.requiredVisits} visits`
+                        )}{' '}
+                        - {m.program!.rewardDescription}
+                      </p>
+                      {m.program!.expiresAt && (
+                        <p className="caption" style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--fg-3)' }}>
+                          <Clock size={12} style={{ flexShrink: 0 }} />
+                          Reward ends {fmtDeadline(m.program!.expiresAt)}
+                        </p>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+              {totalRewardPages > 1 && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 }}>
+                  <span className="caption" style={{ color: 'var(--fg-3)' }}>
+                    {rStart + 1}–{Math.min(rStart + REWARDS_PER_PAGE, rewards.length)} of {rewards.length}
+                  </span>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button type="button" disabled={rp === 0} onClick={() => setRewardsPage((p) => Math.max(0, p - 1))} style={pagerBtn(rp === 0)}>
+                      Prev
+                    </button>
+                    <button type="button" disabled={rp >= totalRewardPages - 1} onClick={() => setRewardsPage((p) => p + 1)} style={pagerBtn(rp >= totalRewardPages - 1)}>
+                      Next
+                    </button>
                   </div>
-                  <p className="caption" style={{ marginTop: 6 }}>
-                    {m.visitsSinceLastRedemption} / {m.program!.requiredVisits} -{' '}
-                    {m.program!.rewardDescription}
-                  </p>
                 </div>
-              </Card>
-            ))}
-        </div>
+              )}
+            </>
+          );
+        })()}
       </section>
 
       <section>

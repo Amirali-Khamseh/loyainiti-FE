@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Pressable, Image } from 'react-native';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { Coffee, ChevronRight } from 'lucide-react-native';
+import { Coffee, ChevronRight, Clock } from 'lucide-react-native';
 import { api } from '../../src/lib/api';
 import { auth } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
@@ -40,8 +40,19 @@ type Membership = {
     requiredVisits: number;
     rewardDescription: string;
     rewardEligible: boolean;
+    expiresAt: string | null;
   };
 };
+
+const SHOPS_PER_PAGE = 5;
+
+function fmtDeadline(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
 
 export default function Explore() {
   const router = useRouter();
@@ -49,6 +60,7 @@ export default function Explore() {
 
   const [searchInput, setSearchInput] = useState('');
   const [searchName, setSearchName] = useState('');
+  const [shopsPage, setShopsPage] = useState(0);
 
   useEffect(() => {
     const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
@@ -142,13 +154,19 @@ export default function Explore() {
         </View>
       </View>
 
-      {session && (memberships.data?.length ?? 0) > 0 && (
+      {session && (memberships.data?.length ?? 0) > 0 && (() => {
+        const myShops = memberships.data ?? [];
+        const totalPages = Math.max(1, Math.ceil(myShops.length / SHOPS_PER_PAGE));
+        const page = Math.min(shopsPage, totalPages - 1);
+        const start = page * SHOPS_PER_PAGE;
+        const visible = myShops.slice(start, start + SHOPS_PER_PAGE);
+        return (
         <View>
           <Typo variant="h2" style={{ marginBottom: 12 }}>
             Your shops
           </Typo>
           <View style={{ gap: 12 }}>
-            {memberships.data?.map((m: Membership) => (
+            {visible.map((m: Membership) => (
               <Pressable
                 key={m.membershipId}
                 onPress={() => router.push(`/(customer)/shop/${m.business.slug}` as const)}
@@ -196,14 +214,46 @@ export default function Explore() {
                           ? 'Reward ready!'
                           : `${m.visitsSinceLastRedemption} / ${m.program.requiredVisits} - ${m.program.rewardDescription}`}
                       </Typo>
+                      {m.program.expiresAt && (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                          <Clock color={tokens.colors.fg3} size={12} />
+                          <Typo variant="caption" color={tokens.colors.fg3}>
+                            Reward ends {fmtDeadline(m.program.expiresAt)}
+                          </Typo>
+                        </View>
+                      )}
                     </View>
                   )}
                 </Card>
               </Pressable>
             ))}
           </View>
+          {totalPages > 1 && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+              <Typo variant="caption" color={tokens.colors.fg3}>
+                {start + 1}–{Math.min(start + SHOPS_PER_PAGE, myShops.length)} of {myShops.length}
+              </Typo>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                <Pressable
+                  disabled={page === 0}
+                  onPress={() => setShopsPage((p) => Math.max(0, p - 1))}
+                  style={pagerBtnStyle(page === 0)}
+                >
+                  <Typo variant="bodySm" color={page === 0 ? tokens.colors.fg3 : tokens.colors.fg1}>Prev</Typo>
+                </Pressable>
+                <Pressable
+                  disabled={page >= totalPages - 1}
+                  onPress={() => setShopsPage((p) => p + 1)}
+                  style={pagerBtnStyle(page >= totalPages - 1)}
+                >
+                  <Typo variant="bodySm" color={page >= totalPages - 1 ? tokens.colors.fg3 : tokens.colors.fg1}>Next</Typo>
+                </Pressable>
+              </View>
+            </View>
+          )}
         </View>
-      )}
+        );
+      })()}
 
       {/* All shops */}
       <View>
@@ -271,4 +321,16 @@ export default function Explore() {
       </View>
     </ScrollView>
   );
+}
+
+function pagerBtnStyle(disabled: boolean) {
+  return {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: tokens.colors.borderDefault,
+    backgroundColor: tokens.colors.bgCard,
+    opacity: disabled ? 0.5 : 1,
+  };
 }

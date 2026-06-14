@@ -33,6 +33,7 @@ type LoyaltyProgram = {
   requiredVisits: number;
   rewardDescription: string;
   isActive: boolean;
+  expiresAt: string | null;
 };
 
 /**
@@ -384,6 +385,7 @@ function LoyaltyEditor({ businessId }: { businessId: string }) {
     name: 'Coffee Card',
     requiredVisits: 10,
     rewardDescription: 'Your 11th visit is on us',
+    expiresAt: '', // YYYY-MM-DD; empty = no deadline
   });
 
   React.useEffect(() => {
@@ -392,18 +394,27 @@ function LoyaltyEditor({ businessId }: { businessId: string }) {
         name: active.name,
         requiredVisits: active.requiredVisits,
         rewardDescription: active.rewardDescription,
+        expiresAt: active.expiresAt ? active.expiresAt.slice(0, 10) : '',
       });
     }
   }, [active]);
 
   const save = useMutation({
-    mutationFn: () =>
-      active
-        ? api(`/api/loyalty-programs/${active.id}`, { method: 'PATCH', body: draft })
+    mutationFn: () => {
+      const body = {
+        name: draft.name,
+        requiredVisits: draft.requiredVisits,
+        rewardDescription: draft.rewardDescription,
+        // Send end-of-day so the deadline includes the chosen date; null clears it.
+        expiresAt: draft.expiresAt ? `${draft.expiresAt}T23:59:59` : null,
+      };
+      return active
+        ? api(`/api/loyalty-programs/${active.id}`, { method: 'PATCH', body })
         : api(`/api/businesses/${businessId}/loyalty-programs`, {
             method: 'POST',
-            body: { ...draft, isActive: true },
-          }),
+            body: { ...body, isActive: true },
+          });
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['loyalty-programs', businessId] }),
   });
 
@@ -429,12 +440,18 @@ function LoyaltyEditor({ businessId }: { businessId: string }) {
           onChange={(e) => setDraft({ ...draft, requiredVisits: Number(e.target.value) || 1 })}
         />
       </div>
-      <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 200px', gap: 16 }}>
         <Input
           label="Reward"
           value={draft.rewardDescription}
           onChange={(e) => setDraft({ ...draft, rewardDescription: e.target.value })}
           placeholder="Your 11th coffee is on us"
+        />
+        <Input
+          label="Deadline (optional)"
+          type="date"
+          value={draft.expiresAt}
+          onChange={(e) => setDraft({ ...draft, expiresAt: e.target.value })}
         />
       </div>
       <Button onClick={() => save.mutate()} loading={save.isPending} style={{ marginTop: 16 }}>
