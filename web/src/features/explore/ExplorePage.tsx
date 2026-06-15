@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { Clock, Coffee, Search, Star } from 'lucide-react';
+import { Clock, Coffee, MapPin, Search, Star } from 'lucide-react';
 import { api } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/Select';
 
 type Category = { id: string; name: string; slug: string };
+
+type LocationGroup = { country: string; cities: string[] };
 
 type MainCategory = {
   id: string;
@@ -23,6 +26,8 @@ type Business = {
   slug: string;
   name: string;
   description: string | null;
+  country?: string | null;
+  city?: string | null;
   logoR2Key: string | null;
   coverR2Key: string | null;
   categories: Category[];
@@ -70,10 +75,31 @@ export function ExplorePage() {
   const [searchName, setSearchName] = useState('');
   const [shopsPage, setShopsPage] = useState(0);
 
+  // Location filter. Defaults to the signed-in user's city (once, on first load)
+  // so customers see their own city first; empty means "everywhere".
+  const [filterCountry, setFilterCountry] = useState('');
+  const [filterCity, setFilterCity] = useState('');
+  const [locationDefaulted, setLocationDefaulted] = useState(false);
+
   useEffect(() => {
     const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
     return () => clearTimeout(t);
   }, [searchInput]);
+
+  const locations = useQuery({
+    queryKey: ['business-locations'],
+    queryFn: () => api<LocationGroup[]>('/api/businesses/locations'),
+  });
+
+  useEffect(() => {
+    if (locationDefaulted) return;
+    const u = session?.user as { country?: string | null; city?: string | null } | undefined;
+    if (u?.city) {
+      setFilterCountry(u.country ?? '');
+      setFilterCity(u.city);
+      setLocationDefaulted(true);
+    }
+  }, [session, locationDefaulted]);
 
   const mainCategories = useQuery({
     queryKey: ['categories-main'],
@@ -81,8 +107,15 @@ export function ExplorePage() {
   });
 
   const businesses = useQuery({
-    queryKey: ['businesses', searchName],
-    queryFn: () => api<Business[]>('/api/businesses', { query: { name: searchName || undefined } }),
+    queryKey: ['businesses', searchName, filterCountry, filterCity],
+    queryFn: () =>
+      api<Business[]>('/api/businesses', {
+        query: {
+          name: searchName || undefined,
+          country: filterCountry || undefined,
+          city: filterCity || undefined,
+        },
+      }),
     placeholderData: keepPreviousData,
   });
 
@@ -240,22 +273,31 @@ export function ExplorePage() {
       <section id="all-shops" style={{ display: 'flex', flexDirection: 'column', gap: 16, scrollMarginTop: 80 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <h2 className="h2">All shops on the network</h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '8px 12px', minWidth: 220 }}>
-            <Search size={15} color="var(--fg-3)" style={{ flexShrink: 0 }} />
-            <input
-              type="search"
-              placeholder="Search shops…"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              style={{ border: 'none', outline: 'none', background: 'transparent', font: 'var(--t-body)', color: 'var(--fg-1)', flex: 1, minWidth: 0 }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <LocationFilter
+              groups={locations.data ?? []}
+              country={filterCountry}
+              city={filterCity}
+              onChange={(c, ci) => { setFilterCountry(c); setFilterCity(ci); }}
             />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '8px 12px', minWidth: 220 }}>
+              <Search size={15} color="var(--fg-3)" style={{ flexShrink: 0 }} />
+              <input
+                type="search"
+                placeholder="Search shops…"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                style={{ border: 'none', outline: 'none', background: 'transparent', font: 'var(--t-body)', color: 'var(--fg-1)', flex: 1, minWidth: 0 }}
+              />
+            </div>
           </div>
         </div>
         {businesses.isLoading && <p className="body">Loading…</p>}
         {businesses.error && (
-          <p className="body" style={{ color: 'var(--danger)' }}>
-            Couldn't load businesses. Is the backend running?
-          </p>
+          <div style={{ color: 'var(--danger)' }}>
+            <p className="body" style={{ fontWeight: 600 }}>Internal Server Error</p>
+            <p className="body">Couldn't load businesses. Is the backend running?</p>
+          </div>
         )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {businesses.data?.map((b) => (
@@ -314,10 +356,70 @@ export function ExplorePage() {
         </div>
         {businesses.data && businesses.data.length === 0 && (
           <p className="body" style={{ color: 'var(--fg-3)' }}>
-            {searchName ? `No shops matching "${searchName}".` : 'No published businesses yet.'}
+            {searchName
+              ? `No shops matching "${searchName}"${filterCity ? ` in ${filterCity}` : ''}.`
+              : filterCity
+                ? `No shops in ${filterCity} yet. Try "All countries" to see everywhere.`
+                : 'No published businesses yet.'}
           </p>
         )}
       </section>
+    </div>
+  );
+}
+
+const LOCATION_ALL = '__all__';
+
+/** Country + city dropdowns sourced from the live set of shop locations. */
+function LocationFilter({
+  groups,
+  country,
+  city,
+  onChange,
+}: {
+  groups: LocationGroup[];
+  country: string;
+  city: string;
+  onChange: (country: string, city: string) => void;
+}) {
+  const cities = groups.find((g) => g.country === country)?.cities ?? [];
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+      <MapPin size={15} color="var(--fg-3)" style={{ flexShrink: 0 }} />
+      <Select
+        value={country || LOCATION_ALL}
+        onValueChange={(v) => onChange(v === LOCATION_ALL ? '' : v, '')}
+      >
+        <SelectTrigger style={{ minWidth: 150 }}>
+          <SelectValue placeholder="All countries" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={LOCATION_ALL}>All countries</SelectItem>
+          {groups.map((g) => (
+            <SelectItem key={g.country} value={g.country}>
+              {g.country}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {country && (
+        <Select
+          value={city || LOCATION_ALL}
+          onValueChange={(v) => onChange(country, v === LOCATION_ALL ? '' : v)}
+        >
+          <SelectTrigger style={{ minWidth: 140 }}>
+            <SelectValue placeholder="All cities" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={LOCATION_ALL}>All cities</SelectItem>
+            {cities.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { r2Url } from '../../src/lib/media';
 import { resolveIcon } from '../../src/lib/icon';
 import { Card } from '../../src/components/Card';
 import { Input } from '../../src/components/Input';
+import { SelectField } from '../../src/components/SelectField';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 
@@ -25,12 +26,15 @@ type Business = {
   slug: string;
   name: string;
   description: string | null;
+  country?: string | null;
+  city?: string | null;
   logoR2Key: string | null;
   coverR2Key: string | null;
   ratingAvg?: number | null;
   ratingCount?: number;
   categories: { id: string; name: string; slug: string }[];
 };
+type LocationGroup = { country: string; cities: string[] };
 type Membership = {
   membershipId: string;
   business: { id: string; slug: string; name: string; logoR2Key?: string | null; coverR2Key?: string | null };
@@ -45,6 +49,7 @@ type Membership = {
 };
 
 const SHOPS_PER_PAGE = 5;
+const ALL_LOCATIONS = '__all__';
 
 function fmtDeadline(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, {
@@ -62,18 +67,46 @@ export default function Explore() {
   const [searchName, setSearchName] = useState('');
   const [shopsPage, setShopsPage] = useState(0);
 
+  // Location filter. Defaults once to the signed-in user's city so customers see
+  // their own city first; empty values mean "everywhere".
+  const [filterCountry, setFilterCountry] = useState('');
+  const [filterCity, setFilterCity] = useState('');
+  const [locationDefaulted, setLocationDefaulted] = useState(false);
+
   useEffect(() => {
     const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
     return () => clearTimeout(t);
   }, [searchInput]);
+
+  const locations = useQuery({
+    queryKey: ['business-locations'],
+    queryFn: () => api<LocationGroup[]>('/api/businesses/locations'),
+  });
+
+  useEffect(() => {
+    if (locationDefaulted) return;
+    const u = session?.user as { country?: string | null; city?: string | null } | undefined;
+    if (u?.city) {
+      setFilterCountry(u.country ?? '');
+      setFilterCity(u.city);
+      setLocationDefaulted(true);
+    }
+  }, [session, locationDefaulted]);
 
   const mainCategories = useQuery({
     queryKey: ['categories-main'],
     queryFn: () => api<MainCategory[]>('/api/categories/main'),
   });
   const businesses = useQuery({
-    queryKey: ['businesses', searchName],
-    queryFn: () => api<Business[]>('/api/businesses', { query: { name: searchName || undefined } }),
+    queryKey: ['businesses', searchName, filterCountry, filterCity],
+    queryFn: () =>
+      api<Business[]>('/api/businesses', {
+        query: {
+          name: searchName || undefined,
+          country: filterCountry || undefined,
+          city: filterCity || undefined,
+        },
+      }),
     placeholderData: keepPreviousData,
   });
   const memberships = useQuery({
@@ -260,6 +293,34 @@ export default function Explore() {
         <Typo variant="h2" style={{ marginBottom: 12 }}>
           All shops on the network
         </Typo>
+        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+          <SelectField
+            value={filterCountry || ALL_LOCATIONS}
+            options={[
+              { label: 'All countries', value: ALL_LOCATIONS },
+              ...(locations.data ?? []).map((g) => ({ label: g.country, value: g.country })),
+            ]}
+            onChange={(v) => {
+              setFilterCountry(v === ALL_LOCATIONS ? '' : v);
+              setFilterCity('');
+            }}
+            containerStyle={{ flex: 1 }}
+          />
+          {filterCountry !== '' && (
+            <SelectField
+              value={filterCity || ALL_LOCATIONS}
+              options={[
+                { label: 'All cities', value: ALL_LOCATIONS },
+                ...((locations.data ?? []).find((g) => g.country === filterCountry)?.cities ?? []).map((c) => ({
+                  label: c,
+                  value: c,
+                })),
+              ]}
+              onChange={(v) => setFilterCity(v === ALL_LOCATIONS ? '' : v)}
+              containerStyle={{ flex: 1 }}
+            />
+          )}
+        </View>
         <Input
           placeholder="Search shops…"
           value={searchInput}
@@ -273,9 +334,14 @@ export default function Explore() {
             </Typo>
           )}
           {businesses.error && (
-            <Typo variant="body" color={tokens.colors.danger}>
-              Couldn't load shops: {(businesses.error as Error).message}
-            </Typo>
+            <View>
+              <Typo variant="body" color={tokens.colors.danger} style={{ fontWeight: '600' }}>
+                Internal Server Error
+              </Typo>
+              <Typo variant="body" color={tokens.colors.danger}>
+                Couldn't load businesses. Is the backend running?
+              </Typo>
+            </View>
           )}
           {businesses.data?.map((b: Business) => {
             const coverUrl = r2Url(b.coverR2Key);
@@ -314,7 +380,11 @@ export default function Explore() {
           })}
           {businesses.data?.length === 0 && (
             <Typo variant="body" color={tokens.colors.fg3}>
-              {searchName ? `No shops matching "${searchName}".` : 'No published shops yet.'}
+              {searchName
+                ? `No shops matching "${searchName}"${filterCity ? ` in ${filterCity}` : ''}.`
+                : filterCity
+                  ? `No shops in ${filterCity} yet. Pick "All countries" to see everywhere.`
+                  : 'No published shops yet.'}
             </Typo>
           )}
         </View>

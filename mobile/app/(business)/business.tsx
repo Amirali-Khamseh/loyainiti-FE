@@ -26,10 +26,14 @@ import { r2Url } from '../../src/lib/media';
 import { resolveActiveBusinessId, setActiveBusinessId } from '../../src/lib/activeBusiness';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
+import { SelectField } from '../../src/components/SelectField';
 import { Card } from '../../src/components/Card';
 import { ConfirmDialog } from '../../src/components/Modal';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
+import { COUNTRIES } from '../../src/lib/countries';
+
+const COUNTRY_OPTIONS = COUNTRIES.map((c) => ({ label: c.name, value: c.name }));
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -45,6 +49,8 @@ type BusinessDetail = {
   name: string;
   description: string | null;
   address: string | null;
+  country: string | null;
+  city: string | null;
   logoR2Key: string | null;
   coverR2Key: string | null;
   openingHours: OpeningHours | null;
@@ -145,15 +151,38 @@ function OnboardingWizard({
 }) {
   const router = useRouter();
   const qc = useQueryClient();
+  const { data: session } = auth.useSession();
   const [step, setStep] = useState<Step>(0);
   const [createdId, setCreatedId] = useState<string | null>(initialBusinessId);
-  const [draft, setDraft] = useState({ name: '', description: '', address: '' });
+  const [draft, setDraft] = useState({ name: '', description: '', address: '', country: '', city: '' });
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [hours, setHours] = useState<OpeningHours>(defaultHours());
   const [photos, setPhotos] = useState<Photo[]>([]);
 
+  // Prefill country/city from what the owner entered at sign-up (stored on the
+  // user). Editable here in case a specific shop differs.
+  useEffect(() => {
+    const u = session?.user as { country?: string | null; city?: string | null } | undefined;
+    if (!u) return;
+    setDraft((d) => ({
+      ...d,
+      country: d.country || u.country || '',
+      city: d.city || u.city || '',
+    }));
+  }, [session]);
+
   const createMut = useMutation({
-    mutationFn: () => api<{ id: string }>('/api/businesses', { method: 'POST', body: draft }),
+    mutationFn: () =>
+      api<{ id: string }>('/api/businesses', {
+        method: 'POST',
+        body: {
+          name: draft.name,
+          description: draft.description || undefined,
+          address: draft.address || undefined,
+          country: draft.country || undefined,
+          city: draft.city || undefined,
+        },
+      }),
     onSuccess: async (b) => {
       await setActiveBusinessId(b.id);
       setCreatedId(b.id);
@@ -214,7 +243,20 @@ function OnboardingWizard({
             label="Address"
             value={draft.address}
             onChangeText={(t) => setDraft({ ...draft, address: t })}
-            placeholder="Via Roma 12, Milan"
+            placeholder="Via Roma 12"
+          />
+          <SelectField
+            label="Country"
+            value={draft.country}
+            options={COUNTRY_OPTIONS}
+            placeholder="Select country"
+            onChange={(v) => setDraft({ ...draft, country: v })}
+          />
+          <Input
+            label="City"
+            value={draft.city}
+            onChangeText={(t) => setDraft({ ...draft, city: t })}
+            placeholder="Milan"
           />
           <Button
             onPress={() => createMut.mutate()}
@@ -328,6 +370,8 @@ function EditBusiness({ businessId }: { businessId: string }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
   const [logoR2Key, setLogoR2Key] = useState<string | null>(null);
   const [coverR2Key, setCoverR2Key] = useState<string | null>(null);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
@@ -341,6 +385,8 @@ function EditBusiness({ businessId }: { businessId: string }) {
     setName(d.name);
     setDescription(d.description ?? '');
     setAddress(d.address ?? '');
+    setCountry(d.country ?? '');
+    setCity(d.city ?? '');
     setLogoR2Key(d.logoR2Key);
     setCoverR2Key(d.coverR2Key);
     setCategoryIds(d.categories.map((c: Category) => c.id));
@@ -357,6 +403,8 @@ function EditBusiness({ businessId }: { businessId: string }) {
           name,
           description: description || null,
           address: address || null,
+          country: country || null,
+          city: city || null,
           logoR2Key,
           coverR2Key,
           categoryIds,
@@ -403,6 +451,14 @@ function EditBusiness({ businessId }: { businessId: string }) {
         <Input label="Name" value={name} onChangeText={setName} />
         <Input label="Description" value={description} onChangeText={setDescription} />
         <Input label="Address" value={address} onChangeText={setAddress} />
+        <SelectField
+          label="Country"
+          value={country}
+          options={COUNTRY_OPTIONS}
+          placeholder="Select country"
+          onChange={setCountry}
+        />
+        <Input label="City" value={city} onChangeText={setCity} />
         <View style={{ flexDirection: 'row', gap: 12 }}>
           <View style={{ flex: 1 }}>
             <SingleImageField

@@ -4,20 +4,27 @@ import { useRouter } from 'expo-router';
 import { auth } from '../../src/lib/auth';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
+import { SelectField } from '../../src/components/SelectField';
 import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
+import { COUNTRIES } from '../../src/lib/countries';
+
+const COUNTRY_OPTIONS = COUNTRIES.map((c) => ({ label: c.name, value: c.name }));
 
 /**
  * Business sign-up - creates the account then routes straight to the
  * business profile onboarding screen. We await auth.getSession() after
  * sign-up so the bearer token from @better-auth/expo is persisted before
- * the next page's API calls fire.
+ * the next page's API calls fire. Country/city are stored on the user and
+ * prefill the business in the onboarding wizard.
  */
 export default function SignUpBusiness() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +33,8 @@ export default function SignUpBusiness() {
   const validate = (): string | null => {
     if (name.trim().length < 2) return 'Name must be at least 2 characters';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Enter a valid email';
+    if (!country) return 'Country is required';
+    if (city.trim().length < 2) return 'City is required';
     if (password.length < 8) return 'Password must be at least 8 characters';
     if (!/[A-Za-z]/.test(password) || !/\d/.test(password))
       return 'Password must contain a letter and a number';
@@ -39,7 +48,7 @@ export default function SignUpBusiness() {
     setBusy(true);
     setError(null);
     try {
-      const { error: err } = await auth.signUp.email({ email, password, name });
+      const { error: err } = await auth.signUp.email({ email, password, name, country, city: city.trim() });
       if (err) { setError(err.message ?? 'Sign up failed'); return; }
       await auth.getSession();
       router.replace('/(business)/business?onboarding=1');
@@ -70,6 +79,19 @@ export default function SignUpBusiness() {
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
+        />
+        <SelectField
+          label="Country you operate in"
+          value={country}
+          options={COUNTRY_OPTIONS}
+          placeholder="Select country"
+          onChange={setCountry}
+        />
+        <Input
+          label="City you operate in"
+          autoComplete="postal-address-locality"
+          value={city}
+          onChangeText={setCity}
         />
         <Input
           label="Password"

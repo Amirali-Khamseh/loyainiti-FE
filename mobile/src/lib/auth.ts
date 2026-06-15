@@ -1,7 +1,17 @@
 import { Platform } from 'react-native';
 import { createAuthClient } from 'better-auth/react';
+import { inferAdditionalFields } from 'better-auth/client/plugins';
 import { expoClient } from '@better-auth/expo/client';
 import * as SecureStore from 'expo-secure-store';
+
+// Teaches the client about the BE's custom user fields so signUp.email accepts
+// country/city and they appear on session.user.
+const additionalFields = inferAdditionalFields({
+  user: {
+    country: { type: 'string', required: false },
+    city: { type: 'string', required: false },
+  },
+});
 
 const isWeb = Platform.OS === 'web';
 
@@ -55,8 +65,9 @@ export const auth = createAuthClient({
   baseURL,
   fetchOptions: isWeb ? { credentials: 'include' } : undefined,
   plugins: isWeb
-    ? []
+    ? [additionalFields]
     : [
+        additionalFields,
         expoClient({
           scheme: 'loyainiti',
           storagePrefix: 'loyainiti',

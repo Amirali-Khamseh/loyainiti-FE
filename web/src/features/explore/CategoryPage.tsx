@@ -122,9 +122,10 @@ export function CategoryPage() {
       <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {businesses.isLoading && <p className="body" style={{ color: 'var(--fg-3)' }}>Loading…</p>}
         {businesses.error && (
-          <p className="body" style={{ color: 'var(--danger)' }}>
-            Couldn't load businesses. Is the backend running?
-          </p>
+          <div style={{ color: 'var(--danger)' }}>
+            <p className="body" style={{ fontWeight: 600 }}>Internal Server Error</p>
+            <p className="body">Couldn't load businesses. Is the backend running?</p>
+          </div>
         )}
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>

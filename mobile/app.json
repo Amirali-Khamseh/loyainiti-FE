@@ -4,12 +4,12 @@
     "slug": "loyainiti",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/Logo_final.png",
+    "icon": "./src/design-system/assets/Logo_final.png",
     "scheme": "loyainiti",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./src/design-system/assets/Logo_final.png",
       "resizeMode": "contain",
       "backgroundColor": "#FBF8F3"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Logo_final.png",
+        "foregroundImage": "./src/design-system/assets/Logo_final.png",
         "backgroundColor": "#000000"
       },
       "package": "com.loyainiti.app"
