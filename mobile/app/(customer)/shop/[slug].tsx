@@ -8,6 +8,7 @@ import { auth } from '../../../src/lib/auth';
 import { r2Url } from '../../../src/lib/media';
 import { Card } from '../../../src/components/Card';
 import { Typo } from '../../../src/components/Heading';
+import { ShopMap } from '../../../src/components/ShopMap';
 import { LoyaltyStamp } from '../../../src/components/LoyaltyStamp';
 import { StarRating } from '../../../src/components/StarRating';
 import { Button } from '../../../src/components/Button';
@@ -25,6 +26,10 @@ type Business = {
   name: string;
   description: string | null;
   address: string | null;
+  country: string | null;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
   logoR2Key: string | null;
   coverR2Key: string | null;
   openingHours: OpeningHours | null;
@@ -198,6 +203,10 @@ export default function ShopDetail() {
 
         {b.openingHours && <HoursDisplay hours={b.openingHours} />}
       </View>
+
+      {b.latitude != null && b.longitude != null && (
+        <ShopMap latitude={b.latitude} longitude={b.longitude} name={b.name} />
+      )}
 
       {/* Photo gallery */}
       {b.photos.length > 0 && (

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { auth } from '../../lib/auth';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { CountrySelect } from '../../components/CountrySelect';
 import { useToast } from '../../components/Toast';
 import { AuthLayout } from './AuthLayout';
 
@@ -12,6 +13,7 @@ type Form = {
   email: string;
   password: string;
   confirmPassword: string;
+  city: string;
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,13 +23,19 @@ export function SignUpPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [country, setCountry] = useState('');
+  const [countryError, setCountryError] = useState<string | undefined>();
   const { register, handleSubmit, formState, getValues } = useForm<Form>({ mode: 'onBlur' });
 
   const onSubmit = handleSubmit(async (values) => {
+    if (!country) {
+      setCountryError('Country is required');
+      return;
+    }
     setSubmitting(true);
     try {
       const { confirmPassword: _confirm, ...signUpInput } = values;
-      const { error: err } = await auth.signUp.email(signUpInput);
+      const { error: err } = await auth.signUp.email({ ...signUpInput, country });
       if (err) {
         toast.error(err.message ?? 'Sign-up failed');
         return;
@@ -65,6 +73,19 @@ export function SignUpPage() {
             pattern: { value: EMAIL_RE, message: 'Enter a valid email address' },
           })}
           error={formState.errors.email?.message}
+        />
+        <CountrySelect
+          value={country}
+          onChange={(v) => { setCountry(v); setCountryError(undefined); }}
+          error={countryError}
+        />
+        <Input label="City" autoComplete="address-level2"
+          hint="We'll show you shops in your city first"
+          {...register('city', {
+            required: 'City is required',
+            minLength: { value: 2, message: 'At least 2 characters' },
+          })}
+          error={formState.errors.city?.message}
         />
         <Input label="Password" type="password" autoComplete="new-password" showPasswordToggle
           hint="At least 8 characters, including a letter and a number"

@@ -7,6 +7,7 @@ import { auth } from '../../lib/auth';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoyaltyStamp } from '../../components/LoyaltyStamp';
+import { ShopMap } from '../../components/ShopMap';
 import { useToast } from '../../components/Toast';
 
 type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
@@ -33,6 +34,10 @@ type Business = {
   name: string;
   description: string | null;
   address: string | null;
+  country: string | null;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
   logoR2Key: string | null;
   coverR2Key: string | null;
   openingHours: OpeningHours | null;
@@ -192,6 +197,10 @@ export function ShopPage() {
         {b.address && <p className="body-sm" style={{ color: 'var(--fg-3)', marginTop: 4 }}>{b.address}</p>}
         {b.openingHours && <HoursDisplay hours={b.openingHours} />}
       </header>
+
+      {b.latitude != null && b.longitude != null && (
+        <ShopMap latitude={b.latitude} longitude={b.longitude} name={b.name} address={b.address} />
+      )}
 
       {/* Photo gallery */}
       {b.photos.length > 0 && (

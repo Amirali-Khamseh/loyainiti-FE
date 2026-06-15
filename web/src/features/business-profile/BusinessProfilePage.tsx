@@ -8,6 +8,7 @@ import { r2Url } from '../../lib/media';
 import { getActiveBusinessId, setActiveBusinessId } from '../../lib/activeBusiness';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { CountrySelect } from '../../components/CountrySelect';
 import { Card } from '../../components/Card';
 import { useToast } from '../../components/Toast';
 
@@ -23,6 +24,8 @@ type BusinessDetail = {
   name: string;
   description: string | null;
   address: string | null;
+  country: string | null;
+  city: string | null;
   logoR2Key: string | null;
   coverR2Key: string | null;
   openingHours: OpeningHours | null;
@@ -82,16 +85,39 @@ const STEP_LABELS = ['Basics', 'Categories', 'Hours', 'Photos', 'Publish'];
 function OnboardingWizard() {
   const toast = useToast();
   const qc = useQueryClient();
+  const { data: session } = auth.useSession();
   const [step, setStep] = useState<Step>(0);
   const [createdId, setCreatedId] = useState<string | null>(null);
 
-  const [draft, setDraft] = useState({ name: '', description: '', address: '' });
+  const [draft, setDraft] = useState({ name: '', description: '', address: '', country: '', city: '' });
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [hours, setHours] = useState<OpeningHours>(defaultHours());
   const [photos, setPhotos] = useState<Photo[]>([]);
 
+  // Prefill country/city from what the owner entered at sign-up (stored on the
+  // user). They remain editable here in case a specific shop differs.
+  useEffect(() => {
+    const u = session?.user as { country?: string | null; city?: string | null } | undefined;
+    if (!u) return;
+    setDraft((d) => ({
+      ...d,
+      country: d.country || u.country || '',
+      city: d.city || u.city || '',
+    }));
+  }, [session]);
+
   const createMut = useMutation({
-    mutationFn: () => api<{ id: string }>('/api/businesses', { method: 'POST', body: draft }),
+    mutationFn: () =>
+      api<{ id: string }>('/api/businesses', {
+        method: 'POST',
+        body: {
+          name: draft.name,
+          description: draft.description || undefined,
+          address: draft.address || undefined,
+          country: draft.country || undefined,
+          city: draft.city || undefined,
+        },
+      }),
     onSuccess: (b) => {
       setCreatedId(b.id);
       setActiveBusinessId(b.id);
@@ -147,7 +173,17 @@ function OnboardingWizard() {
             label="Address"
             value={draft.address}
             onChange={(e) => setDraft({ ...draft, address: e.target.value })}
-            placeholder="Via Roma 12, Milan"
+            placeholder="Via Roma 12"
+          />
+          <CountrySelect
+            value={draft.country}
+            onChange={(v) => setDraft({ ...draft, country: v })}
+          />
+          <Input
+            label="City"
+            value={draft.city}
+            onChange={(e) => setDraft({ ...draft, city: e.target.value })}
+            placeholder="Milan"
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
@@ -269,6 +305,8 @@ function EditBusiness({ businessId }: { businessId: string }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
   const [logoR2Key, setLogoR2Key] = useState<string | null>(null);
   const [coverR2Key, setCoverR2Key] = useState<string | null>(null);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
@@ -282,6 +320,8 @@ function EditBusiness({ businessId }: { businessId: string }) {
     setName(d.name);
     setDescription(d.description ?? '');
     setAddress(d.address ?? '');
+    setCountry(d.country ?? '');
+    setCity(d.city ?? '');
     setLogoR2Key(d.logoR2Key);
     setCoverR2Key(d.coverR2Key);
     setCategoryIds(d.categories.map((c) => c.id));
@@ -298,6 +338,8 @@ function EditBusiness({ businessId }: { businessId: string }) {
           name,
           description: description || null,
           address: address || null,
+          country: country || null,
+          city: city || null,
           logoR2Key,
           coverR2Key,
           categoryIds,
@@ -344,6 +386,8 @@ function EditBusiness({ businessId }: { businessId: string }) {
         <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
         <Input label="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
         <Input label="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+        <CountrySelect value={country} onChange={setCountry} />
+        <Input label="City" value={city} onChange={(e) => setCity(e.target.value)} />
       </Card>
 
       {isOwner && (

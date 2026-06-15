@@ -25,9 +25,10 @@ export async function resolveActiveBusinessId(): Promise<string | null> {
   if (stored) return stored;
   try {
     const businesses = await api<{ id: string }[]>('/api/me/businesses');
-    if (businesses.length > 0) {
-      await AsyncStorage.setItem(KEY, businesses[0].id);
-      return businesses[0].id;
+    const first = businesses[0];
+    if (first) {
+      await AsyncStorage.setItem(KEY, first.id);
+      return first.id;
     }
   } catch {
     // non-fatal — user may not have a business yet
