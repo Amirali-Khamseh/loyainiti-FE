@@ -6,6 +6,7 @@ import { api } from '../../lib/api';
 import { auth } from '../../lib/auth';
 import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
+import { SkeletonCardGrid } from '../../components/Skeleton';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/Select';
 
 type Category = { id: string; name: string; slug: string };
@@ -292,7 +293,7 @@ export function ExplorePage() {
             </div>
           </div>
         </div>
-        {businesses.isLoading && <p className="body">Loading…</p>}
+        {businesses.isLoading && <SkeletonCardGrid count={6} />}
         {businesses.error && (
           <div style={{ color: 'var(--danger)' }}>
             <p className="body" style={{ fontWeight: 600 }}>Internal Server Error</p>
