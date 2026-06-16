@@ -8,6 +8,7 @@ import { auth } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
 import { resolveIcon } from '../../src/lib/icon';
 import { Card } from '../../src/components/Card';
+import { Skeleton, SkeletonCard } from '../../src/components/Skeleton';
 import { Input } from '../../src/components/Input';
 import { SelectField } from '../../src/components/SelectField';
 import { Typo } from '../../src/components/Heading';
@@ -138,9 +139,17 @@ export default function Explore() {
           Browse by category
         </Typo>
         {mainCategories.isLoading && (
-          <Typo variant="body" color={tokens.colors.fg3}>
-            Loading categories…
-          </Typo>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+            {Array.from({ length: 4 }, (_, i) => (
+              <View key={i} style={{ width: '47%' }}>
+                <Card padding={16}>
+                  <Skeleton width={44} height={44} radius={tokens.radius.md} />
+                  <Skeleton width="70%" height={18} style={{ marginTop: 12 }} />
+                  <Skeleton width="40%" height={12} style={{ marginTop: 6 }} />
+                </Card>
+              </View>
+            ))}
+          </View>
         )}
         {mainCategories.error && (
           <Typo variant="body" color={tokens.colors.danger}>
@@ -328,11 +337,8 @@ export default function Explore() {
           containerStyle={{ marginBottom: 12 }}
         />
         <View style={{ gap: 12 }}>
-          {businesses.isLoading && (
-            <Typo variant="body" color={tokens.colors.fg3}>
-              Loading shops…
-            </Typo>
-          )}
+          {businesses.isLoading &&
+            Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} />)}
           {businesses.error && (
             <View>
               <Typo variant="body" color={tokens.colors.danger} style={{ fontWeight: '600' }}>

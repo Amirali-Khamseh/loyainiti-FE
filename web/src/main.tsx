@@ -21,12 +21,15 @@ import './styles/app.css';
 import { router } from './routes';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from './components/Toast';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
+    </ErrorBoundary>
   </React.StrictMode>,
 );

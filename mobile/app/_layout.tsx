@@ -8,6 +8,7 @@ import { useFonts as useMono, JetBrainsMono_400Regular, JetBrainsMono_500Medium,
 import { View, ActivityIndicator } from 'react-native';
 import { queryClient } from '../src/lib/queryClient';
 import { tokens } from '../src/design-system/tokens';
+import { ErrorBoundary } from '../src/components/ErrorBoundary';
 
 export default function RootLayout() {
   const [interTight] = useInterTight({ InterTight: InterTight_400Regular, InterTight_500Medium, InterTight_600SemiBold, InterTight_700Bold });
@@ -25,20 +26,22 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <StatusBar style="light" backgroundColor={tokens.colors.bgCanvas} />
-        <Stack
-          screenOptions={{
-            headerStyle: { backgroundColor: tokens.colors.bgCanvas },
-            headerTintColor: tokens.colors.fg1,
-            headerShadowVisible: false,
-            headerTitleStyle: { fontFamily: tokens.fonts.body, fontSize: 18, fontWeight: '600', color: tokens.colors.fg1 },
-            contentStyle: { backgroundColor: tokens.colors.bgCanvas },
-          }}
-        >
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(customer)" options={{ headerShown: false }} />
-          <Stack.Screen name="(business)" options={{ headerShown: false }} />
-        </Stack>
+        <ErrorBoundary>
+          <Stack
+            screenOptions={{
+              headerStyle: { backgroundColor: tokens.colors.bgCanvas },
+              headerTintColor: tokens.colors.fg1,
+              headerShadowVisible: false,
+              headerTitleStyle: { fontFamily: tokens.fonts.body, fontSize: 18, fontWeight: '600', color: tokens.colors.fg1 },
+              contentStyle: { backgroundColor: tokens.colors.bgCanvas },
+            }}
+          >
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(customer)" options={{ headerShown: false }} />
+            <Stack.Screen name="(business)" options={{ headerShown: false }} />
+          </Stack>
+        </ErrorBoundary>
       </QueryClientProvider>
     </SafeAreaProvider>
   );

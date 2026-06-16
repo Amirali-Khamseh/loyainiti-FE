@@ -25,73 +25,82 @@ import { ConsoleUsersPage } from './features/console/ConsoleUsersPage';
 import { ConsoleBusinessesPage } from './features/console/ConsoleBusinessesPage';
 import { ConsoleCategoriesPage } from './features/console/ConsoleCategoriesPage';
 import { ConsoleReviewsPage } from './features/console/ConsoleReviewsPage';
+import { RouteErrorBoundary } from './components/ErrorBoundary';
 
 const STAFF = ['business_owner', 'staff'] as const;
 
 export const router = createBrowserRouter([
-  // Auth screens (no shell)
-  { path: '/sign-in', element: <SignInPage /> },
-  { path: '/sign-up', element: <SignUpPage /> },            // customer
-  { path: '/sign-up/customer', element: <SignUpPage /> },  // explicit customer route from sign-in
-  { path: '/sign-up/business', element: <SignUpBusinessPage /> }, // business owner
-  { path: '/forgot-password', element: <ForgotPasswordPage /> },
-  { path: '/reset-password', element: <ResetPasswordPage /> },
-
-  // Everything else under the AppShell
+  // Pathless layout route: no `element` renders an implicit <Outlet/>, and its
+  // errorElement is the single catch-all for render/loader errors across every
+  // screen below — any uncaught throw shows the themed fallback.
   {
-    path: '/',
-    element: <AppShell />,
+    errorElement: <RouteErrorBoundary />,
     children: [
-      { index: true, element: <ExplorePage /> },
-      { path: 'categories/:mainSlug', element: <CategoryPage /> },
-      { path: 'b/:slug', element: <ShopPage /> },
+      // Auth screens (no shell)
+      { path: '/sign-in', element: <SignInPage /> },
+      { path: '/sign-up', element: <SignUpPage /> },            // customer
+      { path: '/sign-up/customer', element: <SignUpPage /> },  // explicit customer route from sign-in
+      { path: '/sign-up/business', element: <SignUpBusinessPage /> }, // business owner
+      { path: '/forgot-password', element: <ForgotPasswordPage /> },
+      { path: '/reset-password', element: <ResetPasswordPage /> },
+
+      // Everything else under the AppShell
       {
-        path: 'my-qr',
-        element: <RequireAuth><MyQrPage /></RequireAuth>,
-      },
-      {
-        path: 'visits',
-        element: <RequireAuth><VisitsPage /></RequireAuth>,
-      },
-      {
-        path: 'profile',
-        element: <RequireAuth><ProfilePage /></RequireAuth>,
-      },
-      // Onboarding: customer creates a business (promoted to business_owner after)
-      {
-        path: 'onboarding/business',
-        element: <RequireAuth><BusinessProfilePage /></RequireAuth>,
-      },
-      // Business admin (requires staff role)
-      {
-        path: 'admin',
-        element: (
-          <RequireAuth roles={[...STAFF]}>
-            <Outlet />
-          </RequireAuth>
-        ),
+        path: '/',
+        element: <AppShell />,
         children: [
-          { path: 'stats', element: <StatsPage /> },
-          { path: 'scan', element: <ScanPage /> },
-          { path: 'menus', element: <MenuAdminPage /> },
-          { path: 'staff', element: <StaffPage /> },
-          { path: 'business', element: <BusinessProfilePage /> },
+          { index: true, element: <ExplorePage /> },
+          { path: 'categories/:mainSlug', element: <CategoryPage /> },
+          { path: 'b/:slug', element: <ShopPage /> },
+          {
+            path: 'my-qr',
+            element: <RequireAuth><MyQrPage /></RequireAuth>,
+          },
+          {
+            path: 'visits',
+            element: <RequireAuth><VisitsPage /></RequireAuth>,
+          },
+          {
+            path: 'profile',
+            element: <RequireAuth><ProfilePage /></RequireAuth>,
+          },
+          // Onboarding: customer creates a business (promoted to business_owner after)
+          {
+            path: 'onboarding/business',
+            element: <RequireAuth><BusinessProfilePage /></RequireAuth>,
+          },
+          // Business admin (requires staff role)
+          {
+            path: 'admin',
+            element: (
+              <RequireAuth roles={[...STAFF]}>
+                <Outlet />
+              </RequireAuth>
+            ),
+            children: [
+              { path: 'stats', element: <StatsPage /> },
+              { path: 'scan', element: <ScanPage /> },
+              { path: 'menus', element: <MenuAdminPage /> },
+              { path: 'staff', element: <StaffPage /> },
+              { path: 'business', element: <BusinessProfilePage /> },
+            ],
+          },
         ],
       },
-    ],
-  },
 
-  // Hidden SaaS admin console (not linked from the public app)
-  { path: '/_console/login', element: <ConsoleLoginPage /> },
-  {
-    path: '/_console',
-    element: <ConsoleLayout />,
-    children: [
-      { index: true, element: <ConsoleHomePage /> },
-      { path: 'users', element: <ConsoleUsersPage /> },
-      { path: 'businesses', element: <ConsoleBusinessesPage /> },
-      { path: 'categories', element: <ConsoleCategoriesPage /> },
-      { path: 'reviews', element: <ConsoleReviewsPage /> },
+      // Hidden SaaS admin console (not linked from the public app)
+      { path: '/_console/login', element: <ConsoleLoginPage /> },
+      {
+        path: '/_console',
+        element: <ConsoleLayout />,
+        children: [
+          { index: true, element: <ConsoleHomePage /> },
+          { path: 'users', element: <ConsoleUsersPage /> },
+          { path: 'businesses', element: <ConsoleBusinessesPage /> },
+          { path: 'categories', element: <ConsoleCategoriesPage /> },
+          { path: 'reviews', element: <ConsoleReviewsPage /> },
+        ],
+      },
     ],
   },
 ]);
