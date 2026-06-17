@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { ScrollView, View, Pressable, Image, TextInput, Alert } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import { Lock, Star } from 'lucide-react-native';
+import { Heart, Lock, Star } from 'lucide-react-native';
 import { api, ApiError } from '../../../src/lib/api';
-import { auth } from '../../../src/lib/auth';
+import { auth, type Role } from '../../../src/lib/auth';
+import { useFavoriteIds, useFavoriteToggle } from '../../../src/lib/useFavorites';
 import { r2Url } from '../../../src/lib/media';
 import { Card } from '../../../src/components/Card';
 import { Typo } from '../../../src/components/Heading';
@@ -95,6 +96,10 @@ export default function ShopDetail() {
   const { slug = '' } = useLocalSearchParams<{ slug: string }>();
   const [tab, setTab] = useState<Tab>('public');
   const { data: session } = auth.useSession();
+  const role = (session?.user as { role?: Role } | undefined)?.role;
+  const isCustomer = !!session && (role === 'customer' || role === undefined);
+  const favoriteIds = useFavoriteIds();
+  const { toggle: toggleFavorite, isPending: favPending } = useFavoriteToggle();
 
   const business = useQuery({
     queryKey: ['business', slug],
@@ -162,12 +167,33 @@ export default function ShopDetail() {
               }}
             />
           )}
-          <View>
+          <View style={{ flex: 1 }}>
             <Typo variant="label" color={tokens.colors.fg2}>{b.slug}</Typo>
             <Typo variant="display2" style={{ marginTop: 4 }}>
               {b.name}
             </Typo>
           </View>
+          {isCustomer && (
+            <Pressable
+              onPress={() => toggleFavorite(b.id, favoriteIds.has(b.id))}
+              disabled={favPending}
+              hitSlop={8}
+              style={{
+                padding: 10,
+                borderRadius: tokens.radius.md,
+                borderWidth: 1,
+                borderColor: tokens.colors.borderDefault,
+                backgroundColor: tokens.colors.bgCard,
+              }}
+            >
+              <Heart
+                size={22}
+                color={favoriteIds.has(b.id) ? tokens.colors.cyan500 : tokens.colors.fg3}
+                fill={favoriteIds.has(b.id) ? tokens.colors.cyan500 : 'none'}
+                strokeWidth={2}
+              />
+            </Pressable>
+          )}
         </View>
 
         {b.categories.length > 0 && (

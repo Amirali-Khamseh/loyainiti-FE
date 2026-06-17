@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Pressable, Image } from 'react-native';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { Coffee, ChevronRight, Clock } from 'lucide-react-native';
+import { Coffee, ChevronRight, Clock, Heart } from 'lucide-react-native';
 import { api } from '../../src/lib/api';
 import { auth } from '../../src/lib/auth';
+import { type Role } from '../../src/lib/auth';
+import { useFavoriteIds, useFavoriteToggle } from '../../src/lib/useFavorites';
 import { r2Url } from '../../src/lib/media';
 import { resolveIcon } from '../../src/lib/icon';
 import { Card } from '../../src/components/Card';
@@ -63,6 +65,10 @@ function fmtDeadline(iso: string): string {
 export default function Explore() {
   const router = useRouter();
   const { data: session } = auth.useSession();
+  const role = (session?.user as { role?: Role } | undefined)?.role;
+  const isCustomer = !!session && (role === 'customer' || role === undefined);
+  const favoriteIds = useFavoriteIds();
+  const { toggle: toggleFavorite, isPending: favPending } = useFavoriteToggle();
 
   const [searchInput, setSearchInput] = useState('');
   const [searchName, setSearchName] = useState('');
@@ -351,6 +357,7 @@ export default function Explore() {
           )}
           {businesses.data?.map((b: Business) => {
             const coverUrl = r2Url(b.coverR2Key);
+            const isFav = favoriteIds.has(b.id);
             return (
               <Pressable
                 key={b.id}
@@ -374,7 +381,23 @@ export default function Explore() {
                         ) : null}
                         <Typo variant="h3" style={{ flex: 1 }}>{b.name}</Typo>
                       </View>
-                      <ChevronRight color={tokens.colors.fg3} size={18} />
+                      {isCustomer ? (
+                        <Pressable
+                          onPress={(e) => { e.stopPropagation(); toggleFavorite(b.id, isFav); }}
+                          disabled={favPending}
+                          hitSlop={8}
+                          style={{ padding: 4 }}
+                        >
+                          <Heart
+                            size={18}
+                            color={isFav ? tokens.colors.cyan500 : tokens.colors.fg3}
+                            fill={isFav ? tokens.colors.cyan500 : 'none'}
+                            strokeWidth={2}
+                          />
+                        </Pressable>
+                      ) : (
+                        <ChevronRight color={tokens.colors.fg3} size={18} />
+                      )}
                     </View>
                     <Typo variant="bodySm" color={tokens.colors.fg2} style={{ marginTop: 6 }}>
                       {b.description ?? 'A new shop in the network.'}
