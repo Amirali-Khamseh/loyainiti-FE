@@ -8,6 +8,7 @@ import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
 import { SkeletonCardGrid } from '../../components/Skeleton';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/Select';
+import { FavoriteButton } from '../favorites/FavoriteButton';
 
 type Category = { id: string; name: string; slug: string };
 
@@ -302,57 +303,63 @@ export function ExplorePage() {
         )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {businesses.data?.map((b) => (
-            <Link key={b.id} to={`/b/${b.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
-              <Card style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
-                {r2Url(b.coverR2Key) && (
-                  <img
-                    src={r2Url(b.coverR2Key)!}
-                    alt=""
-                    style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }}
-                  />
-                )}
-                <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {r2Url(b.logoR2Key) && (
-                      <img
-                        src={r2Url(b.logoR2Key)!}
-                        alt=""
-                        style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
-                      />
+            <div key={b.id} style={{ position: 'relative', height: '100%' }}>
+              <Link to={`/b/${b.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+                <Card style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
+                  {r2Url(b.coverR2Key) && (
+                    <img
+                      src={r2Url(b.coverR2Key)!}
+                      alt=""
+                      style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }}
+                    />
+                  )}
+                  <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingRight: 28 }}>
+                      {r2Url(b.logoR2Key) && (
+                        <img
+                          src={r2Url(b.logoR2Key)!}
+                          alt=""
+                          style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
+                        />
+                      )}
+                      <h3 className="h3">{b.name}</h3>
+                    </div>
+                    {b.categories.length > 0 && (
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+                        {b.categories.slice(0, 3).map((c) => (
+                          <span key={c.id} className="caption" style={{
+                            padding: '2px 8px', borderRadius: 10,
+                            background: 'transparent', color: 'var(--action)',
+                            border: '1px solid rgba(14,165,233,0.35)',
+                            fontWeight: 500,
+                          }}>
+                            {c.name}
+                          </span>
+                        ))}
+                      </div>
                     )}
-                    <h3 className="h3">{b.name}</h3>
-                  </div>
-                  {b.categories.length > 0 && (
-                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
-                      {b.categories.slice(0, 3).map((c) => (
-                        <span key={c.id} className="caption" style={{
-                          padding: '2px 8px', borderRadius: 10,
-                          background: 'transparent', color: 'var(--action)',
-                          border: '1px solid rgba(14,165,233,0.35)',
-                          fontWeight: 500,
-                        }}>
-                          {c.name}
+                    <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)', flex: 1 }}>
+                      {b.description ?? 'A new shop in the network.'}
+                    </p>
+                    {(b.ratingCount ?? 0) > 0 && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                        <Star size={13} fill="var(--cyan-500)" color="var(--cyan-500)" />
+                        <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, color: 'var(--action)' }}>
+                          {Number(b.ratingAvg).toFixed(1)}
                         </span>
-                      ))}
-                    </div>
-                  )}
-                  <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)', flex: 1 }}>
-                    {b.description ?? 'A new shop in the network.'}
-                  </p>
-                  {(b.ratingCount ?? 0) > 0 && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-                      <Star size={13} fill="var(--cyan-500)" color="var(--cyan-500)" />
-                      <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, color: 'var(--action)' }}>
-                        {Number(b.ratingAvg).toFixed(1)}
-                      </span>
-                      <span className="caption" style={{ color: 'var(--fg-3)' }}>
-                        ({b.ratingCount})
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </Card>
-            </Link>
+                        <span className="caption" style={{ color: 'var(--fg-3)' }}>
+                          ({b.ratingCount})
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </Link>
+              <FavoriteButton
+                businessId={b.id}
+                style={{ position: 'absolute', top: r2Url(b.coverR2Key) ? 88 : 12, right: 12, zIndex: 1 }}
+              />
+            </div>
           ))}
         </div>
         {businesses.data && businesses.data.length === 0 && (

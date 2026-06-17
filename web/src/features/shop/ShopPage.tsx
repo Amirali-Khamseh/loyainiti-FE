@@ -9,6 +9,7 @@ import { Button } from '../../components/Button';
 import { LoyaltyStamp } from '../../components/LoyaltyStamp';
 import { ShopMap } from '../../components/ShopMap';
 import { useToast } from '../../components/Toast';
+import { FavoriteButton } from '../favorites/FavoriteButton';
 
 type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 type DayHours = { open: string; close: string; closed: boolean };
@@ -172,10 +173,11 @@ export function ShopPage() {
               style={{ width: 56, height: 56, borderRadius: 10, objectFit: 'cover', border: '1px solid var(--border-subtle)' }}
             />
           )}
-          <div>
+          <div style={{ flex: 1 }}>
             <span className="label">{b.slug}</span>
             <h1 className="display-2" style={{ marginTop: 4 }}>{b.name}</h1>
           </div>
+          <FavoriteButton businessId={b.id} variant="detail" />
         </div>
         {b.categories.length > 0 && (
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
