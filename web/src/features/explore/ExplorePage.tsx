@@ -95,12 +95,15 @@ export function ExplorePage() {
 
   useEffect(() => {
     if (locationDefaulted) return;
-    const u = session?.user as { country?: string | null; city?: string | null } | undefined;
-    if (u?.city) {
+    if (!session) return;
+    const u = session.user as { country?: string | null; city?: string | null };
+    if (u.city) {
       setFilterCountry(u.country ?? '');
-      setFilterCity(u.city);
-      setLocationDefaulted(true);
+      setFilterCity(u.city);         // first priority: user's city
+    } else if (u.country) {
+      setFilterCountry(u.country);   // second priority: user's country
     }
+    setLocationDefaulted(true);
   }, [session, locationDefaulted]);
 
   const mainCategories = useQuery({
