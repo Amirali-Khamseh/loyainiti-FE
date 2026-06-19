@@ -4,6 +4,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Coffee, ChevronRight, Clock, Heart } from 'lucide-react-native';
 import { api } from '../../src/lib/api';
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from '../../src/lib/contentGuard';
 import { auth } from '../../src/lib/auth';
 import { type Role } from '../../src/lib/auth';
 import { useFavoriteIds, useFavoriteToggle } from '../../src/lib/useFavorites';
@@ -80,10 +81,13 @@ export default function Explore() {
   const [filterCity, setFilterCity] = useState('');
   const [locationDefaulted, setLocationDefaulted] = useState(false);
 
+  const searchUnsafe = findUnsafeContent(searchInput) !== null;
+
   useEffect(() => {
+    if (searchUnsafe) return;
     const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
     return () => clearTimeout(t);
-  }, [searchInput]);
+  }, [searchInput, searchUnsafe]);
 
   const locations = useQuery({
     queryKey: ['business-locations'],
@@ -341,6 +345,7 @@ export default function Explore() {
           value={searchInput}
           onChangeText={setSearchInput}
           containerStyle={{ marginBottom: 12 }}
+          error={searchUnsafe ? UNSAFE_INPUT_MESSAGE : undefined}
         />
         <View style={{ gap: 12 }}>
           {businesses.isLoading &&

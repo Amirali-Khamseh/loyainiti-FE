@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { Heart, Lock, Star } from 'lucide-react-native';
 import { api, ApiError } from '../../../src/lib/api';
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from '../../../src/lib/contentGuard';
 import { auth, type Role } from '../../../src/lib/auth';
 import { useFavoriteIds, useFavoriteToggle } from '../../../src/lib/useFavorites';
 import { r2Url } from '../../../src/lib/media';
@@ -427,6 +428,9 @@ function ReviewsTab({
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ['reviews', slug] });
 
+  const commentUnsafe = findUnsafeContent(comment) !== null;
+  const editCommentUnsafe = findUnsafeContent(editComment) !== null;
+
   const ownReview = data?.reviews.find((r: Review) => r.isOwn);
 
   const createMut = useMutation({
@@ -515,9 +519,14 @@ function ReviewsTab({
               textAlignVertical: 'top',
             }}
           />
+          {commentUnsafe && (
+            <Typo variant="caption" color={tokens.colors.danger}>
+              {UNSAFE_INPUT_MESSAGE}
+            </Typo>
+          )}
           <Button
             onPress={() => createMut.mutate()}
-            disabled={rating === 0}
+            disabled={rating === 0 || commentUnsafe}
             loading={createMut.isPending}
           >
             Post review
@@ -585,12 +594,17 @@ function ReviewsTab({
                       textAlignVertical: 'top',
                     }}
                   />
+                  {editCommentUnsafe && (
+                    <Typo variant="caption" color={tokens.colors.danger}>
+                      {UNSAFE_INPUT_MESSAGE}
+                    </Typo>
+                  )}
                   <View style={{ flexDirection: 'row', gap: 8 }}>
                     <Button
                       size="sm"
                       onPress={() => updateMut.mutate(r.id)}
                       loading={updateMut.isPending}
-                      disabled={editRating === 0}
+                      disabled={editRating === 0 || editCommentUnsafe}
                     >
                       Save
                     </Button>

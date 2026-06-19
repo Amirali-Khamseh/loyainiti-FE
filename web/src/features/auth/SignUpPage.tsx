@@ -7,6 +7,7 @@ import { Input } from '../../components/Input';
 import { CountrySelect } from '../../components/CountrySelect';
 import { useToast } from '../../components/Toast';
 import { AuthLayout } from './AuthLayout';
+import { safeText } from '../../lib/contentGuard';
 
 type Form = {
   name: string;
@@ -64,6 +65,7 @@ export function SignUpPage() {
           {...register('name', {
             required: 'Name is required',
             minLength: { value: 2, message: 'At least 2 characters' },
+            validate: safeText,
           })}
           error={formState.errors.name?.message}
         />
@@ -84,6 +86,7 @@ export function SignUpPage() {
           {...register('city', {
             required: 'City is required',
             minLength: { value: 2, message: 'At least 2 characters' },
+            validate: safeText,
           })}
           error={formState.errors.city?.message}
         />

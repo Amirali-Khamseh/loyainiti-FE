@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { API_URL } from './auth';
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from './contentGuard';
 
 export class ApiError extends Error {
   constructor(
@@ -71,6 +72,14 @@ async function readNativeToken(): Promise<string | null> {
  */
 export async function api<T = unknown>(path: string, opts: RequestOpts = {}): Promise<T> {
   const { method = 'GET', body, query, headers } = opts;
+
+  // Block dangerous input (XSS/HTML/JS injection) before it ever leaves the
+  // client — covers both request bodies (POST/PATCH) and query params (e.g. the
+  // explore search/filter). The BE enforces the same dictionary as the gate.
+  if (findUnsafeContent(body) || findUnsafeContent(query)) {
+    throw new ApiError(0, 'unsafe_content', UNSAFE_INPUT_MESSAGE);
+  }
+
   const isWeb = Platform.OS === 'web';
   const token = isWeb ? null : await readNativeToken();
 

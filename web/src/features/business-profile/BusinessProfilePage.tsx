@@ -11,6 +11,7 @@ import { Input } from '../../components/Input';
 import { CountrySelect } from '../../components/CountrySelect';
 import { Card } from '../../components/Card';
 import { useToast } from '../../components/Toast';
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from '../../lib/contentGuard';
 
 type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 type DayHours = { open: string; close: string; closed: boolean };
@@ -355,6 +356,12 @@ function EditBusiness({ businessId }: { businessId: string }) {
     onError: (e) => toast.error(e instanceof ApiError ? e.message : 'Could not save'),
   });
 
+  const nameUnsafe = findUnsafeContent(name) !== null;
+  const descriptionUnsafe = findUnsafeContent(description) !== null;
+  const addressUnsafe = findUnsafeContent(address) !== null;
+  const cityUnsafe = findUnsafeContent(city) !== null;
+  const basicsUnsafe = nameUnsafe || descriptionUnsafe || addressUnsafe || cityUnsafe;
+
   if (detail.isLoading) return <p className="body">Loading…</p>;
   if (detail.error) {
     return (
@@ -383,11 +390,15 @@ function EditBusiness({ businessId }: { businessId: string }) {
 
       <Card padding={32} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <h3 className="h3">Basics</h3>
-        <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input label="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-        <Input label="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+        <Input label="Name" value={name} onChange={(e) => setName(e.target.value)}
+          error={nameUnsafe ? UNSAFE_INPUT_MESSAGE : undefined} />
+        <Input label="Description" value={description} onChange={(e) => setDescription(e.target.value)}
+          error={descriptionUnsafe ? UNSAFE_INPUT_MESSAGE : undefined} />
+        <Input label="Address" value={address} onChange={(e) => setAddress(e.target.value)}
+          error={addressUnsafe ? UNSAFE_INPUT_MESSAGE : undefined} />
         <CountrySelect value={country} onChange={setCountry} />
-        <Input label="City" value={city} onChange={(e) => setCity(e.target.value)} />
+        <Input label="City" value={city} onChange={(e) => setCity(e.target.value)}
+          error={cityUnsafe ? UNSAFE_INPUT_MESSAGE : undefined} />
       </Card>
 
       {isOwner && (
@@ -437,7 +448,7 @@ function EditBusiness({ businessId }: { businessId: string }) {
           />
           Published - visible on the public explorer
         </label>
-        <Button onClick={() => saveMut.mutate()} loading={saveMut.isPending}>
+        <Button onClick={() => saveMut.mutate()} loading={saveMut.isPending} disabled={basicsUnsafe}>
           <Save size={16} /> Save changes
         </Button>
       </Card>
