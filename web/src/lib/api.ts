@@ -4,6 +4,8 @@
  * - Throws on non-2xx with the BE's `{ error, message, details? }` shape.
  */
 
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from './contentGuard';
+
 export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
 export class ApiError extends Error {
@@ -37,6 +39,14 @@ function buildUrl(path: string, query?: RequestOpts['query']): string {
 
 export async function api<T = unknown>(path: string, opts: RequestOpts = {}): Promise<T> {
   const { method = 'GET', body, query, headers } = opts;
+
+  // Block dangerous input (XSS/HTML/JS injection) before it ever leaves the
+  // client — covers both request bodies (POST/PATCH) and query params (e.g. the
+  // explore search/filter). The BE enforces the same dictionary as the gate.
+  if (findUnsafeContent(body) || findUnsafeContent(query)) {
+    throw new ApiError(0, 'unsafe_content', UNSAFE_INPUT_MESSAGE);
+  }
+
   const res = await fetch(buildUrl(path, query), {
     method,
     credentials: 'include',

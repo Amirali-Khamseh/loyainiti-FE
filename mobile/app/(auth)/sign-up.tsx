@@ -9,6 +9,7 @@ import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
 import { COUNTRIES } from '../../src/lib/countries';
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from '../../src/lib/contentGuard';
 
 const COUNTRY_OPTIONS = COUNTRIES.map((c) => ({ label: c.name, value: c.name }));
 
@@ -28,6 +29,7 @@ export default function SignUp() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Enter a valid email';
     if (!country) return 'Country is required';
     if (city.trim().length < 2) return 'City is required';
+    if (findUnsafeContent(name) || findUnsafeContent(city)) return UNSAFE_INPUT_MESSAGE;
     if (password.length < 8) return 'Password must be at least 8 characters';
     if (!/[A-Za-z]/.test(password) || !/\d/.test(password))
       return 'Password must contain a letter and a number';

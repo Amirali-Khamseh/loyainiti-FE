@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Lock, Star } from 'lucide-react';
 import { api, ApiError } from '../../lib/api';
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from '../../lib/contentGuard';
 import { auth } from '../../lib/auth';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
@@ -443,6 +444,9 @@ function ReviewsTab({
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ['reviews', slug] });
 
+  const commentUnsafe = findUnsafeContent(comment) !== null;
+  const editCommentUnsafe = findUnsafeContent(editComment) !== null;
+
   const ownReview = data?.reviews.find((r) => r.isOwn);
 
   const createMut = useMutation({
@@ -498,10 +502,15 @@ function ReviewsTab({
               boxSizing: 'border-box',
             }}
           />
+          {commentUnsafe && (
+            <p className="caption" style={{ color: 'var(--danger, #d33)', margin: 0 }}>
+              {UNSAFE_INPUT_MESSAGE}
+            </p>
+          )}
           <Button
             onClick={() => createMut.mutate()}
             loading={createMut.isPending}
-            disabled={rating === 0}
+            disabled={rating === 0 || commentUnsafe}
           >
             Post review
           </Button>
@@ -550,8 +559,13 @@ function ReviewsTab({
                     boxSizing: 'border-box',
                   }}
                 />
+                {editCommentUnsafe && (
+                  <p className="caption" style={{ color: 'var(--danger, #d33)', margin: 0 }}>
+                    {UNSAFE_INPUT_MESSAGE}
+                  </p>
+                )}
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <Button size="sm" onClick={() => updateMut.mutate(r.id)} loading={updateMut.isPending} disabled={editRating === 0}>
+                  <Button size="sm" onClick={() => updateMut.mutate(r.id)} loading={updateMut.isPending} disabled={editRating === 0 || editCommentUnsafe}>
                     Save
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => setEditId(null)}>Cancel</Button>

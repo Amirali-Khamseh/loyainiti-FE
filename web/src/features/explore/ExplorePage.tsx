@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Clock, Coffee, MapPin, Search, Star } from 'lucide-react';
 import { api } from '../../lib/api';
+import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from '../../lib/contentGuard';
 import { auth } from '../../lib/auth';
 import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
@@ -83,10 +84,15 @@ export function ExplorePage() {
   const [filterCity, setFilterCity] = useState('');
   const [locationDefaulted, setLocationDefaulted] = useState(false);
 
+  const searchUnsafe = findUnsafeContent(searchInput) !== null;
+
   useEffect(() => {
+    // Don't push dangerous input into the query — the api() guard would block
+    // the request anyway; this just keeps the last good results on screen.
+    if (searchUnsafe) return;
     const t = setTimeout(() => setSearchName(searchInput.trim()), 300);
     return () => clearTimeout(t);
-  }, [searchInput]);
+  }, [searchInput, searchUnsafe]);
 
   const locations = useQuery({
     queryKey: ['business-locations'],
@@ -296,6 +302,11 @@ export function ExplorePage() {
               />
             </div>
           </div>
+          {searchUnsafe && (
+            <p className="caption" style={{ color: 'var(--danger)', margin: 0 }}>
+              {UNSAFE_INPUT_MESSAGE}
+            </p>
+          )}
         </div>
         {businesses.isLoading && <SkeletonCardGrid count={6} />}
         {businesses.error && (
