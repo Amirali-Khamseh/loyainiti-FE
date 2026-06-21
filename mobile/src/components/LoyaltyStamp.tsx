@@ -52,8 +52,8 @@ export function LoyaltyStamp({ required, earned, rewardLabel }: Props) {
         }}
       >
         {ready
-          ? `🎉 Reward ready${rewardLabel ? ` — ${rewardLabel}` : ''}`
-          : `${earned} / ${required} stamps${rewardLabel ? ` — ${rewardLabel}` : ''}`}
+          ? `🎉 Reward ready${rewardLabel ? ` -${rewardLabel}` : ''}`
+          : `${earned} / ${required} stamps${rewardLabel ? ` -${rewardLabel}` : ''}`}
       </Text>
     </View>
   );
