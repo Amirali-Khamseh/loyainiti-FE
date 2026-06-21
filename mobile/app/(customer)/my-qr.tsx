@@ -1,6 +1,7 @@
-import React from 'react';
-import { ScrollView, View, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, View, Image, Platform } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
+import * as SecureStore from 'expo-secure-store';
 import { api } from '../../src/lib/api';
 import { API_URL } from '../../src/lib/auth';
 import { Card } from '../../src/components/Card';
@@ -14,8 +15,40 @@ type Me = {
   qrCodeId: string;
 };
 
+const TOKEN_KEY = 'loyainiti.session_token';
+
 export default function MyQr() {
   const me = useQuery({ queryKey: ['me'], queryFn: () => api<Me>('/api/me') });
+  const [qrUri, setQrUri] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!me.data) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const isWeb = Platform.OS === 'web';
+        const token = isWeb ? null : await SecureStore.getItemAsync(TOKEN_KEY);
+        const res = await fetch(`${API_URL}/api/me/qr.png`, {
+          credentials: isWeb ? 'include' : 'same-origin',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok || cancelled) return;
+        const blob = await res.blob();
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (!cancelled && typeof reader.result === 'string') {
+            setQrUri(reader.result);
+          }
+        };
+        reader.readAsDataURL(blob);
+      } catch {
+        // silently fail — placeholder remains
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [me.data?.userId]);
 
   if (me.isLoading) return null;
   if (!me.data) return null;
@@ -35,10 +68,7 @@ export default function MyQr() {
         </Typo>
       </View>
 
-      <Card
-        padding={24}
-        style={{ alignItems: 'center', gap: 20 }}
-      >
+      <Card padding={24} style={{ alignItems: 'center', gap: 20 }}>
         <View
           style={{
             padding: 16,
@@ -48,16 +78,17 @@ export default function MyQr() {
             borderColor: tokens.colors.borderSubtle,
           }}
         >
-          {/* The BE renders a 512px PNG QR code at this endpoint, signed automatically by the
-              Better Auth bearer token in this client's session. */}
-          <Image
-            source={{
-              uri: `${API_URL}/api/me/qr.png?t=${me.data.userId}`,
-              headers: { Authorization: `Bearer ${(globalThis as any).__BA_TOKEN__ ?? ''}` },
-            }}
-            style={{ width: 280, height: 280 }}
-            resizeMode="contain"
-          />
+          {qrUri ? (
+            <Image
+              source={{ uri: qrUri }}
+              style={{ width: 280, height: 280 }}
+              resizeMode="contain"
+            />
+          ) : (
+            <View style={{ width: 280, height: 280, alignItems: 'center', justifyContent: 'center' }}>
+              <Typo variant="caption" color={tokens.colors.fg3}>Loading QR code…</Typo>
+            </View>
+          )}
         </View>
 
         <View style={{ alignItems: 'center' }}>
