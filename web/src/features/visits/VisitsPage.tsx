@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { Clock, Gift, History, Star } from 'lucide-react';
+import { Clock, Gift, History } from 'lucide-react';
 import { api } from '../../lib/api';
 import { Card } from '../../components/Card';
+import { LoyaltyStamp } from '../../components/LoyaltyStamp';
 
 type Visit = {
   visitId: string;
@@ -20,7 +21,7 @@ type VisitsPageData = {
   items: Visit[];
 };
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 type Membership = {
   membershipId: string;
@@ -107,32 +108,13 @@ export function VisitsPage() {
                       {m.totalVisits} visits all-time
                     </p>
                     <div style={{ marginTop: 12 }}>
-                      <div
-                        style={{
-                          height: 8,
-                          background: 'var(--slate-200)',
-                          borderRadius: 10,
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program!.requiredVisits) * 100)}%`,
-                            height: '100%',
-                            background: m.program!.rewardEligible ? 'var(--success)' : 'var(--cyan-500)',
-                          }}
-                        />
-                      </div>
-                      <p className="caption" style={{ marginTop: 6 }}>
-                        {m.program!.rewardEligible ? (
-                          <><Star size={12} style={{ verticalAlign: 'middle' }} /> Reward ready</>
-                        ) : (
-                          `${m.visitsSinceLastRedemption} / ${m.program!.requiredVisits} visits`
-                        )}{' '}
-                        - {m.program!.rewardDescription}
-                      </p>
+                      <LoyaltyStamp
+                        required={m.program!.requiredVisits}
+                        earned={m.visitsSinceLastRedemption}
+                        rewardLabel={m.program!.rewardDescription}
+                      />
                       {m.program!.expiresAt && (
-                        <p className="caption" style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--fg-3)' }}>
+                        <p className="caption" style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--fg-3)' }}>
                           <Clock size={12} style={{ flexShrink: 0 }} />
                           Reward ends {fmtDeadline(m.program!.expiresAt)}
                         </p>

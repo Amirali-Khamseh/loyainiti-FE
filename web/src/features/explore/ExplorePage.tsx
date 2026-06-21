@@ -7,6 +7,7 @@ import { findUnsafeContent, UNSAFE_INPUT_MESSAGE } from '../../lib/contentGuard'
 import { auth } from '../../lib/auth';
 import { resolveIcon } from '../../lib/icon';
 import { Card } from '../../components/Card';
+import { LoyaltyStamp } from '../../components/LoyaltyStamp';
 import { SkeletonCardGrid } from '../../components/Skeleton';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/Select';
 import { FavoriteButton } from '../favorites/FavoriteButton';
@@ -209,8 +210,8 @@ export function ExplorePage() {
           <h2 className="h2">Your shops</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
             {visible.map((m) => (
-              <Link key={m.membershipId} to={`/b/${m.business.slug}`} style={{ textDecoration: 'none' }}>
-                <Card>
+              <Link key={m.membershipId} to={`/b/${m.business.slug}`} style={{ textDecoration: 'none', display: 'flex' }}>
+                <Card style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     {r2Url(m.business.logoR2Key) ? (
                       <img
@@ -226,35 +227,20 @@ export function ExplorePage() {
                   <p className="body-sm" style={{ marginTop: 8, color: 'var(--fg-2)' }}>
                     {m.totalVisits} visits total
                   </p>
-                  {m.program ? (
+                  {m.program && (
                     <div style={{ marginTop: 12 }}>
-                      <div style={{ height: 8, background: 'var(--slate-200)', borderRadius: 10, overflow: 'hidden' }}>
-                        <div
-                          style={{
-                            width: `${Math.min(100, (m.visitsSinceLastRedemption / m.program.requiredVisits) * 100)}%`,
-                            height: '100%',
-                            background: m.program.rewardEligible ? 'var(--success)' : 'var(--cyan-500)',
-                            transition: 'width var(--dur-3) var(--ease-out)',
-                          }}
-                        />
-                      </div>
-                      <p className="caption" style={{ marginTop: 6 }}>
-                        {m.program.rewardEligible ? (
-                          <><Star size={12} style={{ verticalAlign: 'middle' }} /> Reward ready</>
-                        ) : (
-                          `${m.visitsSinceLastRedemption} / ${m.program.requiredVisits} visits`
-                        )}{' '}
-                        - {m.program.rewardDescription}
-                      </p>
+                      <LoyaltyStamp
+                        required={m.program.requiredVisits}
+                        earned={m.visitsSinceLastRedemption}
+                        rewardLabel={m.program.rewardDescription}
+                      />
                       {m.program.expiresAt && (
-                        <p className="caption" style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--fg-3)' }}>
+                        <p className="caption" style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--fg-3)' }}>
                           <Clock size={12} style={{ flexShrink: 0 }} />
                           Reward ends {fmtDeadline(m.program.expiresAt)}
                         </p>
                       )}
                     </div>
-                  ) : (
-                    <p className="caption" style={{ marginTop: 12 }}>No active reward programme.</p>
                   )}
                 </Card>
               </Link>

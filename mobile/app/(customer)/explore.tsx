@@ -11,6 +11,7 @@ import { useFavoriteIds, useFavoriteToggle } from '../../src/lib/useFavorites';
 import { r2Url } from '../../src/lib/media';
 import { resolveIcon } from '../../src/lib/icon';
 import { Card } from '../../src/components/Card';
+import { LoyaltyStamp } from '../../src/components/LoyaltyStamp';
 import { Skeleton, SkeletonCard } from '../../src/components/Skeleton';
 import { Input } from '../../src/components/Input';
 import { SelectField } from '../../src/components/SelectField';
@@ -240,34 +241,13 @@ export default function Explore() {
                   </Typo>
                   {m.program && (
                     <View style={{ marginTop: 12 }}>
-                      <View
-                        style={{
-                          height: 8,
-                          backgroundColor: tokens.colors.slate200,
-                          borderRadius: 4,
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: `${Math.min(
-                              100,
-                              (m.visitsSinceLastRedemption / m.program.requiredVisits) * 100,
-                            )}%`,
-                            height: '100%',
-                            backgroundColor: m.program.rewardEligible
-                              ? tokens.colors.success
-                              : tokens.colors.cyan500,
-                          }}
-                        />
-                      </View>
-                      <Typo variant="caption" color={tokens.colors.fg2} style={{ marginTop: 6 }}>
-                        {m.program.rewardEligible
-                          ? 'Reward ready!'
-                          : `${m.visitsSinceLastRedemption} / ${m.program.requiredVisits} - ${m.program.rewardDescription}`}
-                      </Typo>
+                      <LoyaltyStamp
+                        required={m.program.requiredVisits}
+                        earned={m.visitsSinceLastRedemption}
+                        rewardLabel={m.program.rewardDescription}
+                      />
                       {m.program.expiresAt && (
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 }}>
                           <Clock color={tokens.colors.fg3} size={12} />
                           <Typo variant="caption" color={tokens.colors.fg3}>
                             Reward ends {fmtDeadline(m.program.expiresAt)}
