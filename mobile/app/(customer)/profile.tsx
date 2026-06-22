@@ -14,13 +14,16 @@ import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { Upload, Trash2, UserCircle, LogOut } from 'lucide-react-native';
 import { api, ApiError } from '../../src/lib/api';
-import { auth } from '../../src/lib/auth';
+import { auth as authClient } from '../../src/lib/auth';
 import { r2Url } from '../../src/lib/media';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { Card } from '../../src/components/Card';
 import { ConfirmDialog, Modal } from '../../src/components/Modal';
 import { Typo } from '../../src/components/Heading';
+import { SelectField } from '../../src/components/SelectField';
+import { COUNTRIES } from '../../src/lib/countries';
+import { CITIES_BY_COUNTRY } from '../../src/lib/cities';
 import { tokens } from '../../src/design-system/tokens';
 
 type Me = {
@@ -33,6 +36,8 @@ type Me = {
   avatarR2Key: string | null;
   bio: string | null;
   image: string | null;
+  country: string | null;
+  city: string | null;
 };
 
 const BIO_MAX = 150;
@@ -69,6 +74,7 @@ async function pickAndUploadAvatar(): Promise<string | null> {
 export default function CustomerProfileScreen() {
   const router = useRouter();
   const qc = useQueryClient();
+  const { data: session } = authClient.useSession();
   const me = useQuery({ queryKey: ['me'], queryFn: () => api<Me>('/api/me') });
 
   const [signOutOpen, setSignOutOpen] = useState(false);
@@ -82,7 +88,7 @@ export default function CustomerProfileScreen() {
     mutationFn: () => api('/api/me', { method: 'DELETE', body: { password: deletePassword } }),
     onSuccess: async () => {
       qc.clear();
-      await auth.signOut();
+      await authClient.signOut();
       router.replace('/(auth)/sign-in');
     },
     onError: (e) => {
@@ -93,7 +99,7 @@ export default function CustomerProfileScreen() {
   const signOut = async () => {
     setSigningOut(true);
     try {
-      await auth.signOut();
+      await authClient.signOut();
       qc.clear();
       router.replace('/(auth)/sign-in');
     } finally {
@@ -104,6 +110,8 @@ export default function CustomerProfileScreen() {
 
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
   const [avatarR2Key, setAvatarR2Key] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -112,8 +120,10 @@ export default function CustomerProfileScreen() {
     if (!d) return;
     setDisplayName(d.displayName);
     setBio(d.bio ?? '');
+    setCountry(d.country ?? session?.user?.country ?? '');
+    setCity(d.city ?? session?.user?.city ?? '');
     setAvatarR2Key(d.avatarR2Key);
-  }, [me.data]);
+  }, [me.data, session]);
 
   const saveMut = useMutation({
     mutationFn: () =>
@@ -122,6 +132,8 @@ export default function CustomerProfileScreen() {
         body: {
           displayName: displayName.trim(),
           bio: bio.trim() ? bio.trim() : null,
+          country: country || null,
+          city: city.trim() ? city.trim() : null,
           avatarR2Key,
         },
       }),
@@ -167,6 +179,8 @@ export default function CustomerProfileScreen() {
   const dirty =
     displayName.trim() !== me.data.displayName ||
     (bio.trim() || null) !== (me.data.bio ?? null) ||
+    (country || null) !== (me.data.country ?? null) ||
+    (city.trim() || null) !== (me.data.city ?? null) ||
     avatarR2Key !== me.data.avatarR2Key;
 
   return (
@@ -275,6 +289,25 @@ export default function CustomerProfileScreen() {
             </Typo>
           </View>
         </View>
+
+        {/* Location */}
+        <SelectField
+          label="Country"
+          value={country}
+          options={COUNTRIES.map((c) => ({ label: c.name, value: c.name }))}
+          placeholder="Select country"
+          onChange={(v) => {
+            setCountry(v);
+            if (city && !(CITIES_BY_COUNTRY[v] ?? []).includes(city)) setCity('');
+          }}
+        />
+        <SelectField
+          label="City"
+          value={city}
+          options={(CITIES_BY_COUNTRY[country] ?? []).map((c) => ({ label: c, value: c }))}
+          placeholder={country ? 'Select city' : 'Select a country first'}
+          onChange={setCity}
+        />
 
         <Pressable
           disabled={!dirty || displayName.trim().length < 1 || saveMut.isPending}

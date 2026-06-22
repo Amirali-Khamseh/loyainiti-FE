@@ -11,11 +11,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Upload, Save, Trash2, UserCircle } from 'lucide-react';
+import { auth } from '../../lib/auth';
 import { api, ApiError } from '../../lib/api';
 import { r2Url } from '../../lib/media';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Card } from '../../components/Card';
+import { CountrySelect } from '../../components/CountrySelect';
+import { CitySelect } from '../../components/CitySelect';
+import { CITIES_BY_COUNTRY } from '../../lib/cities';
 import { useToast } from '../../components/Toast';
 import { DeleteAccountDialog } from './DeleteAccountDialog';
 
@@ -29,6 +33,8 @@ type Me = {
   avatarR2Key: string | null;
   bio: string | null;
   image: string | null;
+  country: string | null;
+  city: string | null;
 };
 
 const BIO_MAX = 150;
@@ -71,23 +77,29 @@ async function presignAndUpload(file: File): Promise<string> {
 export function ProfilePage() {
   const toast = useToast();
   const qc = useQueryClient();
+  const { data: session } = auth.useSession();
   const me = useQuery({ queryKey: ['me'], queryFn: () => api<Me>('/api/me') });
 
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
   const [avatarR2Key, setAvatarR2Key] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Hydrate form when the query resolves.
+  // Hydrate form when data resolves. country/city come from the session since
+  // they are Better Auth user fields; /api/me values take precedence if present.
   useEffect(() => {
     const d = me.data;
     if (!d) return;
     setDisplayName(d.displayName);
     setBio(d.bio ?? '');
+    setCountry(d.country ?? session?.user?.country ?? '');
+    setCity(d.city ?? session?.user?.city ?? '');
     setAvatarR2Key(d.avatarR2Key);
-  }, [me.data]);
+  }, [me.data, session]);
 
   const saveMut = useMutation({
     mutationFn: () =>
@@ -96,6 +108,8 @@ export function ProfilePage() {
         body: {
           displayName: displayName.trim(),
           bio: bio.trim() ? bio.trim() : null,
+          country: country || null,
+          city: city.trim() ? city.trim() : null,
           avatarR2Key,
         },
       }),
@@ -135,6 +149,8 @@ export function ProfilePage() {
   const dirty =
     displayName.trim() !== me.data.displayName ||
     (bio.trim() || null) !== (me.data.bio ?? null) ||
+    (country || null) !== (me.data.country ?? null) ||
+    (city.trim() || null) !== (me.data.city ?? null) ||
     avatarR2Key !== me.data.avatarR2Key;
 
   return (
@@ -245,6 +261,20 @@ export function ProfilePage() {
             </p>
           </div>
         </div>
+
+        {/* Location */}
+        <CountrySelect
+          value={country}
+          onChange={(v) => {
+            setCountry(v);
+            if (city && !(CITIES_BY_COUNTRY[v] ?? []).includes(city)) setCity('');
+          }}
+        />
+        <CitySelect
+          country={country}
+          value={city}
+          onChange={setCity}
+        />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
