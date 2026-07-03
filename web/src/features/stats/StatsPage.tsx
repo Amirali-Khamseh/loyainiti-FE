@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Download } from 'lucide-react';
 import { api } from '../../lib/api';
 import { getActiveBusinessId } from '../../lib/activeBusiness';
 import { Card } from '../../components/Card';
 import { KpiCard } from '../../components/KpiCard';
+import { Button } from '../../components/Button';
+import { useToast } from '../../components/Toast';
 import { DateRangePicker, defaultDateRange } from '../../components/DateRangePicker';
 import { TopCustomers } from './TopCustomers';
+import { downloadStatsReport, type ReportPeriod } from '../../lib/exportStatsReport';
 
 type Summary = {
   range: { from: string; to: string };
@@ -34,6 +38,8 @@ type TopCustomer = {
 export function StatsPage() {
   const businessId = getActiveBusinessId();
   const [range, setRange] = useState(defaultDateRange());
+  const [exporting, setExporting] = useState<ReportPeriod | null>(null);
+  const toast = useToast();
 
   const summary = useQuery({
     queryKey: ['stats', 'summary', businessId, range],
@@ -62,6 +68,18 @@ export function StatsPage() {
     enabled: !!businessId,
   });
 
+  async function handleExport(period: ReportPeriod) {
+    if (!businessId) return;
+    setExporting(period);
+    try {
+      await downloadStatsReport(businessId, period);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not generate the report.');
+    } finally {
+      setExporting(null);
+    }
+  }
+
   if (!businessId) {
     return (
       <Card>
@@ -80,7 +98,29 @@ export function StatsPage() {
           <span className="label">Dashboard</span>
           <h1 className="display-2" style={{ marginTop: 8 }}>How are we doing?</h1>
         </div>
-        <DateRangePicker from={range.from} to={range.to} onChange={setRange} />
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 16 }}>
+          <DateRangePicker from={range.from} to={range.to} onChange={setRange} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<Download size={16} />}
+              loading={exporting === 'weekly'}
+              onClick={() => handleExport('weekly')}
+            >
+              Weekly report
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<Download size={16} />}
+              loading={exporting === 'monthly'}
+              onClick={() => handleExport('monthly')}
+            >
+              Monthly report
+            </Button>
+          </div>
+        </div>
       </header>
 
       <section
