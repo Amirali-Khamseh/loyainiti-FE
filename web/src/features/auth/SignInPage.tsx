@@ -5,12 +5,14 @@ import { Store, User } from 'lucide-react';
 import { auth } from '../../lib/auth';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { HoneypotField } from '../../components/HoneypotField';
 import { useToast } from '../../components/Toast';
 import { AuthLayout } from './AuthLayout';
 
 type Form = {
   email: string;
   password: string;
+  website: string;
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,9 +24,14 @@ export function SignInPage() {
   const { register, handleSubmit, formState } = useForm<Form>({ mode: 'onBlur' });
 
   const onSubmit = handleSubmit(async (values) => {
+    if (values.website) {
+      // Honeypot filled in — a real user would never see or fill this field.
+      return;
+    }
     setSubmitting(true);
     try {
-      const { error: err } = await auth.signIn.email(values);
+      const { website: _website, ...signInInput } = values;
+      const { error: err } = await auth.signIn.email(signInInput);
       if (err) {
         toast.error(err.message ?? 'Sign-in failed');
         return;
@@ -44,6 +51,7 @@ export function SignInPage() {
       subtitle="Sign in to your loyainiti account."
     >
       <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
+        <HoneypotField {...register('website')} />
         <Input
           label="Email"
           type="email"
