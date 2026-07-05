@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { auth } from '../../src/lib/auth';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
+import { HoneypotField } from '../../src/components/HoneypotField';
 import { SelectField } from '../../src/components/SelectField';
 import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
@@ -28,6 +29,7 @@ export default function SignUpBusiness() {
   const [city, setCity] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [website, setWebsite] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -45,6 +47,10 @@ export default function SignUpBusiness() {
   };
 
   const submit = async () => {
+    if (website) {
+      // Honeypot filled in — a real user would never see or fill this field.
+      return;
+    }
     const v = validate();
     if (v) { setError(v); return; }
     setBusy(true);
@@ -73,6 +79,7 @@ export default function SignUpBusiness() {
       <View style={{ height: 24 }} />
 
       <Card style={{ gap: 12 }}>
+        <HoneypotField value={website} onChangeText={setWebsite} />
         <Input label="Your name" autoComplete="name" value={name} onChangeText={setName} />
         <Input
           label="Work email"

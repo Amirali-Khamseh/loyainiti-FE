@@ -5,6 +5,7 @@ import { User, Store } from 'lucide-react-native';
 import { auth, type Role } from '../../src/lib/auth';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
+import { HoneypotField } from '../../src/components/HoneypotField';
 import { Card } from '../../src/components/Card';
 import { Typo } from '../../src/components/Heading';
 import { tokens } from '../../src/design-system/tokens';
@@ -13,10 +14,15 @@ export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [website, setWebsite] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const submit = async () => {
+    if (website) {
+      // Honeypot filled in — a real user would never see or fill this field.
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -43,6 +49,7 @@ export default function SignIn() {
       <View style={{ height: 24 }} />
 
       <Card style={{ gap: 12 }}>
+        <HoneypotField value={website} onChangeText={setWebsite} />
         <Input
           label="Email"
           autoCapitalize="none"

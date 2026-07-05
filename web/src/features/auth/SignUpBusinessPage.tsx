@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { auth } from '../../lib/auth';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { HoneypotField } from '../../components/HoneypotField';
 import { CountrySelect } from '../../components/CountrySelect';
 import { useToast } from '../../components/Toast';
 import { AuthLayout } from './AuthLayout';
@@ -15,6 +16,7 @@ type Form = {
   password: string;
   confirmPassword: string;
   city: string;
+  website: string;
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,13 +38,17 @@ export function SignUpBusinessPage() {
   const { register, handleSubmit, formState, getValues } = useForm<Form>({ mode: 'onBlur' });
 
   const onSubmit = handleSubmit(async (values) => {
+    if (values.website) {
+      // Honeypot filled in — a real user would never see or fill this field.
+      return;
+    }
     if (!country) {
       setCountryError('Country is required');
       return;
     }
     setSubmitting(true);
     try {
-      const { confirmPassword: _confirm, ...signUpInput } = values;
+      const { confirmPassword: _confirm, website: _website, ...signUpInput } = values;
       const { error: err } = await auth.signUp.email({ ...signUpInput, country });
       if (err) {
         toast.error(err.message ?? 'Sign-up failed');
@@ -72,6 +78,7 @@ export function SignUpBusinessPage() {
       }
     >
       <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
+        <HoneypotField {...register('website')} />
         <Input label="Your name" autoComplete="name"
           {...register('name', {
             required: 'Name is required',
