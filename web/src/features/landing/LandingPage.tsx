@@ -254,20 +254,30 @@ function MenuTabsChip() {
  *  real tile fetch - just enough to read as "location" at a glance. */
 function MiniMapPreview() {
   return (
-    <svg width="100%" height="64" viewBox="0 0 260 64" role="img" aria-hidden="true">
+    <svg width="100%" height="72" viewBox="0 0 260 72" role="img" aria-hidden="true">
       <style>{`
         @keyframes mapPing {
           0% { r: 6; opacity: 0.5; }
-          100% { r: 16; opacity: 0; }
+          100% { r: 18; opacity: 0; }
         }
       `}</style>
-      <rect width="260" height="64" rx="10" fill="var(--bg-muted)" />
-      <path d="M-10 46 C 40 20, 90 55, 140 32 S 230 10, 270 28" stroke="var(--border-default)" strokeWidth="2" fill="none" />
-      <path d="M10 12 C 55 30, 110 6, 150 22 S 230 34, 270 18" stroke="var(--border-subtle)" strokeWidth="2" fill="none" />
-      <circle cx="55" cy="40" r="2.5" fill="var(--fg-3)" />
-      <circle cx="190" cy="20" r="2.5" fill="var(--fg-3)" />
-      <circle cx="140" cy="30" r="6" fill="none" stroke="var(--action)" strokeWidth="2" style={{ animation: 'mapPing 2s ease-out infinite' }} />
-      <circle cx="140" cy="30" r="6" fill="var(--action)" />
+      <rect width="260" height="72" rx="10" fill="var(--bg-muted)" />
+      {/* city block grid - streets */}
+      <line x1="0" y1="20" x2="260" y2="20" stroke="var(--border-default)" strokeWidth="1.5" />
+      <line x1="0" y1="42" x2="260" y2="42" stroke="var(--border-default)" strokeWidth="1.5" />
+      <line x1="0" y1="60" x2="260" y2="60" stroke="var(--border-subtle)" strokeWidth="1.5" />
+      <line x1="40" y1="0" x2="40" y2="72" stroke="var(--border-subtle)" strokeWidth="1.5" />
+      <line x1="95" y1="0" x2="95" y2="72" stroke="var(--border-default)" strokeWidth="1.5" />
+      <line x1="160" y1="0" x2="160" y2="72" stroke="var(--border-subtle)" strokeWidth="1.5" />
+      <line x1="215" y1="0" x2="215" y2="72" stroke="var(--border-default)" strokeWidth="1.5" />
+      {/* diagonal avenue cutting across the grid */}
+      <line x1="0" y1="72" x2="200" y2="0" stroke="var(--border-subtle)" strokeWidth="1.5" />
+      {/* a park block for texture */}
+      <rect x="105" y="6" width="42" height="28" rx="4" fill="var(--success-bg)" />
+      {/* the highlighted business location */}
+      <circle cx="160" cy="42" r="6" fill="none" stroke="var(--action)" strokeWidth="2" style={{ animation: 'mapPing 2s ease-out infinite' }} />
+      <circle cx="160" cy="42" r="6" fill="var(--action)" />
+      <circle cx="160" cy="42" r="2.5" fill="#FFFFFF" />
     </svg>
   );
 }
@@ -512,24 +522,17 @@ export function LandingPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
       {/* ── Hero ── */}
-      <header
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 40,
-          alignItems: 'center',
-        }}
-      >
-        <div>
+      <header style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 32 }}>
+        <div style={{ maxWidth: 640 }}>
           <span className="label">Loyalty network</span>
           <h1 className="display-1" style={{ marginTop: 8 }}>
             One QR code replaces every punch card
           </h1>
-          <p className="body-lg" style={{ color: 'var(--fg-2)', maxWidth: 560, marginTop: 12 }}>
+          <p className="body-lg" style={{ color: 'var(--fg-2)', marginTop: 12 }}>
             Customers carry a single digital loyalty card. Businesses scan it to track visits,
             run reward programs, and unlock member-only menus, with no app-hopping and no paper cards.
           </p>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 28 }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 28 }}>
             <Link to="/sign-up" style={ctaPrimary}>
               <Sparkles size={16} /> Get started
             </Link>
@@ -539,22 +542,20 @@ export function LandingPage() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div
-            style={{
-              width: 260,
-              height: 260,
-              padding: 24,
-              borderRadius: 20,
-              background:
-                'radial-gradient(160px 160px at 50% 40%, rgba(34,211,238,0.16), transparent), var(--bg-card)',
-              border: '1px solid var(--border-subtle)',
-              boxShadow: 'var(--shadow-3)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
-            <QrHeroAnimation />
-          </div>
+        <div
+          style={{
+            width: 260,
+            height: 260,
+            padding: 24,
+            borderRadius: 20,
+            background:
+              'radial-gradient(160px 160px at 50% 40%, rgba(34,211,238,0.16), transparent), var(--bg-card)',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <QrHeroAnimation />
         </div>
       </header>
 
