@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { BarChart, Bar, ResponsiveContainer } from 'recharts';
 import {
   QrCode, ScanLine, Gift, Heart, Star, Clock, UtensilsCrossed,
-  Users, MapPin, LayoutDashboard, Zap, Sparkles,
+  Users, MapPin, LayoutDashboard, Zap, Sparkles, Store, ArrowRight, Check, Lock,
 } from 'lucide-react';
 import { Card } from '../../components/Card';
 import { LoyaltyStamp } from '../../components/LoyaltyStamp';
@@ -78,6 +78,168 @@ function RatingPreview() {
   );
 }
 
+// Fixed decorative pattern - not a real QR code, just a small echo of the hero.
+const qrChipPattern = [
+  [1, 0, 1, 1],
+  [1, 1, 0, 1],
+  [0, 1, 1, 0],
+  [1, 0, 1, 1],
+];
+
+/** Small static QR-swatch icon for the "digital loyalty card" concept. */
+function MiniQrChip() {
+  const cell = 12;
+  const gap = 2;
+  const size = qrChipPattern.length * cell;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+      {qrChipPattern.flatMap((row, r) =>
+        row.map((on, c) =>
+          on ? (
+            <rect
+              key={`${r}-${c}`}
+              x={c * cell}
+              y={r * cell}
+              width={cell - gap}
+              height={cell - gap}
+              rx={2}
+              fill="var(--cyan-500)"
+            />
+          ) : null,
+        ),
+      )}
+    </svg>
+  );
+}
+
+/** Preview of a menu list, for the customer-facing member menu concept. */
+function MenuPreview() {
+  const items = [
+    { name: 'Espresso', price: '€1.80' },
+    { name: 'Flat white', price: '€3.20' },
+  ];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {items.map((item) => (
+        <div key={item.name} style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+          <span className="caption" style={{ color: 'var(--fg-2)' }}>{item.name}</span>
+          <span className="mono" style={{ fontSize: 12, color: 'var(--fg-3)' }}>{item.price}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Preview of a favorited shop card, echoing the heart badge on ExplorePage. */
+function FavoriteChip() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div
+        style={{
+          position: 'relative', width: 40, height: 40, borderRadius: 10,
+          background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}
+      >
+        <Store size={18} color="var(--fg-3)" />
+        <span
+          style={{
+            position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%',
+            background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <Heart size={11} fill="var(--danger)" color="var(--danger)" />
+        </span>
+      </div>
+      <span className="caption" style={{ color: 'var(--fg-2)' }}>Byte Size Café</span>
+    </div>
+  );
+}
+
+/** Countdown chip for a reward with an expiry date. */
+function DeadlineBadge() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <Clock size={13} color="var(--cyan-500)" />
+        <span className="caption" style={{ color: 'var(--fg-2)', fontWeight: 600 }}>12 days left</span>
+      </div>
+      <div style={{ height: 4, borderRadius: 2, background: 'var(--border-subtle)', overflow: 'hidden' }}>
+        <div style={{ width: '65%', height: '100%', background: 'var(--cyan-500)' }} />
+      </div>
+    </div>
+  );
+}
+
+/** Compact summary of a loyalty program's rule, for the business side. */
+function ProgramChip() {
+  return (
+    <div
+      style={{
+        display: 'flex', flexDirection: 'column', gap: 2,
+        padding: '10px 12px', borderRadius: 10,
+        background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)',
+      }}
+    >
+      <span className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>Coffee Card</span>
+      <span className="caption" style={{ color: 'var(--fg-3)' }}>5 visits → free espresso</span>
+    </div>
+  );
+}
+
+/** Scan-to-logged-visit mini flow, for the staff-scanning concept. */
+function ScanFlowChip() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <QrCode size={15} color="var(--fg-2)" />
+      </div>
+      <ArrowRight size={14} color="var(--fg-3)" />
+      <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Check size={15} color="var(--success)" />
+      </div>
+      <span className="caption" style={{ color: 'var(--fg-2)' }}>Visit logged</span>
+    </div>
+  );
+}
+
+/** Public vs. member menu tabs, for the dual-menu concept. */
+function MenuTabsChip() {
+  return (
+    <div style={{ display: 'flex', gap: 8 }}>
+      <span
+        style={{
+          padding: '4px 10px', borderRadius: 999, font: 'var(--t-caption)',
+          background: 'var(--bg-muted)', color: 'var(--fg-2)', border: '1px solid var(--border-subtle)',
+        }}
+      >
+        Public
+      </span>
+      <span
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 4,
+          padding: '4px 10px', borderRadius: 999, font: 'var(--t-caption)',
+          background: 'var(--action-subtle-bg)', color: 'var(--action-subtle-fg)',
+        }}
+      >
+        <Lock size={10} /> Member
+      </span>
+    </div>
+  );
+}
+
+/** Geocoded location chip, for the discovery concept. */
+function LocationChip() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <MapPin size={14} color="var(--cyan-500)" />
+      <span className="caption" style={{ color: 'var(--fg-2)' }}>Berlin, DE</span>
+      <span className="caption" style={{ color: 'var(--fg-3)' }}>· 0.8 km away</span>
+    </div>
+  );
+}
+
 const howItWorks: Feature[] = [
   {
     icon: <QrCode size={20} color="#FFFFFF" />,
@@ -101,6 +263,7 @@ const customerFeatures: Feature[] = [
     icon: <QrCode size={20} color="#FFFFFF" />,
     title: 'A digital loyalty card',
     body: 'One QR code tied to your account, accepted at every participating business, with nothing to print and nothing to lose.',
+    visual: <MiniQrChip />,
   },
   {
     icon: <Zap size={20} color="#FFFFFF" />,
@@ -113,11 +276,13 @@ const customerFeatures: Feature[] = [
     icon: <UtensilsCrossed size={20} color="#FFFFFF" />,
     title: 'Member-only menus',
     body: "Join a business's loyalty program to unlock its member menu and pricing, right alongside its public one.",
+    visual: <MenuPreview />,
   },
   {
     icon: <Heart size={20} color="#FFFFFF" />,
     title: 'Favorite businesses',
     body: "Bookmark the spots you visit most so they're one tap away next time you're deciding where to go.",
+    visual: <FavoriteChip />,
   },
   {
     icon: <Star size={20} color="#FFFFFF" />,
@@ -129,6 +294,7 @@ const customerFeatures: Feature[] = [
     icon: <Clock size={20} color="#FFFFFF" />,
     title: 'Clear reward deadlines',
     body: 'Programs can carry an expiry date, so you always know exactly how long you have to redeem what you have earned.',
+    visual: <DeadlineBadge />,
   },
 ];
 
@@ -137,11 +303,13 @@ const businessFeatures: Feature[] = [
     icon: <Gift size={20} color="#FFFFFF" />,
     title: 'Custom loyalty programs',
     body: 'Set the required visit count and the reward per program, with an optional expiry date on redemptions.',
+    visual: <ProgramChip />,
   },
   {
     icon: <ScanLine size={20} color="#FFFFFF" />,
     title: 'One-tap staff scanning',
     body: "Staff scan a customer's QR code to log the visit and see reward eligibility on the spot, with no manual lookups.",
+    visual: <ScanFlowChip />,
   },
   {
     icon: <Users size={20} color="#FFFFFF" />,
@@ -153,11 +321,13 @@ const businessFeatures: Feature[] = [
     icon: <UtensilsCrossed size={20} color="#FFFFFF" />,
     title: 'Public & member menus',
     body: 'Publish a public menu for anyone to browse, plus a member-only menu with photos and pricing for your program.',
+    visual: <MenuTabsChip />,
   },
   {
     icon: <MapPin size={20} color="#FFFFFF" />,
     title: 'Profile & discovery',
     body: 'Address, hours, and location are geocoded automatically, so customers can find and rate your business by city.',
+    visual: <LocationChip />,
   },
   {
     icon: <LayoutDashboard size={20} color="#FFFFFF" />,
@@ -193,7 +363,7 @@ const ctaGhost: React.CSSProperties = {
 
 function FeatureGrid({ items }: { items: Feature[] }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gridAutoFlow: 'dense', gap: 16 }}>
       {items.map((f) => (
         <Card
           key={f.title}
