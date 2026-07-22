@@ -196,7 +196,7 @@ export function LandingPage() {
         <div>
           <span className="label">Loyalty network</span>
           <h1 className="display-1" style={{ marginTop: 8 }}>
-            one qr code replaces every punch card
+            One QR code replaces every punch card
           </h1>
           <p className="body-lg" style={{ color: 'var(--fg-2)', maxWidth: 560, marginTop: 12 }}>
             Customers carry a single digital loyalty card. Businesses scan it to track visits,
