@@ -89,7 +89,7 @@ export function VisitsPage() {
         {memberships.isLoading && <p className="body">Loading…</p>}
         {memberships.data && memberships.data.length === 0 && (
           <p className="body" style={{ color: 'var(--fg-3)' }}>
-            You haven't joined any shop yet. <Link to="/">Explore the network</Link>.
+            You haven't joined any shop yet. <Link to="/explore">Explore the network</Link>.
           </p>
         )}
         {(() => {

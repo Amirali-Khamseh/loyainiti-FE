@@ -37,7 +37,7 @@ export function SignInPage() {
         return;
       }
       toast.success('Signed in');
-      navigate('/');
+      navigate('/explore');
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Sign-in failed');
     } finally {

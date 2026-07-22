@@ -65,7 +65,7 @@ export function CategoryPage() {
 
       {/* ── Back nav ── */}
       <Link
-        to="/"
+        to="/explore"
         style={{
           display: 'inline-flex', alignItems: 'center', gap: 4,
           color: 'var(--fg-3)', textDecoration: 'none',

@@ -31,7 +31,7 @@ export function FavoritesPage() {
 
       {favorites.data && favorites.data.length === 0 && (
         <p className="body" style={{ color: 'var(--fg-3)' }}>
-          No favorites yet. <Link to="/">Browse shops</Link> and tap the heart to save them here.
+          No favorites yet. <Link to="/explore">Browse shops</Link> and tap the heart to save them here.
         </p>
       )}
 

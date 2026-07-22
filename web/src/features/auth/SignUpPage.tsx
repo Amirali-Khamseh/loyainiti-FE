@@ -48,7 +48,7 @@ export function SignUpPage() {
         return;
       }
       toast.success('Account created. Welcome!');
-      navigate('/');
+      navigate('/explore');
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Sign-up failed');
     } finally {
