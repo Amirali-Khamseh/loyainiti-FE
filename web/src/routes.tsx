@@ -7,6 +7,7 @@ import { SignUpPage } from './features/auth/SignUpPage';
 import { SignUpBusinessPage } from './features/auth/SignUpBusinessPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
+import { LandingPage } from './features/landing/LandingPage';
 import { ExplorePage } from './features/explore/ExplorePage';
 import { CategoryPage } from './features/explore/CategoryPage';
 import { ShopPage } from './features/shop/ShopPage';
@@ -50,7 +51,8 @@ export const router = createBrowserRouter([
         path: '/',
         element: <AppShell />,
         children: [
-          { index: true, element: <ExplorePage /> },
+          { index: true, element: <LandingPage /> },
+          { path: 'explore', element: <ExplorePage /> },
           { path: 'categories/:mainSlug', element: <CategoryPage /> },
           { path: 'b/:slug', element: <ShopPage /> },
           {

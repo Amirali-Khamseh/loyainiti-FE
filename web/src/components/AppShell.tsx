@@ -45,7 +45,7 @@ function getNavLinkStyle({ isActive }: { isActive: boolean }): React.CSSProperti
 type Item = { to: string; label: string; icon: React.ReactNode };
 
 const customerItems: Item[] = [
-  { to: '/', label: 'Explore', icon: <Compass size={16} /> },
+  { to: '/explore', label: 'Explore', icon: <Compass size={16} /> },
   { to: '/my-qr', label: 'My QR', icon: <QrCode size={16} /> },
   { to: '/visits', label: 'Visits', icon: <History size={16} /> },
   { to: '/favorites', label: 'Favorites', icon: <Heart size={16} /> },
@@ -146,7 +146,7 @@ export function AppShell() {
                   <LogIn size={14} /> Sign in
                 </NavLink>
                 <NavLink
-                  to="/sign-in"
+                  to="/sign-up"
                   style={() => ({ ...navLinkBase, background: 'var(--action)', color: 'var(--action-fg)', fontWeight: 600 })}
                 >
                   <Sparkles size={14} /> Get started
