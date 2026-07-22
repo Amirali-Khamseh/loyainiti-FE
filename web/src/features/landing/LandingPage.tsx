@@ -9,6 +9,24 @@ import { QrHeroAnimation } from './QrHeroAnimation';
 
 type Feature = { icon: React.ReactNode; title: string; body: string };
 
+const howItWorks: Feature[] = [
+  {
+    icon: <QrCode size={20} color="#FFFFFF" />,
+    title: 'Get your QR code',
+    body: 'Every account comes with a unique QR code the moment you sign up: it is your loyalty card across the whole network.',
+  },
+  {
+    icon: <ScanLine size={20} color="#FFFFFF" />,
+    title: 'Scan in at checkout',
+    body: 'Staff scan your code to log the visit. Your progress toward the next reward updates instantly, for both of you to see.',
+  },
+  {
+    icon: <Gift size={20} color="#FFFFFF" />,
+    title: 'Redeem your reward',
+    body: 'Hit the required visit count and cash in the reward on the spot: no punch cards to lose, no forms to fill in.',
+  },
+];
+
 const customerFeatures: Feature[] = [
   {
     icon: <QrCode size={20} color="#FFFFFF" />,
@@ -122,6 +140,47 @@ function FeatureGrid({ items }: { items: Feature[] }) {
   );
 }
 
+/** Horizontal step timeline: a connecting line runs behind the markers, each
+ *  cut through by a canvas-colored ring so the line reads as passing "into"
+ *  the marker rather than overlapping it. */
+function Timeline({ steps }: { steps: Feature[] }) {
+  const half = 100 / steps.length / 2;
+  return (
+    <div style={{ position: 'relative' }}>
+      <div
+        style={{
+          position: 'absolute', top: 24, left: `${half}%`, right: `${half}%`,
+          height: 2, background: 'var(--border-default)', zIndex: 0,
+        }}
+      />
+      <div
+        style={{
+          position: 'relative', zIndex: 1,
+          display: 'grid', gridTemplateColumns: `repeat(${steps.length}, 1fr)`, gap: 16,
+        }}
+      >
+        {steps.map((step, i) => (
+          <div key={step.title} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 10 }}>
+            <div
+              style={{
+                width: 48, height: 48, borderRadius: '50%',
+                background: 'var(--action)', border: '4px solid var(--bg-canvas)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: 'var(--shadow-2)',
+              }}
+            >
+              {step.icon}
+            </div>
+            <span className="label" style={{ color: 'var(--fg-3)' }}>Step {i + 1}</span>
+            <p className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>{step.title}</p>
+            <p className="caption" style={{ color: 'var(--fg-2)', maxWidth: 240 }}>{step.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function LandingPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
@@ -144,7 +203,7 @@ export function LandingPage() {
             run reward programs, and unlock member-only menus, with no app-hopping and no paper cards.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 28 }}>
-            <Link to="/sign-in" style={ctaPrimary}>
+            <Link to="/sign-up" style={ctaPrimary}>
               <Sparkles size={16} /> Get started
             </Link>
             <Link to="/explore" style={ctaGhost}>
@@ -175,37 +234,9 @@ export function LandingPage() {
       <hr style={divider} />
 
       {/* ── How it works ── */}
-      <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <h2 className="h2">from sign-up to reward, in three scans</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
-          <Card style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--action)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <QrCode size={20} color="#FFFFFF" />
-            </div>
-            <p className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>Get your QR code</p>
-            <p className="caption" style={{ color: 'var(--fg-2)' }}>
-              Every account comes with a unique QR code the moment you sign up: it is your loyalty card across the whole network.
-            </p>
-          </Card>
-          <Card style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--action)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ScanLine size={20} color="#FFFFFF" />
-            </div>
-            <p className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>Scan in at checkout</p>
-            <p className="caption" style={{ color: 'var(--fg-2)' }}>
-              Staff scan your code to log the visit. Your progress toward the next reward updates instantly, for both of you to see.
-            </p>
-          </Card>
-          <Card style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--action)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Gift size={20} color="#FFFFFF" />
-            </div>
-            <p className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>Redeem your reward</p>
-            <p className="caption" style={{ color: 'var(--fg-2)' }}>
-              Hit the required visit count and cash in the reward on the spot: no punch cards to lose, no forms to fill in.
-            </p>
-          </Card>
-        </div>
+        <Timeline steps={howItWorks} />
       </section>
 
       <hr style={divider} />
@@ -237,7 +268,7 @@ export function LandingPage() {
           Set up a loyalty program, publish your menu, and start scanning customers in, all from loyainiti.
         </p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Link to="/sign-in" style={ctaPrimary}>
+          <Link to="/sign-up" style={ctaPrimary}>
             <Sparkles size={16} /> Get started
           </Link>
           <Link to="/explore" style={{ ...ctaGhost, borderColor: 'rgba(255,255,255,0.35)' }}>

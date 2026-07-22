@@ -146,7 +146,7 @@ export function AppShell() {
                   <LogIn size={14} /> Sign in
                 </NavLink>
                 <NavLink
-                  to="/sign-in"
+                  to="/sign-up"
                   style={() => ({ ...navLinkBase, background: 'var(--action)', color: 'var(--action-fg)', fontWeight: 600 })}
                 >
                   <Sparkles size={14} /> Get started
