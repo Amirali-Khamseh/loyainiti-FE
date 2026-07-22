@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart, Bar, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, ResponsiveContainer } from 'recharts';
 import {
   QrCode, ScanLine, Gift, Heart, Star, Clock, UtensilsCrossed,
   Users, MapPin, LayoutDashboard, Zap, Sparkles, Store, ArrowRight, Check, Lock,
@@ -29,15 +29,29 @@ const miniVisitsData = [
   { d: 'Fri', v: 22 }, { d: 'Sat', v: 30 }, { d: 'Sun', v: 26 },
 ];
 
-/** Decorative preview of the real owner/manager analytics chart (see StatsPage). */
+/** Decorative preview of the real owner/manager analytics chart (see StatsPage),
+ *  with an actual total and per-day figures so it reads as data, not wallpaper. */
 function MiniAnalyticsChart() {
+  const total = miniVisitsData.reduce((sum, d) => sum + d.v, 0);
   return (
-    <div style={{ width: '100%', height: 88 }}>
-      <ResponsiveContainer>
-        <BarChart data={miniVisitsData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
-          <Bar dataKey="v" fill="var(--action)" radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <span className="num-lg">{total}</span>
+        <span className="caption" style={{ color: 'var(--success)' }}>▲ 12% vs last week</span>
+      </div>
+      <div style={{ width: '100%', height: 108 }}>
+        <ResponsiveContainer>
+          <BarChart data={miniVisitsData} margin={{ top: 18, right: 4, left: 4, bottom: 0 }}>
+            <XAxis
+              dataKey="d"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: 'var(--fg-3)', fontFamily: 'var(--font-mono)', fontSize: 11 }}
+            />
+            <Bar dataKey="v" fill="var(--action)" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
@@ -236,12 +250,37 @@ function MenuTabsChip() {
 }
 
 /** Geocoded location chip, for the discovery concept. */
+/** Small decorative map: a few abstract road lines and a pulsing pin, not a
+ *  real tile fetch - just enough to read as "location" at a glance. */
+function MiniMapPreview() {
+  return (
+    <svg width="100%" height="64" viewBox="0 0 260 64" role="img" aria-hidden="true">
+      <style>{`
+        @keyframes mapPing {
+          0% { r: 6; opacity: 0.5; }
+          100% { r: 16; opacity: 0; }
+        }
+      `}</style>
+      <rect width="260" height="64" rx="10" fill="var(--bg-muted)" />
+      <path d="M-10 46 C 40 20, 90 55, 140 32 S 230 10, 270 28" stroke="var(--border-default)" strokeWidth="2" fill="none" />
+      <path d="M10 12 C 55 30, 110 6, 150 22 S 230 34, 270 18" stroke="var(--border-subtle)" strokeWidth="2" fill="none" />
+      <circle cx="55" cy="40" r="2.5" fill="var(--fg-3)" />
+      <circle cx="190" cy="20" r="2.5" fill="var(--fg-3)" />
+      <circle cx="140" cy="30" r="6" fill="none" stroke="var(--action)" strokeWidth="2" style={{ animation: 'mapPing 2s ease-out infinite' }} />
+      <circle cx="140" cy="30" r="6" fill="var(--action)" />
+    </svg>
+  );
+}
+
 function LocationChip() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <MapPin size={14} color="var(--cyan-500)" />
-      <span className="caption" style={{ color: 'var(--fg-2)' }}>Berlin, DE</span>
-      <span className="caption" style={{ color: 'var(--fg-3)' }}>· 0.8 km away</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <MiniMapPreview />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <MapPin size={14} color="var(--cyan-500)" />
+        <span className="caption" style={{ color: 'var(--fg-2)' }}>Berlin, DE</span>
+        <span className="caption" style={{ color: 'var(--fg-3)' }}>· 0.8 km away</span>
+      </div>
     </div>
   );
 }
@@ -415,17 +454,32 @@ function BentoGrid({ items }: { items: Feature[] }) {
 
 /** Horizontal step timeline: a connecting line runs behind the markers, each
  *  cut through by a canvas-colored ring so the line reads as passing "into"
- *  the marker rather than overlapping it. */
+ *  the marker rather than overlapping it. A glowing segment travels along
+ *  the line on a loop so the connection itself feels "active". */
 function Timeline({ steps }: { steps: Step[] }) {
   const half = 100 / steps.length / 2;
   return (
     <div style={{ position: 'relative' }}>
+      <style>{`
+        @keyframes timelineFlow {
+          0% { left: -35%; }
+          100% { left: 100%; }
+        }
+      `}</style>
       <div
         style={{
           position: 'absolute', top: 24, left: `${half}%`, right: `${half}%`,
-          height: 2, background: 'var(--border-default)', zIndex: 0,
+          height: 2, background: 'var(--border-default)', overflow: 'hidden', zIndex: 0,
         }}
-      />
+      >
+        <div
+          style={{
+            position: 'absolute', top: 0, width: '35%', height: '100%',
+            background: 'linear-gradient(to right, transparent, var(--action), var(--cyan-500), transparent)',
+            animation: 'timelineFlow 2.6s ease-in-out infinite',
+          }}
+        />
+      </div>
       <div
         style={{
           position: 'relative', zIndex: 1,
