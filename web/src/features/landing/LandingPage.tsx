@@ -9,16 +9,20 @@ import { Card } from '../../components/Card';
 import { LoyaltyStamp } from '../../components/LoyaltyStamp';
 import { QrHeroAnimation } from './QrHeroAnimation';
 
-type Feature = {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-  /** Extra live preview rendered below the text, for the handful of cards
-   *  that show a real product component instead of just an icon. */
-  visual?: React.ReactNode;
-  /** Grid-column span for a featured card (default 1). */
-  span?: 1 | 2;
+type Step = { icon: React.ReactNode; title: string; body: string };
+
+type Feature = Step & {
+  /** Live preview rendered below the text - a real product component, not
+   *  just another icon, so each cell has something distinct to look at. */
+  visual: React.ReactNode;
+  /** Named cell in the section's bento-grid template (see BENTO_AREAS). */
+  area: 'a' | 'b' | 'c' | 'd' | 'e' | 'f';
 };
+
+// 4-column x 3-row mosaic: one 2x2 hero cell, two 1x2 tall cells, two 1x1
+// small cells, and one 2x1 wide cell - a real gallery of differently
+// shaped cards instead of a uniform grid.
+const BENTO_AREAS = `"a a b c" "a a b c" "d e f f"`;
 
 const miniVisitsData = [
   { d: 'Mon', v: 8 }, { d: 'Tue', v: 14 }, { d: 'Wed', v: 10 }, { d: 'Thu', v: 18 },
@@ -38,7 +42,7 @@ function MiniAnalyticsChart() {
   );
 }
 
-/** Decorative preview of staff role assignment. */
+/** Decorative preview of staff role assignment - stacked to suit a narrow tall cell. */
 function StaffRolesPreview() {
   const people: { initials: string; role: string; color: string }[] = [
     { initials: 'A', role: 'Owner', color: 'var(--action)' },
@@ -46,19 +50,19 @@ function StaffRolesPreview() {
     { initials: 'S', role: 'Staff', color: 'var(--slate-500)' },
   ];
   return (
-    <div style={{ display: 'flex', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       {people.map((p) => (
-        <div key={p.role} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <div key={p.role} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div
             style={{
-              width: 36, height: 36, borderRadius: '50%', background: p.color,
+              width: 28, height: 28, borderRadius: '50%', background: p.color,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#FFFFFF', font: 'var(--t-body-sm)', fontWeight: 700,
+              color: '#FFFFFF', font: 'var(--t-caption)', fontWeight: 700, flexShrink: 0,
             }}
           >
             {p.initials}
           </div>
-          <span className="caption" style={{ color: 'var(--fg-3)' }}>{p.role}</span>
+          <span className="caption" style={{ color: 'var(--fg-2)' }}>{p.role}</span>
         </div>
       ))}
     </div>
@@ -191,13 +195,15 @@ function ProgramChip() {
 /** Scan-to-logged-visit mini flow, for the staff-scanning concept. */
 function ScanFlowChip() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <QrCode size={15} color="var(--fg-2)" />
-      </div>
-      <ArrowRight size={14} color="var(--fg-3)" />
-      <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Check size={15} color="var(--success)" />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ width: 26, height: 26, borderRadius: 7, background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <QrCode size={13} color="var(--fg-2)" />
+        </div>
+        <ArrowRight size={12} color="var(--fg-3)" />
+        <div style={{ width: 26, height: 26, borderRadius: 7, background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Check size={13} color="var(--success)" />
+        </div>
       </div>
       <span className="caption" style={{ color: 'var(--fg-2)' }}>Visit logged</span>
     </div>
@@ -240,7 +246,7 @@ function LocationChip() {
   );
 }
 
-const howItWorks: Feature[] = [
+const howItWorks: Step[] = [
   {
     icon: <QrCode size={20} color="#FFFFFF" />,
     title: 'Get your QR code',
@@ -260,81 +266,91 @@ const howItWorks: Feature[] = [
 
 const customerFeatures: Feature[] = [
   {
-    icon: <QrCode size={20} color="#FFFFFF" />,
-    title: 'A digital loyalty card',
-    body: 'One QR code tied to your account, accepted at every participating business, with nothing to print and nothing to lose.',
-    visual: <MiniQrChip />,
-  },
-  {
     icon: <Zap size={20} color="#FFFFFF" />,
     title: 'Real-time progress',
     body: 'Every scan updates your visit count and reward eligibility immediately, so you can watch a free reward come into reach.',
     visual: <LoyaltyStamp required={5} earned={3} rewardLabel="Free coffee" />,
-    span: 2,
+    area: 'a',
   },
   {
     icon: <UtensilsCrossed size={20} color="#FFFFFF" />,
     title: 'Member-only menus',
     body: "Join a business's loyalty program to unlock its member menu and pricing, right alongside its public one.",
     visual: <MenuPreview />,
+    area: 'b',
   },
   {
     icon: <Heart size={20} color="#FFFFFF" />,
     title: 'Favorite businesses',
     body: "Bookmark the spots you visit most so they're one tap away next time you're deciding where to go.",
     visual: <FavoriteChip />,
+    area: 'c',
+  },
+  {
+    icon: <QrCode size={20} color="#FFFFFF" />,
+    title: 'A digital loyalty card',
+    body: 'One QR code tied to your account, accepted at every participating business, with nothing to print and nothing to lose.',
+    visual: <MiniQrChip />,
+    area: 'd',
   },
   {
     icon: <Star size={20} color="#FFFFFF" />,
     title: 'Ratings & reviews',
     body: "Rate and review the businesses you've actually visited, and read what other members think before you go.",
     visual: <RatingPreview />,
+    area: 'e',
   },
   {
     icon: <Clock size={20} color="#FFFFFF" />,
     title: 'Clear reward deadlines',
     body: 'Programs can carry an expiry date, so you always know exactly how long you have to redeem what you have earned.',
     visual: <DeadlineBadge />,
+    area: 'f',
   },
 ];
 
 const businessFeatures: Feature[] = [
   {
-    icon: <Gift size={20} color="#FFFFFF" />,
-    title: 'Custom loyalty programs',
-    body: 'Set the required visit count and the reward per program, with an optional expiry date on redemptions.',
-    visual: <ProgramChip />,
-  },
-  {
-    icon: <ScanLine size={20} color="#FFFFFF" />,
-    title: 'One-tap staff scanning',
-    body: "Staff scan a customer's QR code to log the visit and see reward eligibility on the spot, with no manual lookups.",
-    visual: <ScanFlowChip />,
+    icon: <LayoutDashboard size={20} color="#FFFFFF" />,
+    title: 'Analytics dashboard',
+    body: 'Total visits, unique and new customers, redemptions, and your top customers, over any date range you pick.',
+    visual: <MiniAnalyticsChart />,
+    area: 'a',
   },
   {
     icon: <Users size={20} color="#FFFFFF" />,
     title: 'Owner, manager & staff roles',
     body: 'Invite your team with the right level of access: owners and managers see analytics, staff focus on scanning.',
     visual: <StaffRolesPreview />,
+    area: 'b',
   },
   {
     icon: <UtensilsCrossed size={20} color="#FFFFFF" />,
     title: 'Public & member menus',
     body: 'Publish a public menu for anyone to browse, plus a member-only menu with photos and pricing for your program.',
     visual: <MenuTabsChip />,
+    area: 'c',
+  },
+  {
+    icon: <Gift size={20} color="#FFFFFF" />,
+    title: 'Custom loyalty programs',
+    body: 'Set the required visit count and the reward per program, with an optional expiry date on redemptions.',
+    visual: <ProgramChip />,
+    area: 'd',
+  },
+  {
+    icon: <ScanLine size={20} color="#FFFFFF" />,
+    title: 'One-tap staff scanning',
+    body: "Staff scan a customer's QR code to log the visit and see reward eligibility on the spot, with no manual lookups.",
+    visual: <ScanFlowChip />,
+    area: 'e',
   },
   {
     icon: <MapPin size={20} color="#FFFFFF" />,
     title: 'Profile & discovery',
     body: 'Address, hours, and location are geocoded automatically, so customers can find and rate your business by city.',
     visual: <LocationChip />,
-  },
-  {
-    icon: <LayoutDashboard size={20} color="#FFFFFF" />,
-    title: 'Analytics dashboard',
-    body: 'Total visits, unique and new customers, redemptions, and your top customers, over any date range you pick.',
-    visual: <MiniAnalyticsChart />,
-    span: 2,
+    area: 'f',
   },
 ];
 
@@ -361,21 +377,26 @@ const ctaGhost: React.CSSProperties = {
   border: '1px solid var(--border-default)', textDecoration: 'none',
 };
 
-function FeatureGrid({ items }: { items: Feature[] }) {
+/** Gallery-style mosaic: one large hero cell, two tall cells, two small
+ *  cells, and one wide cell, laid out via named CSS grid-template-areas
+ *  so the six cards read as a deliberate gallery rather than a uniform grid. */
+function BentoGrid({ items }: { items: Feature[] }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gridAutoFlow: 'dense', gap: 16 }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateRows: 'repeat(3, minmax(130px, auto))',
+        gridTemplateAreas: BENTO_AREAS,
+        gap: 16,
+      }}
+    >
       {items.map((f) => (
-        <Card
-          key={f.title}
-          style={{
-            display: 'flex', flexDirection: 'column', gap: 12,
-            gridColumn: f.span === 2 ? 'span 2' : undefined,
-          }}
-        >
+        <Card key={f.title} style={{ gridArea: f.area, display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div
             style={{
               width: 40, height: 40, borderRadius: 10,
-              background: 'var(--action)',
+              background: 'var(--action)', flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
@@ -385,7 +406,7 @@ function FeatureGrid({ items }: { items: Feature[] }) {
             <p className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>{f.title}</p>
             <p className="caption" style={{ color: 'var(--fg-2)', marginTop: 4 }}>{f.body}</p>
           </div>
-          {f.visual && <div style={{ marginTop: 4 }}>{f.visual}</div>}
+          <div style={{ marginTop: 'auto', paddingTop: 4 }}>{f.visual}</div>
         </Card>
       ))}
     </div>
@@ -395,7 +416,7 @@ function FeatureGrid({ items }: { items: Feature[] }) {
 /** Horizontal step timeline: a connecting line runs behind the markers, each
  *  cut through by a canvas-colored ring so the line reads as passing "into"
  *  the marker rather than overlapping it. */
-function Timeline({ steps }: { steps: Feature[] }) {
+function Timeline({ steps }: { steps: Step[] }) {
   const half = 100 / steps.length / 2;
   return (
     <div style={{ position: 'relative' }}>
@@ -497,7 +518,7 @@ export function LandingPage() {
       <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <span className="label">For customers</span>
         <h2 className="h2">every visit, every reward, in one place</h2>
-        <FeatureGrid items={customerFeatures} />
+        <BentoGrid items={customerFeatures} />
       </section>
 
       <hr style={divider} />
@@ -506,7 +527,7 @@ export function LandingPage() {
       <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <span className="label">For businesses</span>
         <h2 className="h2">run your loyalty program, not your paperwork</h2>
-        <FeatureGrid items={businessFeatures} />
+        <BentoGrid items={businessFeatures} />
       </section>
 
       {/* ── Final CTA ── */}
