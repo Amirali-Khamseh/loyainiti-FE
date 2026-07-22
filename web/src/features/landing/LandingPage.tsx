@@ -1,13 +1,82 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { BarChart, Bar, ResponsiveContainer } from 'recharts';
 import {
   QrCode, ScanLine, Gift, Heart, Star, Clock, UtensilsCrossed,
   Users, MapPin, LayoutDashboard, Zap, Sparkles,
 } from 'lucide-react';
 import { Card } from '../../components/Card';
+import { LoyaltyStamp } from '../../components/LoyaltyStamp';
 import { QrHeroAnimation } from './QrHeroAnimation';
 
-type Feature = { icon: React.ReactNode; title: string; body: string };
+type Feature = {
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+  /** Extra live preview rendered below the text, for the handful of cards
+   *  that show a real product component instead of just an icon. */
+  visual?: React.ReactNode;
+  /** Grid-column span for a featured card (default 1). */
+  span?: 1 | 2;
+};
+
+const miniVisitsData = [
+  { d: 'Mon', v: 8 }, { d: 'Tue', v: 14 }, { d: 'Wed', v: 10 }, { d: 'Thu', v: 18 },
+  { d: 'Fri', v: 22 }, { d: 'Sat', v: 30 }, { d: 'Sun', v: 26 },
+];
+
+/** Decorative preview of the real owner/manager analytics chart (see StatsPage). */
+function MiniAnalyticsChart() {
+  return (
+    <div style={{ width: '100%', height: 88 }}>
+      <ResponsiveContainer>
+        <BarChart data={miniVisitsData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+          <Bar dataKey="v" fill="var(--action)" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/** Decorative preview of staff role assignment. */
+function StaffRolesPreview() {
+  const people: { initials: string; role: string; color: string }[] = [
+    { initials: 'A', role: 'Owner', color: 'var(--action)' },
+    { initials: 'M', role: 'Manager', color: 'var(--cyan-500)' },
+    { initials: 'S', role: 'Staff', color: 'var(--slate-500)' },
+  ];
+  return (
+    <div style={{ display: 'flex', gap: 20 }}>
+      {people.map((p) => (
+        <div key={p.role} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <div
+            style={{
+              width: 36, height: 36, borderRadius: '50%', background: p.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#FFFFFF', font: 'var(--t-body-sm)', fontWeight: 700,
+            }}
+          >
+            {p.initials}
+          </div>
+          <span className="caption" style={{ color: 'var(--fg-3)' }}>{p.role}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Decorative preview of a business's rating, as shown on ExplorePage cards. */
+function RatingPreview() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <Star key={i} size={15} fill="var(--cyan-500)" color="var(--cyan-500)" />
+      ))}
+      <span style={{ font: 'var(--t-body-sm)', fontWeight: 600, color: 'var(--action)' }}>4.8</span>
+      <span className="caption" style={{ color: 'var(--fg-3)' }}>(128)</span>
+    </div>
+  );
+}
 
 const howItWorks: Feature[] = [
   {
@@ -37,6 +106,8 @@ const customerFeatures: Feature[] = [
     icon: <Zap size={20} color="#FFFFFF" />,
     title: 'Real-time progress',
     body: 'Every scan updates your visit count and reward eligibility immediately, so you can watch a free reward come into reach.',
+    visual: <LoyaltyStamp required={5} earned={3} rewardLabel="Free coffee" />,
+    span: 2,
   },
   {
     icon: <UtensilsCrossed size={20} color="#FFFFFF" />,
@@ -52,6 +123,7 @@ const customerFeatures: Feature[] = [
     icon: <Star size={20} color="#FFFFFF" />,
     title: 'Ratings & reviews',
     body: "Rate and review the businesses you've actually visited, and read what other members think before you go.",
+    visual: <RatingPreview />,
   },
   {
     icon: <Clock size={20} color="#FFFFFF" />,
@@ -75,6 +147,7 @@ const businessFeatures: Feature[] = [
     icon: <Users size={20} color="#FFFFFF" />,
     title: 'Owner, manager & staff roles',
     body: 'Invite your team with the right level of access: owners and managers see analytics, staff focus on scanning.',
+    visual: <StaffRolesPreview />,
   },
   {
     icon: <UtensilsCrossed size={20} color="#FFFFFF" />,
@@ -90,6 +163,8 @@ const businessFeatures: Feature[] = [
     icon: <LayoutDashboard size={20} color="#FFFFFF" />,
     title: 'Analytics dashboard',
     body: 'Total visits, unique and new customers, redemptions, and your top customers, over any date range you pick.',
+    visual: <MiniAnalyticsChart />,
+    span: 2,
   },
 ];
 
@@ -120,7 +195,13 @@ function FeatureGrid({ items }: { items: Feature[] }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
       {items.map((f) => (
-        <Card key={f.title} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <Card
+          key={f.title}
+          style={{
+            display: 'flex', flexDirection: 'column', gap: 12,
+            gridColumn: f.span === 2 ? 'span 2' : undefined,
+          }}
+        >
           <div
             style={{
               width: 40, height: 40, borderRadius: 10,
@@ -134,6 +215,7 @@ function FeatureGrid({ items }: { items: Feature[] }) {
             <p className="body-sm" style={{ fontWeight: 600, color: '#FFFFFF' }}>{f.title}</p>
             <p className="caption" style={{ color: 'var(--fg-2)', marginTop: 4 }}>{f.body}</p>
           </div>
+          {f.visual && <div style={{ marginTop: 4 }}>{f.visual}</div>}
         </Card>
       ))}
     </div>
